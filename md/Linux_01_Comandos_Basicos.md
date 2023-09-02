@@ -1,5 +1,5 @@
 ---
-title: PowerShell Básico
+title: Linux
 description: Introducción a PowerShell
 permalink: /Linux_01_Comandos_Basicos/
 ---
