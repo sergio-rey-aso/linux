@@ -12,13 +12,13 @@ permalink: /Linux_02_Bash_Script/
 - [1. ¿Qué es un script?](#1-qué-es-un-script)
 - [2. Comentarios](#2-comentarios)
 - [3. Variables](#3-variables)
-  - [Variables de usuario](#variables-de-usuario)
-  - [Variables de entorno](#variables-de-entorno)
-  - [Variables especiales de bash](#variables-especiales-de-bash)
+  - [3.1. Variables de usuario](#31-variables-de-usuario)
+  - [3.2. Variables de entorno](#32-variables-de-entorno)
+  - [3.3. Variables especiales de bash](#33-variables-especiales-de-bash)
 - [4. `echo`, `read` y `printf`](#4-echo-read-y-printf)
-  - [`echo`](#echo)
-  - [`printf`](#printf)
-  - [read](#read)
+  - [4.1. `echo`](#41-echo)
+  - [4.2. `printf`](#42-printf)
+  - [4.3. read](#43-read)
 - [5. Parámetros](#5-parámetros)
 - [6. Comillas](#6-comillas)
 - [7. Condiciones](#7-condiciones)
@@ -151,13 +151,13 @@ Debemos tener en cuenta que hay varios tipos de variables en tu script de `Bash`
 - Variables especiales
 
 
-## Variables de usuario
+## 3.1. Variables de usuario
 
 Además, puedes establecer y utilizar variables personalizadas en tu script.
 
 Puedes llamar a las variables de usuario de la misma manera como se muestra a continuación:
 
-## Variables de entorno
+## 3.2. Variables de entorno
 
 Estas variables que vienen definidas por defecto en Bash, y que se refieren al entorno en el que trabajas. Para conocer estas variables puedes utilizar el comando `env` (de environtment)
 
@@ -169,7 +169,7 @@ Si lo ejecutas puedes encontrar algunas variables tan interesantes como:
 - `$PATH`: la ruta por defecto donde encontrar binarios, etc.
 
 
-## Variables especiales de bash
+## 3.3. Variables especiales de bash
 
 En Bash, hay algunas variables especiales y que están definidas por defecto, y que se refieren al script, al que ha ejecutado el script, o a la máquina en la que se ha ejecutado el script. Así, algunas de ellas son las siguientes:
 
@@ -187,7 +187,7 @@ En Bash, hay algunas variables especiales y que están definidas por defecto, y 
 En este apartado comentaremos detalladamente los comandos echo, printf y read, los cuales
 nos permiten realizar las operaciones de entrada/salida que requiere un script.
 
-## `echo`
+## 4.1. `echo`
 
 Ya hemos visto que la orden `echo` es para mostrar mensajes por pantalla. 
 
@@ -224,7 +224,7 @@ La siguiente tabla nos muestra las secuencias de escape que acepta `echo` (cuand
 | `\v` | Tabulador vertical |
 
 
-## `printf`
+## 4.2. `printf`
 
 El comando `printf` en Linux, se usa para mostrar cadenas formateadas, ya sea por número o por cualquier otro especificador de formato en la ventana de nuestra terminal. Funciona de la misma manera, que printf en el lenguaje de programación `C`, que es su base. El comando `printf` no estaba disponible en las primeras shell, por lo que si estas en un sistema muy antiguo tal vez no tengas acceso. Deberíamos usar este comando antes que `echo` para generar las salidas formateadas.
 
@@ -291,7 +291,7 @@ Ejemplos de formatos comúnmente utilizados:
 - `%10.2f` : Visualización de un número en coma flotante de 10 posiciones, 2 de las cuales decimales.
 - `%+010.2f` : Visualización de un número en coma flotante de 10 posiciones, 2 de las cuales decimales, alineación a la derecha, con escritura sistemática del signo, completado con ceros a la izquierda.
 
-## read
+## 4.3. read
 
 La orden `read` se puede usar para darle valor a una variable como ya se ha mostrado en los ejemplos. También se puede dar valores a más de una variable de una vez:
 
@@ -1659,35 +1659,7 @@ On_IBlack='\e[0;100m'   # Black
 On_IRed='\e[0;101m'     # Red
 On_IGreen='\e[0;102m'   # Green
 On_IYellow='\e[0;103m'  # Yellow
-On_IBlue='\e[0;104m'    - [¿Qué es un script?](#qué-es-un-script)
-- [Comentarios](#comentarios)
-- [Variables](#variables)
-- [`echo`, `read` y `printf`](#echo-read-y-printf)
-- [Parámetros](#parámetros)
-- [Comillas](#comillas)
-- [Condiciones](#condiciones)
-- [Valores devueltos por programas](#valores-devueltos-por-programas)
-- [Condiciones en shell script](#condiciones-en-shell-script)
-  - [Condiciones al ejecutar comandos](#condiciones-al-ejecutar-comandos)
-  - [Evaluación de expresiones. La orden `test`.](#evaluación-de-expresiones-la-orden-test)
-- [Control de flujo de programa. Estructura `if`.](#control-de-flujo-de-programa-estructura-if)
-- [Bloques dentro de un programa](#bloques-dentro-de-un-programa)
-- [Recordando el Redireccionamiento](#recordando-el-redireccionamiento)
-- [Expresiones matemáticas](#expresiones-matemáticas)
-- [Metacaracteres y algunos caracteres especiales](#metacaracteres-y-algunos-caracteres-especiales)
-- [Bucles](#bucles)
-  - [Estructura `While` (mientras)](#estructura-while-mientras)
-  - [Estructura `for`](#estructura-for)
-  - [Ruptura de bucles: `break` y `continue`](#ruptura-de-bucles-break-y-continue)
-- [Saltos de línea en los scripts: '`;`' y '`\`'](#saltos-de-línea-en-los-scripts--y-)
-- [Vectores (Arrays)](#vectores-arrays)
-- [Funciones](#funciones)
-- [ANEXOS](#anexos)
-  - [Definir color y posición del texto en la consola](#definir-color-y-posición-del-texto-en-la-consola)
-  - [Definir la posición](#definir-la-posición)
-  - [El doble paréntesis `(( .. ))`](#el-doble-paréntesis---)
-  - [Reflexión final](#reflexión-final)
-# Blue
+On_IBlue='\e[0;104m'    # Blue
 On_IPurple='\e[10;95m'  # Purple
 On_ICyan='\e[0;106m'    # Cyan
 On_IWhite='\e[0;107m'   # White
