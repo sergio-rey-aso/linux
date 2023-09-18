@@ -418,16 +418,15 @@ Una condición puede ser por ejemplo “x es mayor que y”, siendo 'x'  e 'y' n
 
 Cuando queremos unir 2 o más condiciones para evaluar si son ciertas o no, es decir, podemos crear un programa que te pregunte la altura y el peso, y en función de eso mostrar mensajes diferentes. En este caso podemos evaluar 2 condiciones (altura y peso) de la siguiente forma:
 
-```
-    Si altura es igual que x y peso mayor que y
-    Si altura es igual que x y peso menor que z
-    Si altura es mayor que f o peso menor que g
-    etcétera.
-```
+- Si altura es igual que x y peso mayor que y
+- Si altura es igual que x y peso menor que z
+- Si altura es mayor que f o peso menor que g
+- etcétera.
 
-En este caso tendremos 2 operadores especiales, llamados operadores lógicos, estos son el operador “y” y el operador “o”.
 
--** Operador “y”**: El operador “y” se evalúa como verdadero si todas las condiciones unidas con este operador son verdaderas, y falso en el caso contrario.
+En este caso tendremos 2 operadores especiales, llamados operadores lógicos, estos son el operador `y` y el operador `o`.
+
+-**Operador `y`**: El operador “y” se evalúa como verdadero si todas las condiciones unidas con este operador son verdaderas, y falso en el caso contrario.
 
 Imaginemos la evaluación de: “condición1 **y** condición2 **y** condición3”
 
@@ -440,7 +439,7 @@ Imaginemos la evaluación de: “condición1 **y** condición2 **y** condición3
 
 En definitiva si cualquier valor evaluado con “y” es falso, el resultado será falso.
 
-- **Operador “o”**: El operador “o” se evalúa como falso si todas las condiciones unidas con este operador son falsas, y verdadero en el caso contrario. Es decir, es suficiente con que se cumpla una de las condiciones.
+- **Operador `o`**: El operador “o” se evalúa como falso si todas las condiciones unidas con este operador son falsas, y verdadero en el caso contrario. Es decir, es suficiente con que se cumpla una de las condiciones.
 - 
 Imaginemos la evaluación de: “condición1 **o** condición2 **o** condición3”
 
@@ -460,23 +459,25 @@ También existe otro operador lógico que es la negación, en este caso lo vamos
 
 Las condiciones se pueden agrupar entre paréntesis igual que si de expresiones matemáticas se tratara, simplemente hay que evaluar primero las condiciones de los paréntesis y sustituir el paréntesis por el resultado:
 
-     -> condición1 y condición2 y (condición3 o condición4)
-        - condición1=verdadero
-        - condición2=verdadero
-        - condición3=falso
-        - condición4=verdadero
-    -> verdadero y verdadero y (falso o verdadero) -> falso o verdadero = verdadero
-    -> verdadero y verdadero y verdadero
-    -> verdadero
+Siendo: 
+- condición1=verdadero
+- condición2=verdadero
+- condición3=falso
+- condición4=verdadero
+
+1. condición1 y condición2 y (condición3 o condición4)
+2. verdadero y verdadero y (falso o verdadero) -> falso o verdadero = verdadero
+3. verdadero y verdadero y verdadero
+4. verdadero
 
 
 Otro ejemplo:
 
-    -> !(verdadero y (falso o falso o (verdadero y falso)))
-    -> !(verdadero y (falso o falso o falso))
-    -> !(verdadero y falso)
-    -> !(falso)
-    -> verdadero
+1. !(verdadero y (falso o falso o (verdadero y falso)))
+2. !(verdadero y (falso o falso o falso))
+3. !(verdadero y falso)
+4. !(falso)
+5. verdadero
 
 
 # 8. Valores devueltos por programas
@@ -1146,7 +1147,7 @@ do
 done
 ```
 <div align="center">
-    <img src="../img/Bucle_WHILE.png" alt="Bucle infinito" width="50%" />
+    <img src="../img/Bucle_WHuLE.png" alt="Bucle infinito" width="50%" />
 </div>
 
 Como podemos observar, siempre que la condición sea cierta, se ejecutarán las instrucciones dentro del bucle una y otra vez, hasta que la condición sea falsa.
