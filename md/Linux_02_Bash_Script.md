@@ -166,8 +166,8 @@ Estas variables que vienen definidas por defecto en Bash, y que se refieren al e
 Si lo ejecutas puedes encontrar algunas variables tan interesantes como:
 - `$SHELL`: que indica el shell que estás ejecutando
 - `$EDITOR`: donde está indicado el editor por defecto. En mi caso vim.
-- `$HOME`: la ruta del usuario. En mi caso /home/pascual
-- `$USERNAME`: el nombre del usuario. En mi caso pascual
+- `$HOME`: la ruta del usuario. En mi caso `/home/sergio`
+- `$USERNAME`: el nombre del usuario. En mi caso `sergio`
 - `$PATH`: la ruta por defecto donde encontrar binarios, etc.
 
 
