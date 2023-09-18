@@ -18,7 +18,7 @@ permalink: /Linux_02_Bash_Script/
 - [4. `echo`, `read` y `printf`](#4-echo-read-y-printf)
   - [4.1. `echo`](#41-echo)
   - [4.2. `printf`](#42-printf)
-  - [4.3. read](#43-read)
+  - [4.3. `read`](#43-read)
 - [5. Parámetros](#5-parámetros)
 - [6. Comillas](#6-comillas)
 - [7. Condiciones](#7-condiciones)
@@ -31,18 +31,20 @@ permalink: /Linux_02_Bash_Script/
 - [12. Recordando el Redireccionamiento](#12-recordando-el-redireccionamiento)
 - [13. Expresiones matemáticas](#13-expresiones-matemáticas)
 - [14. Metacaracteres y algunos caracteres especiales](#14-metacaracteres-y-algunos-caracteres-especiales)
-- [15. Bucles](#15-bucles)
-  - [15.1. Estructura `While` (mientras)](#151-estructura-while-mientras)
-  - [15.2. Estructura `for`](#152-estructura-for)
-  - [15.3. Ruptura de bucles: `break` y `continue`](#153-ruptura-de-bucles-break-y-continue)
-- [16. Saltos de línea en los scripts: '`;`' y '`\`'](#16-saltos-de-línea-en-los-scripts--y-)
-- [17. Vectores (Arrays)](#17-vectores-arrays)
-- [18. Funciones](#18-funciones)
-- [19. ANEXOS](#19-anexos)
-  - [19.1. Definir color y posición del texto en la consola](#191-definir-color-y-posición-del-texto-en-la-consola)
-  - [19.2. Definir la posición](#192-definir-la-posición)
-  - [19.3. El doble paréntesis `(( .. ))`](#193-el-doble-paréntesis---)
-  - [19.4. Reflexión final](#194-reflexión-final)
+- [15. Estructura `case`](#15-estructura-case)
+- [16. Bucles](#16-bucles)
+  - [16.1. Estructura `While` (mientras)](#161-estructura-while-mientras)
+  - [16.2. Estructura `for`](#162-estructura-for)
+  - [16.3. Ruptura de bucles: `break` y `continue`](#163-ruptura-de-bucles-break-y-continue)
+- [17. Saltos de línea en los scripts: '`;`' y '`\`'](#17-saltos-de-línea-en-los-scripts--y-)
+- [18. Vectores (Arrays)](#18-vectores-arrays)
+- [19. Funciones](#19-funciones)
+- [20. ANEXOS](#20-anexos)
+  - [20.1. Definir color y posición del texto en la consola](#201-definir-color-y-posición-del-texto-en-la-consola)
+  - [20.2. Definir la posición](#202-definir-la-posición)
+  - [20.3. El doble paréntesis `(( .. ))`](#203-el-doble-paréntesis---)
+  - [20.4. Número aleatorios](#204-número-aleatorios)
+  - [20.5. Reflexión final](#205-reflexión-final)
 
 
 
@@ -291,7 +293,7 @@ Ejemplos de formatos comúnmente utilizados:
 - `%10.2f` : Visualización de un número en coma flotante de 10 posiciones, 2 de las cuales decimales.
 - `%+010.2f` : Visualización de un número en coma flotante de 10 posiciones, 2 de las cuales decimales, alineación a la derecha, con escritura sistemática del signo, completado con ceros a la izquierda.
 
-## 4.3. read
+## 4.3. `read`
 
 La orden `read` se puede usar para darle valor a una variable como ya se ha mostrado en los ejemplos. También se puede dar valores a más de una variable de una vez:
 
@@ -307,11 +309,11 @@ hola que tal bien
 
 A cada variable se le asigna una palabra, y a a la última, el resto del texto.
 
-Principales opciones del comando read, que se resumen en la tabla:
+Principales opciones del comando `read`, que se resumen en la tabla:
 
 | Opción | Descripción |
 | :---: | --- |
-| `-a` | Permite leer las palabras como elementos de un array | 
+| `-a` | Permite leer las palabras como elementos de un ***array*** | 
 | `-n` max | Permite leer como máximo max caracteres. |  
 | `-p` | Permite indicar un texto de prompt | 
 | `-s` | Ocultar los caracteres introducidos (para contraseñas). | 
@@ -361,17 +363,21 @@ En la programación en el shell `Bash` existen 3 tipos de comillas:
 
 - `Comillas simples (') ` : Las comillas simples encierran una cadena de texto que se representa después tal como se ha escrito, es decir, no se sustituyen ni variables ni caracteres especiales que estén dentro de este tipo de comillas.
 - `Comillas dobles (“)`: Las comillas dobles tienen una función similar a las comillas simples. La diferencia es que primero sustituyen las variables y los caracteres especiales por su valor y a continuación el resultado de esa sustitución es como si estuviera encerrado en comillas simples.
-- `Comillas invertidas (``) ` ( A la derecha de la tecla p) : Las comillas invertidas se utilizan para encerrar un comando y después son sustituidas por la salida que produce la ejecución de ese comando
+- `Comillas invertidas o acento grave (``) ` ( A la derecha de la tecla p) : Las comillas invertidas se utilizan para encerrar un comando y después son sustituidas por la salida que produce la ejecución de ese comando
 
 ```bash
 #!/bin/bash
 var=”Mensaje”
+
 echo 'os mando un $var'
+# Esto escribirá: os mando un $var
 
-#Esto escribirá: os mando un $var
 echo “os mando un $var”
+# Esto escribirá: os mando un Mensaje
 
-#Esto escribirá: os mando un Mensaje
+echo 'A veces queremos "entrecomillar algo" y usamos los dos tipos de comillas'
+# Esto escribirá: A veces queremos "entrecomillar algo" y usamos los dos tipos de comillas
+
 echo `ls -l`
 #Mostrará la salida de ejecutar ls -l
 
@@ -575,6 +581,7 @@ Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cue
 | operador | resultado |
 | --- | --- |
 | texto1 `=` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
+| texto1 `==` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
 | texto1 `!=` texto2 | Comprueba si las dos cadenas de texto son diferentes (no vacías) |
 | `-z` texto | Comprueba si la cadena de texto está vacía (longitud 0) |
 | `-n` texto | Comprueba que la cadena de texto no esté vacía (longitud > 0) |
@@ -724,6 +731,48 @@ else
     exit 1
 fi
 ```
+
+En el caso de que queramos tener más de una condición utilizamos los operadores lógicos `&&` y `-a` (y), `||` y `-o` (o) y `!` (negado) tal y como hemos visto antes.
+
+Por ejemplo: 
+
+```bash
+#/bin/bash
+valor1=55
+valor2=22
+valor3=36
+
+if [ $valor1 -ge $valor2 ] || [ $valor2 -ge $valor3 ]
+then
+    echo "el valor mayor de todos es $valor1"
+fi
+# comprueba si valor1 es el mayor de todos los valores
+
+if [[ $(($valor1 % 2)) == 0 ]]
+then
+    echo Par
+else
+    echo Impar
+fi
+# Comprueba si valor1 es par o impar realizando una operación en la propia condición.
+
+```
+
+o por ejemplo un comando más complejo. El siguiente script nos dice si un usuario dado se encuentra en el sistema: 
+
+```bash
+#/bin/bash
+
+if $(grep -q ^$1: /etc/passwd); then
+    echo “El usuario $1 existe”
+else
+    echo “El usuario $1 NO existe”
+fi
+```
+
+> **RETO**. A partir del script anterior genera un script que le pases dos nombres con una letra "y" u "o" en medio y nos devuelva si existen los dos usuarios (si se ha pasado una "y") o no, o hay uno de los dos (si se ha pasado una "o"). Un ejemplo de ejecución sería `./hayUsuarios.sh sergio y gustavo`
+
+> **RETO2**. Verifica que hay una "y" o una "o" antes de hacer nada más.
 
 # 11. Bloques dentro de un programa
 
@@ -995,7 +1044,8 @@ Elige una opción:
 ```
 
 
-Estructura `case`
+# 15. Estructura `case`
+
 Esta estructura es muy fácil de entender una vez entendido como funciona la estructura `if`. Ya que el funcionamiento es similar, pero más limitado. La estructura es la siguiente:
 
 ```bash
@@ -1068,7 +1118,7 @@ echo “Respuesta no válida” 1>&2;;
 esac
 ```
 
-# 15. Bucles
+# 16. Bucles
 
 Hasta ahora, las condiciones que hemos visto nos permiten ejecutar una serie de acciones diferentes según se cumpla una condición determinada, como por ejemplo que el valor de una variable sea 1, 2, 3, o 4, etc...
 
@@ -1083,7 +1133,7 @@ Ejemplo de un bucle infinito. Podemos observar como después de ejecutar todas l
     <img src="../img/Bucle_Infinito.png" alt="Bucle infinito" width="30%" />
 </div>
 
-## 15.1. Estructura `While` (mientras)
+## 16.1. Estructura `While` (mientras)
 
 Esta estructura establece un bucle dentro de si misma. Este bucle de instrucciones se repetirá siempre que la condición que pongamos sea cierta. Se puede decir que es como una estructura `if`, con la diferencia de que cuando termina, vuelve al principio a comprobar otra vez la condición una y otra vez hasta que esta no se cumpla.
 
@@ -1163,7 +1213,7 @@ done
 echo "Hemos creado $total directorios."
 ```
 
-## 15.2. Estructura `for`
+## 16.2. Estructura `for`
 
 La estructura `for` funciona de manera similar a la estructura `while`, aunque está pensada para ser usada en casos más concretos (algo similar a lo que pasa con la estructura case con respecto a `if`). La estructura `if` se puede usar de dos maneras. La primera es la siguiente:
 
@@ -1212,6 +1262,38 @@ do
 done
 ```
 
+Tambien podemos añadir grupos de valores o **rangos**, si vamos a iterar por valores enteros:
+
+Ejemplo: 
+
+```bash
+#!/bin/bash
+for NUM in {1..10}
+# Equivalente for NUM in `seq 1 10`
+do
+    echo Linea $NUM
+done
+```
+
+--- 
+
+Un **rango** se puede expresar con un número de inicio y un número de fin. Sin embargo, `Bash`, es lo suficientemente inteligente, como para interpretar que si el número de inicio, es mayor que el número de fin, lo que tiene que hacer es una cuenta regresiva. Así,
+
+- `{1..1000}` contará de 1 a 1000 
+- `{1000..1}` contará de 1000 a 1
+
+Pero, no solo puedes decir que cuente de uno en uno, también le puedes definir paso. Así
+
+- `{1..1000..2}` contará de 1 a 1000, pero, de dos en dos.
+- `{1000..1..-2}`, lo mismo que en el caso anterior, pero de forma regresiva.
+
+Por supuesto que además de ponerlo en un bucle `for`, también lo puedes utilizar directamente en un echo, por ejemplo,
+
+```bash
+echo {1..100..5}
+```
+
+---
 
 Existe, sin embargo, otra forma de utilizar el bucle `for`. Esta otra forma es muy útil sobretodo cuando queremos hacer un contador, y queda más limpio que utilizando la estructura `while`:
 
@@ -1266,7 +1348,7 @@ done
 
 En el ejemplo con `for`, realiza los pasos de forma idéntica a como los realiza en el ejemplo con `while`, pero sin embargo nos estamos ahorrando 2 líneas en el código del programa.
 
-## 15.3. Ruptura de bucles: `break` y `continue`
+## 16.3. Ruptura de bucles: `break` y `continue`
 
 Hasta ahora hemos visto que para salir de un bucle la condición de entrada en dicho bucle debe ser falsa, y además, sabemos que la instrucciones dentro del bucle se ejecutarán hasta el final antes de volver a repetirse.
 
@@ -1328,7 +1410,7 @@ Como se ha podido observar, la instrucción continue, en el caso de un bucle del
 > ***Importante***: aunque estas dos instrucciones nos pueden resultar muy útiles en varias ocasiones, no conviene abusar de ellas (sólo utilizarlas cuando de verdad se necesite), ya que podrían hacer el código del programa más difícil de entender al alterar el comportamiento normal de un bucle e introducir comportamientos no esperados.
 
 
-# 16. Saltos de línea en los scripts: '`;`' y '`\`'
+# 17. Saltos de línea en los scripts: '`;`' y '`\`'
 
 En ocasiones, tal vez por elegancia, o por pura claridad (aunque suele ser subjetivo), nos podría interesar tener más de 1 instrucción que irían en líneas separadas, en una misma línea o viceversa.
 
@@ -1358,7 +1440,7 @@ do
     mkdir $dir
 done
 ```
-# 17. Vectores (Arrays)
+# 18. Vectores (Arrays)
 
 Un vector o array, básicamente se puede decir que es una variable que en lugar de contener un sólo valor, puede contener varios. Para acceder a cada valor, se utiliza un índice, que es el número que indica la posición que ocupan dentro del vector.
 
@@ -1478,7 +1560,7 @@ vector=( “uno” “dos” “tres” )
 ```
 
 
-# 18. Funciones
+# 19. Funciones
 
 Aunque no vamos a profundizar demasiado en este tema, vamos a aprender lo que es una **función** y su utilidad de forma muy básica.
 
@@ -1581,9 +1663,9 @@ Es importante saber que la funciones en un script de `bash` están más limitada
 - Las funciones deberían poder **devolver un valor** de cualquier tipo básico que soporte el lenguaje (numérico, cadena de texto, etc...). Sin embargo aquí estamos **limitados a un número entero entre 0 y 255** solamente.
 - Normalmente se define la cantidad de parámetros que puede (y debe) recibir una función (y muchas veces el tipo de parámetro también). Este no es el caso de `bash` script, en el cual **podemos enviar a una función cualquiera una cantidad indeterminada de parámetros**.
 
-# 19. ANEXOS
+# 20. ANEXOS
 
-## 19.1. Definir color y posición del texto en la consola
+## 20.1. Definir color y posición del texto en la consola
 
 Para hacer que el texto aparezca de un determinado color o en una determinada posición de la consola (definida por número de columna y de fila), se utilizan una serie de códigos especiales, que luego serán interpretados por el comando echo con la opción -n (igual que cuando queremos que funcionen los saltos de línea o tabuladores `\n\t)`.
 
@@ -1671,7 +1753,7 @@ Para probar estos colores, simplemente debemos meter la variable entre el texto 
 echo -e "${Blue}Texto azul ${UGreen}Texto verde subrayado${Color_Off} Reset"
 ```
 
-## 19.2. Definir la posición
+## 20.2. Definir la posición
 
 Se hace de una forma parecida a usar colores, es decir, mediante un código. Los 3 tipos de códigos que nos interesan son:
 
@@ -1691,7 +1773,7 @@ Ejemplo de uso
 echo -e '\033[2J\033[1;1fBienvenido a: \033[4;7f La consola\033[4C...Del futuro'
 ```
  
-## 19.3. El doble paréntesis `(( .. ))`
+## 20.3. El doble paréntesis `(( .. ))`
 
 El doble paréntesis, cuyo uso en un caso muy particular ya hemos visto con el bucle for, forma un estructura con funcionamiento muy similar al comando let. De hecho podemos hacer lo mismo que hacíamos con let (El dólar para leer las variables sigue siendo opcional en este caso solamente, sólo para leer, al darles valor siempre van sin dolar):
 
@@ -1738,8 +1820,54 @@ do
 done
 ```
 
-## 19.4. Reflexión final
+## 20.4. Número aleatorios
+
+A veces, estamos programando algún script en `Bash` y necesitamos (por algún motivo) generar algún **número aleatorio**. `RANDOM` es una variable de shell que se utiliza para generar enteros aleatorios en Linux. Es un comando bash interno que devuelve un entero de 16 bits en el rango 0 - 32767.Devuelve un entero diferente en cada invocación.
+
+- Generando un entero aleatorio cuando se da el límite superior.
+
+Si se desea generar un número entero aleatorio dentro de Y (donde Y no está incluido). El formato para lograr esto es:
+
+```bash
+NUM=$(( $RANDOM % Y))
+```
+
+Para incluir el valor del limite superior (Y) la operación será Y+1. El formato es:
+
+```bash
+R=$(($RANDOM % Y+1))
+```
+
+- Generando un número entero aleatorio cuando se da tanto el límite superior como el inferior
+
+Si se desea generar un número entero aleatorio entre X e Y donde X es el límite inferior (X ≠ 0) e Y es el límite superior. El formato para lograr esto es:
+
+```bash
+RANGO = $ ((Y-X + 1))
+NUM = $ (($ (($ RANDOM% $ RANGO)) + X))
+```
+
+Otra forma de conseguir un valor aleatorio es mediante el comando `shuf` (*shuffle* = barajar). Como argumentos más representativos tenemos: 
+- `-i`: indica el intervalo del que debe extraer el número aletorio
+- `-n`: indica la cantidad de números aleatorios a obtener, si no ponemos nada realiza un orden aleatorio de todos el intervalo indicado
+- `-r`: se pueden repetir los números obtenidos. Si no se pone, no se repiten, se van descartando.
+- `-z`: el delimitador de línes es NUL. Obtiene todos los números en una misma línea.
+
+Por ejemplo 
+```bash
+shuf -i1-10 -n3
+# Obtiene 3 números aleatorios desde el 1 al 10 ambos incluidos
+
+shuf -i 0-9 -n 5 -r -z
+# obtiene 5 dígitos aleatorios entre 0 y 9, que se pueden repetir y se obtienen en una misma línea
+
+echo "El número primeado ha sido el `shuf -i0-9 -n5 -rz`"
+# ídem anterior, pero lo muestra en una frase.
+
+```
+
+## 20.5. Reflexión final
 
 Finalmente cabe resaltar que todavía no hemos aprendido todas las posibilidades de programar con `bash script`. Aunque lo aprendido nos servirá para salir airosos de la mayoría de las situaciones, hay ocasiones en las que se requieren conocimientos más avanzados, y por ello, quien esté interesado puede buscar y consultar en los cientos de tutoriales y ejemplos que existen en internet.
 
-Allí podrá encontrar nuevas posibilidades para programar con bash script. ¡Simplemente usa tu buscador favorito para ello!.
+Allí podrá encontrar nuevas posibilidades para programar con bash script. ¡Simplemente usa tu buscador favorito para ello!.0
