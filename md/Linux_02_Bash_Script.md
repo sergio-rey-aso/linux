@@ -1,6 +1,6 @@
 ---
 title: Linux
-description: CBash script
+description: Bash script
 permalink: /Linux_02_Bash_Script/
 ---
 

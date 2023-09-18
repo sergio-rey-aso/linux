@@ -13,7 +13,9 @@ Apuntes de **Bash**  para el módulo de ASO del CFGS de ASIX.
 Apartados:
 
 - [Comandos GNU/Linux Bash Básicos](./Linux_01_Comandos_Basicos/)
+- [Bash Script](./Linux_02_Bash_Script/)
 
+# - [Comandos GNU/Linux Bash. Tips](./Linux_01_Comandos_Basicos/)
 
 
 {% comment %} 
