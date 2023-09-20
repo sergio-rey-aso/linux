@@ -10,6 +10,8 @@ permalink: /Linux_02_Bash_Script/
 
 
 - [1. ¿Qué es un script?](#1-qué-es-un-script)
+  - [1.1. Ejemplo: Script que borra los ficheros log en /var/log](#11-ejemplo-script-que-borra-los-ficheros-log-en-varlog)
+  - [1.2. Empezando el script con el sha-­bang (`#!`)](#12-empezando-el-script-con-el-sha-bang-)
 - [2. Comentarios](#2-comentarios)
 - [3. Variables](#3-variables)
   - [3.1. Variables de usuario](#31-variables-de-usuario)
@@ -44,7 +46,8 @@ permalink: /Linux_02_Bash_Script/
   - [20.2. Definir la posición](#202-definir-la-posición)
   - [20.3. El doble paréntesis `(( .. ))`](#203-el-doble-paréntesis---)
   - [20.4. Número aleatorios](#204-número-aleatorios)
-  - [20.5. Reflexión final](#205-reflexión-final)
+  - [20.5. Expresiones regulares](#205-expresiones-regulares)
+  - [20.6. Reflexión final](#206-reflexión-final)
 
 
 
@@ -52,7 +55,11 @@ permalink: /Linux_02_Bash_Script/
 
 # 1. ¿Qué es un script?
 
+> Es imprescindible un conocimiento alto de “shell scripting” para aquellos que quieran dominar la administración de sistemas
+
 Un script no es más que fichero de texto que contiene una serie de instrucciones y órdenes que se ejecutarán en la línea de comandos de forma seguida. Estas órdenes funcionarían de la misma manera si las fuésemos introduciendo en la línea de comandos nosotros.
+
+En el arranque de una máquina Linux, se ejecuta el shell script `/etc/rc.d` (dependiendo del sistema de inicio utilizado) para restaurar la configuración del sistema y activar los servicios. Es muy importante conocer el funcionamiento de dichos scripts para analizar el comportamiento de la máquina y realizar posibles cambios.
 
 El procedimiento para **crear un programa o comando** necesita de los siguientes pasos:
 
@@ -65,6 +72,8 @@ Para ejecutar un script tenemos 2 alternativas. La primera es llamar al intérpr
 ```bash
 sh script.sh    # se ejecuta utilizando la shell `sh`
 bash script.sh  # se ejecuta utilizando la shell `bash`
+/bin/dash script_ejemplo.sh  # tambien
+/bin/bash script_ejemplo.sh
 ```
 
 La segunda es indicando en el archivo la ruta del intérprete de comandos en la primera línea de la siguiente forma: `#!/bin/bash` (en este caso `/bin/bash` es la ruta al intérprete bash, que será el que utilicemos, pero aquí se puede poner la ruta a nuestro intérprete favorito). En este último caso basta con darle permiso de ejecución y llamar directamente al script
@@ -84,13 +93,46 @@ cd ..
 ln -s dir1/arch1 enl1
 ```
 
+## 1.1. Ejemplo: Script que borra los ficheros log en /var/log
+
+```bash
+#!/bin/bash
+# Proper header for a Bash script.
+# Cleanup, version 2
+# Run as root, of course.
+# Insert code here to print error message and exit if not root.
+LOG_DIR=/var/log
+# Variables are better than hard-coded values.
+cd $LOG_DIR
+cat /dev/null > messages
+cat /dev/null > wtmp
+echo "Logs cleaned up."
+exit # The right and proper method of "exiting" from a script.
+# A bare "exit" (no parameter) returns the exit status
+#+ of the preceding command.
+```
+
+## 1.2. Empezando el script con el sha-­bang (`#!`) 
+
+Este símbolo (`#!`) en la cabecera del script, le indica a tu sistema este fichero (script) es un conjunto de comandos a interpretar por el intérprete de comandos que se indica. Inmediatamente a continuación del ***sha-­bang*** está el pathname. Éste es el path al programa que interpreta los comandos en el script, sea un shell, un lenguaje de programación o una utilidad. Este intérprete de comandos, entonces, ejecuta los comandos comentarios.
+
+```bash 
+#!/bin/sh
+#!/bin/bash
+#!/usr/bin/perl
+#!/usr/bin/tcl
+#!/bin/sed -f
+#!/bin/awk -f
+```
+
+
 # 2. Comentarios
 
 Un comentario en un script es una línea que será ignorada por el intérprete de comandos. En estas líneas podemos poner cualquier nota o  apunte que nos resulte útil, por ejemplo, para recordar en el futuro que es lo que realizaba una parte del script que hicimos hace tiempo.
 
 Un comentario siempre empieza por '`#`', lo que haya detrás será completamente ignorado hasta que pasemos a la siguiente línea:
 
-```
+```bash
 #!/bin/bash
 #Este es un comentario cualquiera
 
@@ -109,7 +151,7 @@ ln -s dir1/arch1 enl1
 
 Una variable se puede decir que es un nombre que se le da a un dato cualquiera para luego poder acceder a él sin problemas. Por ejemplo, si queremos preguntarle a alguien por su nombre en un script, habrá que almacenar ese nombre en una variable, ya que no podemos saber el nombre que introducirá. De esa forma podremos acceder a su nombre sin conocerlo, simplemente conociendo el nombre de la variable es suficiente:
 
-```
+```bash
 #!/bin/bash
 echo “Escribe tu nombre”
 
@@ -169,6 +211,18 @@ Si lo ejecutas puedes encontrar algunas variables tan interesantes como:
 - `$HOME`: la ruta del usuario. En mi caso `/home/sergio`
 - `$USERNAME`: el nombre del usuario. En mi caso `sergio`
 - `$PATH`: la ruta por defecto donde encontrar binarios, etc.
+- `$PS1`: prompt primario. El siguiente ejemplo modifica el prompt, utilizando colores, el nombre del usuario aparece en color verde, y el resto en negro: `PS1=’[\033[0;32;48m\u\033[0;30;48m@\h \W ] \ $’` 
+- `$PS2`: prompt secundario. 
+- `$LOGNAME`: nombre del usuario. 
+- `$PWD`: directorio activo. 
+- `$TERM`: el tipo de la terminal actual.
+- `$IFS`: el Separador Interno de Campo que se emplea para la división de palabras tras la expansión y para dividir líneas en palabras con la orden interna read. El valor por defecto es un espacio en blanco (“*<espacio><tab><nueva-línea>*”). Se puede utilizar uno diferente. El siguiente ejemplo lo cambia a dos puntos ( `:` ) 
+
+```bash
+IFS=: 
+```
+
+> nota: `$*` usa el primer carácter almacenado en IFS
 
 
 ## 3.3. Variables especiales de bash
@@ -738,7 +792,7 @@ En el caso de que queramos tener más de una condición utilizamos los operadore
 Por ejemplo: 
 
 ```bash
-#/bin/bash
+ #!/bin/bash
 valor1=55
 valor2=22
 valor3=36
@@ -762,7 +816,7 @@ fi
 o por ejemplo un comando más complejo. El siguiente script nos dice si un usuario dado se encuentra en el sistema: 
 
 ```bash
-#/bin/bash
+ #!/bin/bash
 
 if $(grep -q ^$1: /etc/passwd); then
     echo “El usuario $1 existe”
@@ -1006,10 +1060,10 @@ Los metacaracteres son caracteres especiales que tienen un significado determina
 
 Ejemplos de uso:
 
-- `dir*` → palabra dir, seguida de cualquier cosa (dir, direct, dir1, directorio, ...)
-- `dir?` → palabra dir, seguida de 1 carácter cualquiera (dir1, dira, dirz, dir7, ...)
-- `dir[1234]` → palabra dir, seguida de uno de los caracteres entre corchetes (dir1, dir2, dir3 o dir4). Por ejemplo 'dir9' no sería válida.
-- `dir[a-j]` → palabra dir seguida de una letra entre la 'a' y la 'j'. El guión significa un rango entre el primer carater y el segundo (dira, dirf, dird). Por ejemplo 'dirt' no sería válido.
+- `dir*` → palabra *dir*, seguida de cualquier cosa (dir, direct, dir1, directorio, ...)
+- `dir?` → palabra *dir*, seguida de 1 carácter cualquiera (dir1, dira, dirz, dir7, ...)
+- `dir[1234]` → palabra *dir*, seguida de uno de los caracteres entre corchetes (dir1, dir2, dir3 o dir4). Por ejemplo 'dir9' no sería válida.
+- `dir[a-j]` → palabra *dir* seguida de una letra entre la 'a' y la 'j'. El guión significa un rango entre el primer carater y el segundo (dira, dirf, dird). Por ejemplo 'dirt' no sería válido.
 
 Se pueden unir en una palabra tantos metacaracteres como queramos:
 
@@ -1867,7 +1921,112 @@ echo "El número primeado ha sido el `shuf -i0-9 -n5 -rz`"
 
 ```
 
-## 20.5. Reflexión final
+## 20.5. Expresiones regulares
+
+Dominar las expresiones regulares es fundamental para realizar todo tipo de operaciones en texto.
+
+A continuación tenemos un compendio extraido de la siguiente fuente: [UPV. COMAV. Expresiones regulares](https://bioinf.comav.upv.es/courses/unix/expresiones_regulares.html)
+
+- **Contenedores**
+
+| POSIX |	ASCII | Significado |
+| --- | --- | --- |
+| [:alnum:] |	[A-Za-z0-9] |	Caracteres alfanuméricos (letras y números) |
+| [:word:] |	[A-Za-z0-9_] |	Caracteres alfanuméricos y “_” |
+| [:alpha:] |	[A-Za-z] |	Caracteres alfabéticos |
+| [:blank:] |	[ \t] |	Espacio y tabulador |
+| [:space:] |	[ \t\r\n\v\f] |	Espacios |
+| [:digit:] |	[0-9] |	Dígitos |
+| [:lower:] |	[a-z] |	Letras minúsculas |
+| [:upper:] |	[A-Z] |	Letras mayúsculas |
+| [:punct:] |	[][!”#$%&’()*+,./:;<=>?@\^_`{\|}~-] |	Caracteres de puntuación |
+
+- **Cuantificadores**
+
+| Expr | Significado |
+| --- | --- | 
+| `?` | el carácter aparece ninguna o una vez. “usher1?” coincidiría con “usher” o “usher1”. |
+| `*` | cero, una o varias veces. |
+|  `+ ` | al menos una vez |
+|  `{4} ` | cuatro veces. |
+|  `{4,10} ` | entre 4 y 10 veces |
+
+
+- **Puntos de anclaje**
+
+| Expr | Significado |
+| --- | --- | 
+|  `^ ` | inicio de línea |
+|  `$ ` | fin de línea |
+|  `< ` | principio de palabra |
+|  `> ` | fin de palabra |
+|  `\b ` | límite de palabra |
+
+Veamos algunos ejemplos de uso: 
+
+buscamos solo directorios
+```bash
+ls /etc | grep ^d
+```
+
+Buscamos archivos de configuración, que sean archivos y que tengan cosas intermedias y que acanben en .conf. La barra invertida es para que el punto se tome como punto (\.)
+```bash
+ls -l /etc | grep ^-.*\.conf$
+```
+
+Buscamos ficheros que comiencen y terminen por una vocal
+```bash
+ls /etc | grep ^[aeiouAEIOU].*[aeiouAEIOU]$ 
+```
+Para los caracteres comodines, si los queremos buscar utilizamos escapes, por ejemplo para buscar  3 o 4 puntos 
+
+```bash
+echo fdf....fdfsaf...a | grep "\.\.\."
+echo fdf....fdfsaf...a | grep "\.\.\.\."
+
+ls -1 /etc | grep ".conf"   //aquí el punto se interpreta como cualquier caracter
+ls -1 /etc | grep "\.conf"  //aqui el punto se toma como un punto
+
+```
+
+podemos crear máscaras para mostrar los que tengan ciertos permisos
+```bash
+ls -l /etc | grep '^......x.w.'
+```
+en este caso, los que los del grupo puedan ejecutar y los otros puedan escribir.
+
+Todos los directorios: contarlos
+```bash
+ls -l /etc | grep ^d | wc -l
+```
+
+listado de todos los directorios en mayusculas
+```bash
+ls -l /etc | grep ^d | tr -s " " | cut -f9 -d" " |tr a-z A-Z
+```
+
+Con el siguiente comando, te coge la entranda estadar, que es el teclado, y te repite las lineas que cumplen las condiciones indicadas, comienzan por letra, sigue por letra o número o _, y acaba por letra o numero
+```bash
+grep '^[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]$'
+```
+
+Numerara a la hora de buscar / filtra
+```bash
+sergio@sergio-VirtualBox:~/script$ ls  /etc | grep -n ^d 
+39:dbus-1
+40:dconf
+41:debconf.conf
+42:debian_version
+43:default
+44:deluser.conf
+45:depmod.d
+46:dhcp
+47:dictionaries-common
+48:dpkg
+```
+
+
+## 20.6. Reflexión final
 
 Finalmente cabe resaltar que todavía no hemos aprendido todas las posibilidades de programar con `bash script`. Aunque lo aprendido nos servirá para salir airosos de la mayoría de las situaciones, hay ocasiones en las que se requieren conocimientos más avanzados, y por ello, quien esté interesado puede buscar y consultar en los cientos de tutoriales y ejemplos que existen en internet.
 
