@@ -1201,7 +1201,7 @@ do
 done
 ```
 <div align="center">
-    <img src="../img/Bucle_WHuLE.png" alt="Bucle infinito" width="50%" />
+    <img src="../img/Bucle_WHILE.png" alt="Bucle infinito" width="50%" />
 </div>
 
 Como podemos observar, siempre que la condición sea cierta, se ejecutarán las instrucciones dentro del bucle una y otra vez, hasta que la condición sea falsa.
