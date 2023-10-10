@@ -60,7 +60,9 @@ en el arranque para dejar el computador listo para ser usado por un usuario.
 
 ## Objetivos del systemd
 
-## `Units`. Tipos
+### `Units`. Tipos
+
+Una ​unit es un fichero de configuración​ que controla algún aspecto relevante para el funcionamiento y arranque de los servicios. Entenderemos mejor esta idea viendo los tipos de unit existentes
 
 Los 7 tipos más importantes:
 
@@ -73,17 +75,22 @@ Los 7 tipos más importantes:
 - **snapshot**: Similar a las unidades target.
 
 
-## Units de servicio: 
+### Units de servicio: 
 
-Para hacer funcionar los servicios.
+Son las unit que describen aspectos del funcionamiento de un servicio​. En concreto se pueden especificar las siguientes informaciones:
+- Comando a ejecutar para arrancar el servicio
+- Comando para detener el servicio
+- Dependencias previas
+- Servicios que dependen de esta unit (creo)
+- Destino de la salida de error o estándar.
 
-### ficheros .service
+#### ficheros .service
 
 ```
 [Unit]
 Description=Foo
-[Service]
 
+[Service]
 ExecStart=/usr/sbin/foo-daemon
 
 [Install]
@@ -96,24 +103,30 @@ Donde
 - **Target**: BAjo que condiciones o ***target*** se ejecuta el servicio.
 
 
-### Tarjets
+#### Targets
 
 Significan estado a alcanzar por una situación concreta del sistema, por ejemplo `multi-user.target` es el principal de inicio.
 
 Ver los ficheros en `/usr/lib/systemd/system/multi-user.target` y la carpeta `/usr/lib/systemd/system/multi-user.target.wants` y analizar 
 
-### Carpetas importantes
+#### Carpetas importantes
 
 - `/lib/systemd/system` : Repositorio principal de ***units***, gestionado por el gestor de paquetes.
-- `/usr/lib/sytemd/system` : Copia del principal de ***units*** al que se le añaden las ***units*** los administradorescd 
+- `/usr/lib/sytemd/system` : Copia del principal de ***units*** al que se le añaden las ***units*** los administradores 
 - `/etc/systemd/system` : Configuración del sistema **real** aplicada, o sea, las que se ejecutan. Observer que todas enlaces a la carpeta anterior
 
+### Gestión de Servicios. `systemd`
 
-# El comando `systemctl`
+`systemd` es un sistema **init** y un administrador del sistema que se ha convertido en el nuevo estándar para las distribuciones Linux. Debido a su gran adopción, merece la pena familiarizarse con `systemd`, ya que hará que administrar servidores sea mucho más fácil. Conocer y utilizar las herramientas y daemons que componen `systemd` le ayudará a apreciar mejor la potencia, la flexibilidad y las capacidades que proporciona, o al menos a simplificar su trabajo.
 
-Tenemos muchos tutoriales buenos por internet, por ejemplo 
+La finalidad principal de un sistema **init** es inicializar los componentes que deben iniciarse tras arrancar el kernel Linux. El sistema **init** también se utiliza para administrar servicios y daemons para el servidor en cualquier momento mientras se ejecuta el sistema. Teniendo eso en cuenta, comenzaremos con algunas operaciones básicas de administración de servicio.
 
-(DigitalOcean: Cómo usar Systemctl para gestionar servicios y unidades de Systemd)[https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units-es]
+En `systemd`, el destino de la mayoría de las acciones son “unidades”, que son recursos que `systemd` sabe cómo administrar. Las unidades se categorizan por el tipo de recurso al que representan y se definen con archivos conocidos como archivos de unidad. El tipo de cada unidad puede deducirse del sufijo al final del archivo.
+
+Para las tareas de administración de servicio, la unidad de destino será unidades de servicio, que tienen archivos de unidad con un sufijo `.service`. Sin embargo, para la mayoría de los comandos de administración de servicio, puede dejar fuera el sufijo `.service`, ya que `systemd` es lo suficientemente inteligente para saber que probablemente quiere operar sobre un servicio cuando utiliza comandos de administración de servicio.
+
+
+### El comando `systemctl`
 
 Sintetizando: 
 
@@ -161,6 +174,12 @@ systemctl list-units --all --state=inactive     # filtrando por las inactivas
 systemctl list-units --type=service             # filtrando por servicios solamente.
 ```
 
+Tenemos muchos tutoriales buenos por internet, por ejemplo 
+
+[DigitalOcean: Cómo usar Systemctl para gestionar servicios y unidades de Systemd](https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units-es)
+
+
+
 Demo de cómo se `status` y `mask`
 
 
@@ -186,3 +205,10 @@ Para ejecutar la prueba:
 ```bash
 sernetcat localhost 5000
 ```
+
+
+Ejercicio python
+
+El ejercicio consta de:
+- Servidor en python (`socketEchoServer.py`) que se ejecuta como un servicio.
+- Aplicación que llama al servicio (`socketEchoClient.py`) que se ejecuta cada minuto entre las 8 y las 14 horas, los días lectivos. Las respuestas la dejan un un fichero en la carpeta `/tmp`

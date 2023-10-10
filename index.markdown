@@ -15,10 +15,11 @@ Apartados:
 - [Comandos GNU/Linux Bash Básicos](./Linux_01_Comandos_Basicos/)
 - [Bash Script](./Linux_02_Bash_Script/)
 
-# - [Comandos GNU/Linux Bash. Tips](./Linux_01_Comandos_Basicos/)
 
 
 {% comment %} 
+- [Comandos GNU/Linux Bash. Tips](./Linux_01_Comandos_Basicos/)
+
 Prueba de [slide](./md/es/slides/00.html)
 
 Prueba de [página de lavavel](./md/es/00.md)
