@@ -203,7 +203,7 @@ sudo systemctl daemon-reload
 
 Para ejecutar la prueba: 
 ```bash
-sernetcat localhost 5000
+netcat localhost 5000
 ```
 
 
