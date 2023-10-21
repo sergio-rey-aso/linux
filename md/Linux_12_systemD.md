@@ -1,7 +1,7 @@
 ---
 title: Linux
 description: Procesos servidores y arranque del sistema con SystemD
-permalink: /Linux_SystemD/
+permalink: /systemd/
 ---
 
 <h1>Gestión de procesos: SystemD</h1>
