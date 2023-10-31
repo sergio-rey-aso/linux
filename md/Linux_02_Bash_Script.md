@@ -47,7 +47,9 @@ permalink: /Linux_02_Bash_Script/
   - [20.3. El doble paréntesis `(( .. ))`](#203-el-doble-paréntesis---)
   - [20.4. Número aleatorios](#204-número-aleatorios)
   - [20.5. Expresiones regulares](#205-expresiones-regulares)
-  - [20.6. Reflexión final](#206-reflexión-final)
+  - [20.6. Comando `awk`](#206-comando-awk)
+  - [20.7. `Zenity`](#207-zenity)
+  - [20.8. Reflexión final](#208-reflexión-final)
 
 
 
@@ -282,7 +284,7 @@ La siguiente tabla nos muestra las secuencias de escape que acepta `echo` (cuand
 
 ## 4.2. `printf`
 
-El comando `printf` en Linux, se usa para mostrar cadenas formateadas, ya sea por número o por cualquier otro especificador de formato en la ventana de nuestra terminal. Funciona de la misma manera, que printf en el lenguaje de programación `C`, que es su base. El comando `printf` no estaba disponible en las primeras shell, por lo que si estas en un sistema muy antiguo tal vez no tengas acceso. Deberíamos usar este comando antes que `echo` para generar las salidas formateadas.
+El comando `printf` en Linux, se usa para mostrar cadenas formateadas, ya sea por número o por cualquier otro formato en la ventana de nuestra terminal. Funciona de la misma manera, que `printf` en el lenguaje de programación `C`, que es su base. El comando `printf` no estaba disponible en las primeras shell, por lo que si estas en un sistema muy antiguo tal vez no tengas acceso. Deberíamos usar este comando antes que `echo` para generar las salidas formateadas.
 
 La sintaxis de `printf` no es difícil, tan solo debes acostumbrarte a ella.
 
@@ -319,12 +321,12 @@ printf "%b\n" "Hola, Linux! \n" "Gracias por vuestra labor\n"
 # Hola, Linux!
 # Gracias por vuestra labor
 
-# Valonres numéricos, separados por un salto de línea
+# Valores numéricos, separados por un salto de línea
 printf "%d\n %d\n" "2020" "2021"
 # 2020
 # 2021
 
-# VAlores hexadecimales
+# Valores hexadecimales
 printf "%08x\n" "2021"
 # 000007e5
 
@@ -346,6 +348,7 @@ Ejemplos de formatos comúnmente utilizados:
 - `%+3d` : Visualización de un entero (decimal) de 3 posiciones (alineación a la derecha) con escritura sistemática del signo (un número negativo siempre mostrará su signo).
 - `%10.2f` : Visualización de un número en coma flotante de 10 posiciones, 2 de las cuales decimales.
 - `%+010.2f` : Visualización de un número en coma flotante de 10 posiciones, 2 de las cuales decimales, alineación a la derecha, con escritura sistemática del signo, completado con ceros a la izquierda.
+
 
 ## 4.3. `read`
 
@@ -2025,8 +2028,100 @@ sergio@sergio-VirtualBox:~/script$ ls  /etc | grep -n ^d
 48:dpkg
 ```
 
+## 20.6. Comando `awk`
 
-## 20.6. Reflexión final
+El comando `awk` de linux es una herramienta que te permite procesar y modificar archivos de texto según tus necesidades. Con `awk` puedes buscar palabras o patrones en los archivos y realizar acciones sobre ellos, como imprimir, reemplazar o hacer operaciones matemáticas1. `Awk` también ***tiene su propio lenguaje de programación y scripting***, que te permite escribir programas más complejos y flexibles2.
+
+Aquí tienes algunos ejemplos de cómo usar el comando awk:
+
+```bash
+# Para mostrar solo la primera columna de un archivo separado por espacios
+awk '{print $1}' archivo.txt
+```
+
+```bash
+# Para mostrar solo las líneas que contienen la palabra “Linux”:
+awk '/Linux/ {print}' archivo.txt
+```
+
+```bash
+# Para sumar los valores de la segunda columna de un archivo separado por comas:
+awk -F ',' '{sum += $2} END {print sum}' archivo.txt
+```
+
+```bash
+# Para contar el número de líneas que contienen una vocal:
+awk '/[aeiou]/ {count++} END {print count}' archivo.txt
+```
+
+```bash
+# Para mostrar las líneas que tienen una longitud mayor que 10 caracteres:
+awk 'length($0) > 10 {print}' archivo.txt
+```
+
+```bash
+# Para convertir las letras minúsculas en mayúsculas:
+awk '{print toupper($0)}' archivo.txt
+```
+
+```bash
+# Para generar un código QR con el texto del archivo:
+awk 'BEGIN {srand()} {a[NR] = $0} END {for (i=1; i<=NR; i++) {n = int(rand() * NR) + 1; print "\\qr{" a[n] "}\\\\"}}' archivo.txt
+```
+
+```bash
+# Para generar un poema con las palabras del archivo:
+awk 'BEGIN {srand()} {a[NR] = $0} END {for (i=1; i<=4; i++) {n = int(rand() * NR) + 1; print a[n]}}' archivo.txt
+```    
+
+## 20.7. `Zenity`
+
+`Zenity` es una herramienta que te permite crear cuadros de diálogo gráficos desde la línea de comandos o desde scripts de shell1. Con `Zenity` puedes interactuar con el usuario y recibir información de forma sencilla y visual. `Zenity` usa las librerías GTK y se integra bien con el entorno de escritorio GNOME, pero también funciona en otros entornos2.
+
+Para usar `Zenity`, solo tienes que escribir el nombre del comando seguido del tipo de cuadro de diálogo y las opciones que quieras. Por ejemplo, para mostrar un cuadro de diálogo de entrada con el texto *“Escribe tu nombre”*, puedes escribir:
+
+```bash
+zenity --entry --text="Escribe tu nombre"
+```
+
+`Zenity` tiene varios tipos de cuadros de diálogo que puedes usar según tus necesidades, como por ejemplo:
+
+- **Calendario** `--calendar`: Te muestra un calendario y te permite seleccionar una fecha.
+- **Entrada** `--entry`: Te pide que introduzcas un texto.
+- **Error** `--error` o `--warning`: Te muestra un mensaje de error.
+- **Información** `--text-info`: Te muestra un mensaje de información.
+- **Lista** `--list`: Te muestra una lista de opciones y te permite elegir una o varias.
+- **Notificación** `--notification`: Te muestra una notificación en la barra de menús.
+- **Progreso** `--progress`: Te muestra el progreso de un proceso.
+- **Pregunta** `--question`: Te hace una pregunta y te permite responder sí o no.
+- **Selector de archivos** `--file-selection`: Te permite seleccionar un archivo o una carpeta.
+- **Selector de color** `--color-selection`: Te permite seleccionar un color.
+
+Un ejemplo de uso sería:
+
+```bash
+nombre=$(zenity --entry \
+                --title="Datos del usuario" \
+                --width=250 \
+                --ok-label="Aceptar" \
+                --cancel-label="No te lo quiero decir" \
+                --text="¿Cual es tu nombre?")
+ans=$?
+if [ $ans -eq 0 ]
+then
+    echo "Su nombre es: ${nombre}"
+else
+    echo "No me quiere decir su nombre"
+fi
+```
+
+Para más informción:
+- [Manual de Zenity](https://help.gnome.org/users/zenity/stable/index.html.es)
+- [atareao con Linux. Zenity, díálogos para GNOME, Cinnamon, MATE...](https://atareao.es/tutorial/dialogos-para-scripts/zenity-dialogos-para-gnome-cinnamon-mate/)
+- [DesdeLinux: Usos prácticos de la caja de dialog Zenity](https://blog.desdelinux.net/usos-practicos-de-la-caja-de-dialog-zenity/)
+
+
+## 20.8. Reflexión final
 
 Finalmente cabe resaltar que todavía no hemos aprendido todas las posibilidades de programar con `bash script`. Aunque lo aprendido nos servirá para salir airosos de la mayoría de las situaciones, hay ocasiones en las que se requieren conocimientos más avanzados, y por ello, quien esté interesado puede buscar y consultar en los cientos de tutoriales y ejemplos que existen en internet.
 
