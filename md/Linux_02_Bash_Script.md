@@ -42,14 +42,15 @@ permalink: /Linux_02_Bash_Script/
 - [18. Vectores (Arrays)](#18-vectores-arrays)
 - [19. Funciones](#19-funciones)
 - [20. ANEXOS](#20-anexos)
-  - [20.1. Definir color y posición del texto en la consola](#201-definir-color-y-posición-del-texto-en-la-consola)
-  - [20.2. Definir la posición](#202-definir-la-posición)
-  - [20.3. El doble paréntesis `(( .. ))`](#203-el-doble-paréntesis---)
-  - [20.4. Número aleatorios](#204-número-aleatorios)
-  - [20.5. Expresiones regulares](#205-expresiones-regulares)
-  - [20.6. Comando `awk`](#206-comando-awk)
+  - [20.1. El doble paréntesis `(( .. ))`](#201-el-doble-paréntesis---)
+  - [20.2. Expresiones regulares](#202-expresiones-regulares)
+  - [20.3. Número aleatorios](#203-número-aleatorios)
+  - [20.4. Comando `awk`](#204-comando-awk)
+  - [20.5. Definir color y posición del texto en la consola](#205-definir-color-y-posición-del-texto-en-la-consola)
+  - [20.6. Definir la posición](#206-definir-la-posición)
   - [20.7. `Zenity`](#207-zenity)
-  - [20.8. Reflexión final](#208-reflexión-final)
+  - [20.8. Comandos para mejorar la salida por consola.](#208-comandos-para-mejorar-la-salida-por-consola)
+  - [20.9. Reflexión final](#209-reflexión-final)
 
 
 
@@ -1723,115 +1724,8 @@ Es importante saber que la funciones en un script de `bash` están más limitada
 
 # 20. ANEXOS
 
-## 20.1. Definir color y posición del texto en la consola
-
-Para hacer que el texto aparezca de un determinado color o en una determinada posición de la consola (definida por número de columna y de fila), se utilizan una serie de códigos especiales, que luego serán interpretados por el comando echo con la opción -n (igual que cuando queremos que funcionen los saltos de línea o tabuladores `\n\t)`.
-
-Estos son los códigos para colores y estilos de letra (*subrayado*, *negrita*), lo más útil es guardarlos en variables por ejemplo, al principio de nuestro script o en otro al cual llamaremos desde el nuestro (lo ejecutamos).
-
-```bash
-# Resetear el formato de texto (volver al original)
-Color_Off='\e[0m'
-# Text Reset
-
-# Colores normales
-Black='\e[0;30m'    # Black
-Red='\e[0;31m'      # Red
-Green='\e[0;32m'    # Green
-Yellow='\e[0;33m'   # Yellow
-Blue='\e[0;34m'     # Blue
-Purple='\e[0;35m'   # Purple
-Cyan='\e[0;36m'     # Cyan
-White='\e[0;37m'    # White
-
-# Colores + negrita
-BBlack='\e[1;30m'   # Black
-BRed='\e[1;31m'     # Red
-BGreen='\e[1;32m'   # Green
-BYellow='\e[1;33m'  # Yellow
-BBlue='\e[1;34m'    # Blue
-BPurple='\e[1;35m'  # Purple
-BCyan='\e[1;36m'    # Cyan
-BWhite='\e[1;37m'   # White
-
-# Colores + subrayado
-UBlack='\e[4;30m'   # Black
-URed='\e[4;31m'     # Red
-UGreen='\e[4;32m'   # Green
-UYellow='\e[4;33m'  # Yellow
-UBlue='\e[4;34m'    # Blue
-UPurple='\e[4;35m'  # Purple
-UCyan='\e[4;36m'    # Cyan
-UWhite='\e[4;37m'   # White
-
-# Color de fondo (anteriores era para el texto)
-On_Black='\e[40m'   # Black
-On_Red='\e[41m'     # Red
-On_Green='\e[42m'   # Green
-On_Yellow='\e[43m'  # Yellow
-On_Blue='\e[44m'    # Blue
-On_Purple='\e[45m'  # Purple
-On_Cyan='\e[46m'    # Cyan
-On_White='\e[47m'   # White
-
-# Colores de alta intensidad
-IBlack='\e[0;90m'   # Black
-IRed='\e[0;91m'     # Red
-IGreen='\e[0;92m'   # Green
-IYellow='\e[0;93m'  # Yellow
-IBlue='\e[0;94m'    # Blue
-IPurple='\e[0;95m'  # Purple
-ICyan='\e[0;96m'    # Cyan
-IWhite='\e[0;97m'   # White
-
-# Colores de alta intensidad + negrita
-BIBlack='\e[1;90m'  # Black
-BIRed='\e[1;91m'    # Red
-BIGreen='\e[1;92m'  # Green
-BIYellow='\e[1;93m' # Yellow
-BIBlue='\e[1;94m'   # Blue
-BIPurple='\e[1;95m' # Purple
-BICyan='\e[1;96m'   # Cyan
-BIWhite='\e[1;97m'  # White
-
-# Colores de fondo de alta intensidad
-On_IBlack='\e[0;100m'   # Black
-On_IRed='\e[0;101m'     # Red
-On_IGreen='\e[0;102m'   # Green
-On_IYellow='\e[0;103m'  # Yellow
-On_IBlue='\e[0;104m'    # Blue
-On_IPurple='\e[10;95m'  # Purple
-On_ICyan='\e[0;106m'    # Cyan
-On_IWhite='\e[0;107m'   # White
-```
-
-Para probar estos colores, simplemente debemos meter la variable entre el texto (los cambios serán permanentes hasta que los volvamos a resetear o cambiar de nuevo):
-
-```bash
-echo -e "${Blue}Texto azul ${UGreen}Texto verde subrayado${Color_Off} Reset"
-```
-
-## 20.2. Definir la posición
-
-Se hace de una forma parecida a usar colores, es decir, mediante un código. Los 3 tipos de códigos que nos interesan son:
-
-- `\033[s` → Guarda la posición actual del cursor, útil para luego volver a ella
-- `\033[<fila>;<columna>f` → Sitúa el cursos, para empezar a escribir, en la posición fila (línea), columna de la consola que indiquemos (empiezan en 1 ambas).
-- `\033[u` → Restaura la posición guardada anterior para seguir escribiendo.
-- `\033[<N>A` → Mueve el cursor arriba N líneas
-- `\033[<N>B` → Mueve el curso abajo N líneas
-- `\033[<N>C` → Mueve el cursor hacia delante N columnas
-- `\033[<N>D` → Mueve el cursor hacia atrás N columnas
-- `\033[2J` → Limpia la pantalla
-- `\033[K` → Limpia hasta el final de línea
-
-Ejemplo de uso
-
-```bash
-echo -e '\033[2J\033[1;1fBienvenido a: \033[4;7f La consola\033[4C...Del futuro'
-```
  
-## 20.3. El doble paréntesis `(( .. ))`
+## 20.1. El doble paréntesis `(( .. ))`
 
 El doble paréntesis, cuyo uso en un caso muy particular ya hemos visto con el bucle for, forma un estructura con funcionamiento muy similar al comando let. De hecho podemos hacer lo mismo que hacíamos con let (El dólar para leer las variables sigue siendo opcional en este caso solamente, sólo para leer, al darles valor siempre van sin dolar):
 
@@ -1878,53 +1772,7 @@ do
 done
 ```
 
-## 20.4. Número aleatorios
-
-A veces, estamos programando algún script en `Bash` y necesitamos (por algún motivo) generar algún **número aleatorio**. `RANDOM` es una variable de shell que se utiliza para generar enteros aleatorios en Linux. Es un comando bash interno que devuelve un entero de 16 bits en el rango 0 - 32767.Devuelve un entero diferente en cada invocación.
-
-- Generando un entero aleatorio cuando se da el límite superior.
-
-Si se desea generar un número entero aleatorio dentro de Y (donde Y no está incluido). El formato para lograr esto es:
-
-```bash
-NUM=$(( $RANDOM % Y))
-```
-
-Para incluir el valor del limite superior (Y) la operación será Y+1. El formato es:
-
-```bash
-R=$(($RANDOM % Y+1))
-```
-
-- Generando un número entero aleatorio cuando se da tanto el límite superior como el inferior
-
-Si se desea generar un número entero aleatorio entre X e Y donde X es el límite inferior (X ≠ 0) e Y es el límite superior. El formato para lograr esto es:
-
-```bash
-RANGO = $ ((Y-X + 1))
-NUM = $ (($ (($ RANDOM% $ RANGO)) + X))
-```
-
-Otra forma de conseguir un valor aleatorio es mediante el comando `shuf` (*shuffle* = barajar). Como argumentos más representativos tenemos: 
-- `-i`: indica el intervalo del que debe extraer el número aletorio
-- `-n`: indica la cantidad de números aleatorios a obtener, si no ponemos nada realiza un orden aleatorio de todos el intervalo indicado
-- `-r`: se pueden repetir los números obtenidos. Si no se pone, no se repiten, se van descartando.
-- `-z`: el delimitador de línes es NUL. Obtiene todos los números en una misma línea.
-
-Por ejemplo 
-```bash
-shuf -i1-10 -n3
-# Obtiene 3 números aleatorios desde el 1 al 10 ambos incluidos
-
-shuf -i 0-9 -n 5 -r -z
-# obtiene 5 dígitos aleatorios entre 0 y 9, que se pueden repetir y se obtienen en una misma línea
-
-echo "El número primeado ha sido el `shuf -i0-9 -n5 -rz`"
-# ídem anterior, pero lo muestra en una frase.
-
-```
-
-## 20.5. Expresiones regulares
+## 20.2. Expresiones regulares
 
 Dominar las expresiones regulares es fundamental para realizar todo tipo de operaciones en texto.
 
@@ -2028,7 +1876,54 @@ sergio@sergio-VirtualBox:~/script$ ls  /etc | grep -n ^d
 48:dpkg
 ```
 
-## 20.6. Comando `awk`
+## 20.3. Número aleatorios
+
+A veces, estamos programando algún script en `Bash` y necesitamos (por algún motivo) generar algún **número aleatorio**. `RANDOM` es una variable de shell que se utiliza para generar enteros aleatorios en Linux. Es un comando bash interno que devuelve un entero de 16 bits en el rango 0 - 32767.Devuelve un entero diferente en cada invocación.
+
+- Generando un entero aleatorio cuando se da el límite superior.
+
+Si se desea generar un número entero aleatorio dentro de Y (donde Y no está incluido). El formato para lograr esto es:
+
+```bash
+NUM=$(( $RANDOM % Y))
+```
+
+Para incluir el valor del limite superior (Y) la operación será Y+1. El formato es:
+
+```bash
+R=$(($RANDOM % Y+1))
+```
+
+- Generando un número entero aleatorio cuando se da tanto el límite superior como el inferior
+
+Si se desea generar un número entero aleatorio entre X e Y donde X es el límite inferior (X ≠ 0) e Y es el límite superior. El formato para lograr esto es:
+
+```bash
+RANGO = $ ((Y-X + 1))
+NUM = $ (($ (($ RANDOM% $ RANGO)) + X))
+```
+
+Otra forma de conseguir un valor aleatorio es mediante el comando `shuf` (*shuffle* = barajar). Como argumentos más representativos tenemos: 
+- `-i`: indica el intervalo del que debe extraer el número aletorio
+- `-n`: indica la cantidad de números aleatorios a obtener, si no ponemos nada realiza un orden aleatorio de todos el intervalo indicado
+- `-r`: se pueden repetir los números obtenidos. Si no se pone, no se repiten, se van descartando.
+- `-z`: el delimitador de línes es NUL. Obtiene todos los números en una misma línea.
+
+Por ejemplo 
+```bash
+shuf -i1-10 -n3
+# Obtiene 3 números aleatorios desde el 1 al 10 ambos incluidos
+
+shuf -i 0-9 -n 5 -r -z
+# obtiene 5 dígitos aleatorios entre 0 y 9, que se pueden repetir y se obtienen en una misma línea
+
+echo "El número primeado ha sido el `shuf -i0-9 -n5 -rz`"
+# ídem anterior, pero lo muestra en una frase.
+
+```
+
+
+## 20.4. Comando `awk`
 
 El comando `awk` de linux es una herramienta que te permite procesar y modificar archivos de texto según tus necesidades. Con `awk` puedes buscar palabras o patrones en los archivos y realizar acciones sobre ellos, como imprimir, reemplazar o hacer operaciones matemáticas1. `Awk` también ***tiene su propio lenguaje de programación y scripting***, que te permite escribir programas más complejos y flexibles2.
 
@@ -2073,6 +1968,115 @@ awk 'BEGIN {srand()} {a[NR] = $0} END {for (i=1; i<=NR; i++) {n = int(rand() * N
 # Para generar un poema con las palabras del archivo:
 awk 'BEGIN {srand()} {a[NR] = $0} END {for (i=1; i<=4; i++) {n = int(rand() * NR) + 1; print a[n]}}' archivo.txt
 ```    
+
+## 20.5. Definir color y posición del texto en la consola
+
+Para hacer que el texto aparezca de un determinado color o en una determinada posición de la consola (definida por número de columna y de fila), se utilizan una serie de códigos especiales, que luego serán interpretados por el comando echo con la opción -n (igual que cuando queremos que funcionen los saltos de línea o tabuladores `\n\t)`.
+
+Estos son los códigos para colores y estilos de letra (*subrayado*, *negrita*), lo más útil es guardarlos en variables por ejemplo, al principio de nuestro script o en otro al cual llamaremos desde el nuestro (lo ejecutamos).
+
+```bash
+# Resetear el formato de texto (volver al original)
+Color_Off='\e[0m'
+# Text Reset
+
+# Colores normales
+Black='\e[0;30m'    # Black
+Red='\e[0;31m'      # Red
+Green='\e[0;32m'    # Green
+Yellow='\e[0;33m'   # Yellow
+Blue='\e[0;34m'     # Blue
+Purple='\e[0;35m'   # Purple
+Cyan='\e[0;36m'     # Cyan
+White='\e[0;37m'    # White
+
+# Colores + negrita
+BBlack='\e[1;30m'   # Black
+BRed='\e[1;31m'     # Red
+BGreen='\e[1;32m'   # Green
+BYellow='\e[1;33m'  # Yellow
+BBlue='\e[1;34m'    # Blue
+BPurple='\e[1;35m'  # Purple
+BCyan='\e[1;36m'    # Cyan
+BWhite='\e[1;37m'   # White
+
+# Colores + subrayado
+UBlack='\e[4;30m'   # Black
+URed='\e[4;31m'     # Red
+UGreen='\e[4;32m'   # Green
+UYellow='\e[4;33m'  # Yellow
+UBlue='\e[4;34m'    # Blue
+UPurple='\e[4;35m'  # Purple
+UCyan='\e[4;36m'    # Cyan
+UWhite='\e[4;37m'   # White
+
+# Color de fondo (anteriores era para el texto)
+On_Black='\e[40m'   # Black
+On_Red='\e[41m'     # Red
+On_Green='\e[42m'   # Green
+On_Yellow='\e[43m'  # Yellow
+On_Blue='\e[44m'    # Blue
+On_Purple='\e[45m'  # Purple
+On_Cyan='\e[46m'    # Cyan
+On_White='\e[47m'   # White
+
+# Colores de alta intensidad
+IBlack='\e[0;90m'   # Black
+IRed='\e[0;91m'     # Red
+IGreen='\e[0;92m'   # Green
+IYellow='\e[0;93m'  # Yellow
+IBlue='\e[0;94m'    # Blue
+IPurple='\e[0;95m'  # Purple
+ICyan='\e[0;96m'    # Cyan
+IWhite='\e[0;97m'   # White
+
+# Colores de alta intensidad + negrita
+BIBlack='\e[1;90m'  # Black
+BIRed='\e[1;91m'    # Red
+BIGreen='\e[1;92m'  # Green
+BIYellow='\e[1;93m' # Yellow
+BIBlue='\e[1;94m'   # Blue
+BIPurple='\e[1;95m' # Purple
+BICyan='\e[1;96m'   # Cyan
+BIWhite='\e[1;97m'  # White
+
+# Colores de fondo de alta intensidad
+On_IBlack='\e[0;100m'   # Black
+On_IRed='\e[0;101m'     # Red
+On_IGreen='\e[0;102m'   # Green
+On_IYellow='\e[0;103m'  # Yellow
+On_IBlue='\e[0;104m'    # Blue
+On_IPurple='\e[10;95m'  # Purple
+On_ICyan='\e[0;106m'    # Cyan
+On_IWhite='\e[0;107m'   # White
+```
+
+Para probar estos colores, simplemente debemos meter la variable entre el texto (los cambios serán permanentes hasta que los volvamos a resetear o cambiar de nuevo):
+
+```bash
+echo -e "${Blue}Texto azul ${UGreen}Texto verde subrayado${Color_Off} Reset"
+```
+
+## 20.6. Definir la posición
+
+Se hace de una forma parecida a usar colores, es decir, mediante un código. Los 3 tipos de códigos que nos interesan son:
+
+- `\033[s` → Guarda la posición actual del cursor, útil para luego volver a ella
+- `\033[<fila>;<columna>f` → Sitúa el cursos, para empezar a escribir, en la posición fila (línea), columna de la consola que indiquemos (empiezan en 1 ambas).
+- `\033[u` → Restaura la posición guardada anterior para seguir escribiendo.
+- `\033[<N>A` → Mueve el cursor arriba N líneas
+- `\033[<N>B` → Mueve el curso abajo N líneas
+- `\033[<N>C` → Mueve el cursor hacia delante N columnas
+- `\033[<N>D` → Mueve el cursor hacia atrás N columnas
+- `\033[2J` → Limpia la pantalla
+- `\033[K` → Limpia hasta el final de línea
+
+Ejemplo de uso
+
+```bash
+echo -e '\033[2J\033[1;1fBienvenido a: \033[4;7f La consola\033[4C...Del futuro'
+```
+
 
 ## 20.7. `Zenity`
 
@@ -2121,7 +2125,20 @@ Para más informción:
 - [DesdeLinux: Usos prácticos de la caja de dialog Zenity](https://blog.desdelinux.net/usos-practicos-de-la-caja-de-dialog-zenity/)
 
 
-## 20.8. Reflexión final
+## 20.8. Comandos para mejorar la salida por consola.
+
+Existe una serie de comandos curiosos/divertido/inutiles que permiten mejorar nuestra interaccón con la consola. 
+
+Uno que seguramente habrás visto en clase es la utilidad/fuente `figlet`, pero hay muchos otros similares como `cowsay`, `banner` o `espeak`.
+
+Existen suficiente literatura sobre el tema, a continuación un par de enlaces que te servirán de introducción, a partir de ahí, tu sabrás en qué quieres invertir tu tiempo.
+
+- [FUNNY COMMANDS IN LINUX](https://www.linkedin.com/pulse/funny-commands-linux-anudeepthi-kolagani)
+- [20 curiosidades geeks para terminales linux](https://www.emezeta.com/articulos/20-curiosidades-geeks-para-terminales-linux)
+- [Diez herramientas para divertirse con el arte ASCII en la terminal Linux](https://es.linux-console.net/?p=17876)
+
+
+## 20.9. Reflexión final
 
 Finalmente cabe resaltar que todavía no hemos aprendido todas las posibilidades de programar con `bash script`. Aunque lo aprendido nos servirá para salir airosos de la mayoría de las situaciones, hay ocasiones en las que se requieren conocimientos más avanzados, y por ello, quien esté interesado puede buscar y consultar en los cientos de tutoriales y ejemplos que existen en internet.
 
