@@ -14,7 +14,7 @@ permalink: /Linux_02_Bash_Script/
   - [1.2. Empezando el script con el sha-­bang (`#!`)](#12-empezando-el-script-con-el-sha-bang-)
 - [2. Comentarios](#2-comentarios)
 - [3. Variables](#3-variables)
-  - [3.1. Variables de usuario](#31-variables-de-usuario)
+  - [3.1. Variables de usuario/script](#31-variables-de-usuarioscript)
   - [3.2. Variables de entorno](#32-variables-de-entorno)
   - [3.3. Variables especiales de bash](#33-variables-especiales-de-bash)
 - [4. `echo`, `read` y `printf`](#4-echo-read-y-printf)
@@ -23,34 +23,34 @@ permalink: /Linux_02_Bash_Script/
   - [4.3. `read`](#43-read)
 - [5. Parámetros](#5-parámetros)
 - [6. Comillas](#6-comillas)
-- [7. Condiciones](#7-condiciones)
-- [8. Valores devueltos por programas](#8-valores-devueltos-por-programas)
-- [9. Condiciones en shell script](#9-condiciones-en-shell-script)
-  - [9.1. Condiciones al ejecutar comandos](#91-condiciones-al-ejecutar-comandos)
-  - [9.2. Evaluación de expresiones. La orden `test`.](#92-evaluación-de-expresiones-la-orden-test)
-- [10. Control de flujo de programa. Estructura `if`.](#10-control-de-flujo-de-programa-estructura-if)
-- [11. Bloques dentro de un programa](#11-bloques-dentro-de-un-programa)
-- [12. Recordando el Redireccionamiento](#12-recordando-el-redireccionamiento)
-- [13. Expresiones matemáticas](#13-expresiones-matemáticas)
-- [14. Metacaracteres y algunos caracteres especiales](#14-metacaracteres-y-algunos-caracteres-especiales)
-- [15. Estructura `case`](#15-estructura-case)
-- [16. Bucles](#16-bucles)
-  - [16.1. Estructura `While` (mientras)](#161-estructura-while-mientras)
-  - [16.2. Estructura `for`](#162-estructura-for)
-  - [16.3. Ruptura de bucles: `break` y `continue`](#163-ruptura-de-bucles-break-y-continue)
-- [17. Saltos de línea en los scripts: '`;`' y '`\`'](#17-saltos-de-línea-en-los-scripts--y-)
-- [18. Vectores (Arrays)](#18-vectores-arrays)
-- [19. Funciones](#19-funciones)
-- [20. ANEXOS](#20-anexos)
-  - [20.1. El doble paréntesis `(( .. ))`](#201-el-doble-paréntesis---)
-  - [20.2. Expresiones regulares](#202-expresiones-regulares)
-  - [20.3. Número aleatorios](#203-número-aleatorios)
-  - [20.4. Comando `awk`](#204-comando-awk)
-  - [20.5. Definir color y posición del texto en la consola](#205-definir-color-y-posición-del-texto-en-la-consola)
-  - [20.6. Definir la posición](#206-definir-la-posición)
-  - [20.7. `Zenity`](#207-zenity)
-  - [20.8. Comandos para mejorar la salida por consola.](#208-comandos-para-mejorar-la-salida-por-consola)
-  - [20.9. Reflexión final](#209-reflexión-final)
+- [7. Valores devueltos por programas](#7-valores-devueltos-por-programas)
+- [8. Condiciones en shell script](#8-condiciones-en-shell-script)
+  - [8.1. Condiciones al ejecutar comandos](#81-condiciones-al-ejecutar-comandos)
+  - [8.2. Evaluación de expresiones. La orden `test`.](#82-evaluación-de-expresiones-la-orden-test)
+  - [8.3. Evaluación de condiciones booleanas: verdadero (0) y falso (1)](#83-evaluación-de-condiciones-booleanas-verdadero-0-y-falso-1)
+- [9. Control de flujo de programa. Estructura `if`.](#9-control-de-flujo-de-programa-estructura-if)
+- [10. Bloques dentro de un programa](#10-bloques-dentro-de-un-programa)
+- [11. Recordando el Redireccionamiento](#11-recordando-el-redireccionamiento)
+- [12. Expresiones matemáticas](#12-expresiones-matemáticas)
+- [13. Metacaracteres y algunos caracteres especiales](#13-metacaracteres-y-algunos-caracteres-especiales)
+- [14. Estructura `case`](#14-estructura-case)
+- [15. Bucles](#15-bucles)
+  - [15.1. Estructura `While` (mientras)](#151-estructura-while-mientras)
+  - [15.2. Estructura `for`](#152-estructura-for)
+  - [15.3. Ruptura de bucles: `break` y `continue`](#153-ruptura-de-bucles-break-y-continue)
+- [16. Saltos de línea en los scripts: '`;`' y '`\`'](#16-saltos-de-línea-en-los-scripts--y-)
+- [17. Vectores (Arrays)](#17-vectores-arrays)
+- [18. Funciones](#18-funciones)
+- [19. ANEXOS](#19-anexos)
+  - [19.1. El doble paréntesis `(( .. ))`](#191-el-doble-paréntesis---)
+  - [19.2. Expresiones regulares](#192-expresiones-regulares)
+  - [19.3. Número aleatorios](#193-número-aleatorios)
+  - [19.4. Comando `awk`](#194-comando-awk)
+  - [19.5. Definir color y posición del texto en la consola](#195-definir-color-y-posición-del-texto-en-la-consola)
+  - [19.6. Definir la posición](#196-definir-la-posición)
+  - [19.7. `Zenity`](#197-zenity)
+  - [19.8. Comandos para mejorar la salida por consola.](#198-comandos-para-mejorar-la-salida-por-consola)
+  - [19.9. Reflexión final](#199-reflexión-final)
 
 
 
@@ -123,6 +123,7 @@ Este símbolo (`#!`) en la cabecera del script, le indica a tu sistema este fich
 #!/bin/sh
 #!/bin/bash
 #!/usr/bin/perl
+#!/usr/bin/python3
 #!/usr/bin/tcl
 #!/bin/sed -f
 #!/bin/awk -f
@@ -198,15 +199,13 @@ Debemos tener en cuenta que hay varios tipos de variables en tu script de `Bash`
 - Variables especiales
 
 
-## 3.1. Variables de usuario
+## 3.1. Variables de usuario/script
 
-Además, puedes establecer y utilizar variables personalizadas en tu script.
-
-Puedes llamar a las variables de usuario de la misma manera como se muestra a continuación:
+Las variables de usuario son las que hemos visto anteriormente; un usuario las define en su terminal o en un script, y mientras no cierre el terminal o no finalice el script esta variable perdurará en el tiempo.
 
 ## 3.2. Variables de entorno
 
-Estas variables que vienen definidas por defecto en Bash, y que se refieren al entorno en el que trabajas. Para conocer estas variables puedes utilizar el comando `env` (de environtment)
+Estas variables  vienen definidas por defecto en Bash, y que se refieren al entorno en el que trabajas. Para conocer estas variables puedes utilizar el comando `env` (de environtment)
 
 Si lo ejecutas puedes encontrar algunas variables tan interesantes como:
 - `$SHELL`: que indica el shell que estás ejecutando
@@ -228,13 +227,70 @@ IFS=:
 > nota: `$*` usa el primer carácter almacenado en IFS
 
 
+Para **crear una nueva variable de entorno** en Linux seguiremos la siguiente sintaxis básica :
+
+```bash
+export VAR="value"
+```
+
+Vamos a desglosarlo:
+    - `export`: el comando utilizado para crear la variable.
+    - `VAR`: el nombre de la variable.
+    -= `indica` que la siguiente sección es el valor.
+    - `«value»`: el valor real
+
+Por ejemplo:
+
+```bash
+export MAIN_USER = "Sergio Rey"
+```
+
+Veamos ahora cómo podrías **cambiar el valor de una variable de entorno**, por ejemplo la variable TZ (zona horaria):
+
+Primero, chequea la hora:
+
+```bash
+date
+```
+
+El comando debería mostrar la hora actual.
+
+Luego de esto, puedes usar el comando de exportación para alterar la zona horaria:
+
+```bash
+export TZ="US/Pacific"
+```
+
+Ahora que modificaste el valor de la variable, puedes verificar la hora nuevamente utilizando el comando `date`, que generará una hora diferente, acorde a los cambios realizados en la variable de entorno Linux.
+
+Para deshacer un cambio realizado sobre una variale de entorno, y volver a su valor por defecto, lo podemos hacer con el comando `unset`. La sintaxis del comando se ve de la siguiente manera:
+
+```bash
+unset VAR
+```
+
+Las partes del comando son:
+
+    - `unset`: el comando en sí
+    - `VAR`: la variable cuyo valor queremos revertir
+
+Como ejemplo, veamos cómo revertir la variable de zona horaria:
+
+```bash
+unset TZ
+```
+
+Esto aplicará a la hora su valor predeterminado, el cual puedes verificar utilizando el comando `date` una vez más.
+
+Configurar y revertir una variable de entorno de Linux desde la línea de comandos **afecta solo tus sesiones actuales**. Si deseas que la configuración se mantenga en todos los inicios de sesión, debes definir las variables de entorno en tu archivo de inicialización personal, es decir `.bashrc`. No obstante las variables de entorno no se encuentran definidas únicamente en este fichero.
+
+
 ## 3.3. Variables especiales de bash
 
 En Bash, hay algunas variables especiales y que están definidas por defecto, y que se refieren al script, al que ha ejecutado el script, o a la máquina en la que se ha ejecutado el script. Así, algunas de ellas son las siguientes:
 
 - `$0`, `$1`...: parámetros que veremos más adelante
 - `$?`: la salida del último proceso que se ha ejecutado
-- `$$`: el ID del proceso del script
 - `$USER`: el nombre del usuario que ha ejecutado el script
 - `$HOSTNAME`: se refiere al hostname ejecutando el script
 - `$SECONDS`: se refiere al tiempo transcurrido desde que se inició el script, contabilizado en segundos.
@@ -293,14 +349,14 @@ La sintaxis de `printf` no es difícil, tan solo debes acostumbrarte a ella.
 printf formato_de_cadena argumento1 argumento2 ...  argumenton
 ```
 
-***Formato de cadena*** representa la cadena que se mostrará por pantalla. Puede contener formatos queserán substituidos por el valor de las expresiones citadas a su continuación. Tiene que haber tantos formatos como argumentos.
+***Formato de cadena*** representa la cadena que se mostrará por pantalla. Puede contener formatos que serán substituidos por el valor de las expresiones citadas a su continuación. Tiene que haber tantos formatos como argumentos.
 
 
-Existen varios especificadores de formato, algunos de los más utilizados son:
+Existen varios indicadores de formato, algunos de los más utilizados son:
 
-- `%s` : Especificador de cadena para la salida.
+- `%s` : indicador de cadena para la salida.
 - `%b` : Nos permite interpretar secuencias de escape con un argumento.
-- `%d` : Permite mostrar valores integrales.
+- `%d` : Permite mostrar valores numérico enteros.
 - `%x` : Imprime valores hexadecimales en minúsculas con relleno de salida.
 - `%f` : Permite mostrar valores con coma flotante.
 
@@ -313,7 +369,7 @@ Ejemplos:
 printf "%s\n" "Hola, Linux!"
 # Obtenemos: Hola, Linux!
 
-# Una cadena sin mas, sin salto de línea. El prompt aparecera
+# Una cadena sin mas, sin salto de línea. El prompt aparecerá en la misma línea
 printf "%s" "Hola, Linux!"
 # Hola, Linux!
 
@@ -411,6 +467,9 @@ También tenemos las variables especiales:
 - `$0` : Nombre del programa
 - `$#` : Número de parámetros enviados
 - `$*` : Lista con todos los parámetros enviados
+- `$$` : PID del script
+- `$!` : PID del último comando lanzado en background dentro del script
+- `$?` : Valor devuelto por el ultimo comando ejecutado (si es 0 es que es se ha ejecutado correctamente)
   
 
 # 6. Comillas
@@ -441,7 +500,7 @@ echo `ls -l`
 
 #También se pueden poner cadenas de texto seguidas encerradas en diferentes tipos #de comillas
 echo 'La variable $var tiene el valor:' “$var” `date`
-#Esto mostraŕa: La variable $var tiene el valor: Mensaje lun feb 26 12:23:36 CET 2023
+#Esto mostrara: La variable $var tiene el valor: Mensaje lun feb 26 12:23:36 CET 2023
 ```
 
 Cuando pongamos una cadena de texto sin encerrarla en comillas de ningún tipo se comportará principalmente como si la hubiéramos encerrado entre comillas dobles, pero cualquier cantidad de espacios seguidos, tabuladores o saltos de línea los interpretará como un sólo espacio.
@@ -455,7 +514,139 @@ echo Aquí van   5 espacios
 # Mostrará: Aquí van 5 espacios
 ```
 
-# 7. Condiciones
+# 7. Valores devueltos por programas
+
+En shell script de Linux, los programas cuando terminan de ejecutarse, devolverán un valor que indicará si se han ejecutado de forma correcta, o por el contrario, ha ocurrido algún tipo de error durante su ejecución. Cuando todo ha ido correctamente, devolverán el valor 0, mientras que si algo ha ido mal, devolverán un valor diferente de `0`, normalmente `1` o `-1`.
+
+Para terminar un programa devolviendo uno de estos valores hay que ejecutar la orden `exit` dentro del programa pasándole como primer y único parámetro el valor de salida. Si no se le pasa ningún parámetro se interpreta como valor 0, es decir, el programa ha ido  correctamente.
+
+```bash
+#!/bin/bash
+# Escribimos el programa y comprobamos si ha ido todo bien
+# Si todo ha ido bien
+exit 0
+# Si algo ha fallado
+exit 1
+```
+
+> ***Con esto se puede deducir que el valor verdadero (todo correcto), se representa con el número 0, y otro valor diferente, por ejemplo el 1, se interpretará como falso***. 
+
+Esto puede liar un poco porque funciona justo al revés que en muchos lenguajes de programación ya que normalmente se
+suele asociar al 0 como valor falso.
+
+
+# 8. Condiciones en shell script
+
+Podemos representar un condición de 2 maneras cuando realizamos un script. La primera es ejecutando un comando y evaluando su salida (0 -> correcto, y, otro valor -> falso) y la segunda es mediante la orden test que sirve para evaluar expresiones.
+
+## 8.1. Condiciones al ejecutar comandos
+
+Cada vez que ejecutemos un comando o programa y este termine nos devuelve un valor que indica si todo ha ido correcto o no, lo equivalente a `verdadero` y `falso` en este caso. Por ejemplo el comando:
+
+`cd dir1`
+
+Nos devolverá `verdadero` (**0**) si el directorio 'dir1' existe y ha podido entrar en el, y falso en caso contrario (algo ha ido mal, es decir, no ha podido entrar en el directorio, bien sea porque no existe, o porque no tiene permiso el usuario).
+
+En este tipo de condiciones podemos utilizar los operadores '`y`' y '`o`' que vimos anteriormente.
+
+En este caso, el operador `y` se representa '`&&`' y el operador '`o`' se representa '`||`'. Podemos usar paréntesis para agrupar comandos también (pero no se comportarán igual, ya que comandos como `cd dir` se evaluarán pero no tendrán ningún efecto), y hay que tener en cuenta que estos **se evalúan de izquierda a derecha**, es decir, si tenemos algo del tipo: 'comando1 y comando2', el comando 2 sólo se ejecutará si el comando1 es verdadero (ha ido bien), ya que si unimos 2 condiciones con '`y`', y alguna es falsa, el resultado siempre será falso, no nos hará falta evaluar la otra condición. 
+
+Si las unimos con '`o`', en cuanto encuentre un comando que vaya correctamente se parará y no ejecutará el resto.
+
+
+Imaginemos que queremos crear un archivo dentro de un directorio, pero no sabemos si el directorio existe:
+
+```bash
+cd dir1 && touch arch1
+```
+
+De esta forma, el comando '`touch arch1`' sólo se ejecutará si el comando '`cd dir1`' se ha ejecutado correctamente.
+
+
+Otro ejemplo:
+
+```bash
+cd dir1 || echo “No he podido entrar en dir1”
+```
+
+De esta forma, `echo “No he podido entrar en dir1”` sólo se ejecutará si '`cd dir1`' ha fallado, es decir, si no podemos entrar en `dir1` por alguna razón, mostrará un mensaje de error.
+
+```bash
+cd dir1 || cd dir2 && touch arch1
+```
+
+Primero evalúa '`cd dir1`', si todo es correcto, no evaluará '`cd dir2`'. Si '`cd dir1`' o '`cd dir2`' funcionan bien, creará un archivo '`arch1`' dentro de ellos.
+
+Digamos que va evaluando primero los 2 primeros comandos y el resultado lo evalúa junto con el siguiente de la derecha y así sucesivamente.
+
+Si ponemos un símbolo de admiración '`!`' antes de un comando (separado por un espacio), estaremos haciendo una negación, es decir, si el resultado del comando es V, pasará a ser F y viceversa.
+
+```bash
+! cd dir || echo “enhorabuena, estamos dentro de dir”
+cd dir && echo “enhorabuena, estamos dentro de dir”
+```
+
+## 8.2. Evaluación de expresiones. La orden `test`.
+
+En shell script, tenemos una orden o comando llamado `test`, que evalúa una serie de condiciones y devuelve el valor final, es decir, verdadero, o falso. Hay dos formas de llamar a este comando.
+
+- test condición
+- [ condición ]
+
+Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cuenta que se debe dejar un espacio entre el primer corchete y la condición y también al poner el último corchete.
+
+
+1. **Operadores para ficheros**: Trabajan con ficheros y algunos de los que existen son:
+
+| operador | resultado |
+| --- | --- |
+| `-e` fichero | Comprueba si el fichero existe |
+| `-f` fichero | Comprueba si el fichero existe y además es un fichero normal y corriente |
+| `-d` fichero | Comprueba si el fichero existe y además es un directorio | 
+| `-r` fichero | Comprueba si el proceso (script) tiene permiso de lectura sobre el fichero |
+| `-w` fichero | Comprueba si el proceso (script) tiene permiso de escritura sobre el fichero |
+| `-x` fichero | Comprueba si el proceso (script) tiene permiso de ejecución sobre el fichero |
+| `-s` fichero | Comprueba si el fichero no es vacío (tiene más de 0 bytes) |
+| fich1 `-nt` fich2 | Comprueba si fich1 se ha modificado más recientemente que fich2 |
+| fich1 `-ot` fich2 | Comprueba si fich1 se ha modificado antes (es más viejo) que fich2 |
+
+
+2. **Operadores para cadenas de texto**: Trabajan con texto y algunos de los que existen son:
+
+| operador | resultado |
+| --- | --- |
+| texto1 `=` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
+| texto1 `==` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
+| texto1 `!=` texto2 | Comprueba si las dos cadenas de texto son diferentes (no vacías) |
+| `-z` texto | Comprueba si la cadena de texto está vacía (longitud 0) |
+| `-n` texto | Comprueba que la cadena de texto no esté vacía (longitud > 0) |
+ 
+3. **Operadores para manejar números**: Trabajan comparando valores numéricos:
+
+| operador | resultado |
+| --- | --- |
+| num1 `-eq` num2 | Comprueba si los números son iguales |
+| num1 `-ne` num2 | Comprueba si los números son distintos |
+| num1 `-gt` num2 | Comprueba si num1 es mayor que num2 |
+| num1 `-ge` num2 | Comprueba si num1 es mayor o igual que num2 |
+| num1 `-lt` num2 | Comprueba si num1 es menor que num2 |
+| num1 `-le` num2 | Comprueba si num1 es menor o igual que num2 |
+
+4. **Operadores `y`, `o`, `no` y `paréntesis`**: Se pueden unir condiciones o negarlas y agruparlas de la siguiente manera:
+
+- El operador 'y' se representa con '`-a`'.
+- El operador 'o' se representa con '`-o`'.
+- El operador 'no' se representa con '`!`'.
+- Para utilizar los paréntesis hay que escaparlos, es decir, poner el símbolo '`\`' antes de cada paréntesis, ya que estos son símbolos especiales para el intérprete y queremos evitar que los interprete como tales.
+
+| operador | resultado |
+| --- | --- |  
+| num1 -`eq` num2 `-a` num1 `-gt` num3 | Comprueba si num1 es igual a num2 y además mayor que num3. |
+| `-r` arch1 `-o` `-x` arch1 | Comprueba si arch1 tiene permisos de lectura o de ejecución. |
+| `!` `-s` arch1 | Comprueba que el fichero arch1 si es vacío |
+| $var `-ne` 0 `-a` `\(` `-f` arch1 `-o` `-d` arch1 `\)` | Comprueba si el valor de la variable $var es distinto de 0 y además, comprueba si arch1 es un fichero normal o un directorio. |
+
+## 8.3. Evaluación de condiciones booleanas: verdadero (0) y falso (1)
 
 Como veremos más adelante, lo que hemos aprendido hasta ahora, nos deja muy limitados.
 
@@ -538,140 +729,7 @@ Otro ejemplo:
 5. verdadero
 
 
-# 8. Valores devueltos por programas
-
-En shell script de Linux, los programas cuando terminan de ejecutarse, devolverán un valor que indicará si se han ejecutado de forma correcta, o por el contrario, ha ocurrido algún tipo de error durante su ejecución. Cuando todo ha ido correctamente, devolverán el valor 0, mientras que si algo ha ido mal, devolverán un valor diferente de `0`, normalmente `1` o `-1`.
-
-Para terminar un programa devolviendo uno de estos valores hay que ejecutar la orden `exit` dentro del programa pasándole como primer y único parámetro el valor de salida. Si no se le pasa ningún parámetro se interpreta como valor 0, es decir, el programa ha ido  correctamente.
-
-```bash
-#!/bin/bash
-# Escribimos el programa y comprobamos si ha ido todo bien
-# Si todo ha ido bien
-exit 0
-# Si algo ha fallado
-exit 1
-```
-
-> ***Con esto se puede deducir que el valor verdadero (todo correcto), se representa con el número 0, y otro valor diferente, por ejemplo el 1, se interpretará como falso***. 
-
-Esto puede liar un poco porque funciona justo al revés que en muchos lenguajes de programación ya que normalmente se
-suele asociar al 0 como valor falso.
-
-
-# 9. Condiciones en shell script
-
-Podemos representar un condición de 2 maneras cuando realizamos un script. La primera es ejecutando un comando y evaluando su salida (0 -> correcto, y, otro valor -> falso) y la segunda es mediante la orden test que sirve para evaluar expresiones.
-
-## 9.1. Condiciones al ejecutar comandos
-
-Cada vez que ejecutemos un comando o programa y este termine nos devuelve un valor que indica si todo ha ido correcto o no, lo equivalente a `verdadero` y `falso` en este caso. Por ejemplo el comando:
-
-`cd dir1`
-
-Nos devolverá `verdadero` (**0**) si el directorio 'dir1' existe y ha podido entrar en el, y falso en caso contrario (algo ha ido mal, es decir, no ha podido entrar en el directorio, bien sea porque no existe, o porque no tiene permiso el usuario).
-
-En este tipo de condiciones podemos utilizar los operadores '`y`' y '`o`' que vimos anteriormente.
-
-En este caso, el operador `y` se representa '`&&`' y el operador '`o`' se representa '`||`'. Podemos usar paréntesis para agrupar comandos también (pero no se comportarán igual, ya que comandos como `cd dir` se evaluarán pero no tendrán ningún efecto), y hay que tener en cuenta que estos **se evalúan de izquierda a derecha**, es decir, si tenemos algo del tipo: 'comando1 y comando2', el comando 2 sólo se ejecutará si el comando1 es verdadero (ha ido bien), ya que si unimos 2 condiciones con '`y`', y alguna es falsa, el resultado siempre será falso, no nos hará falta evaluar la otra condición. 
-
-Si las unimos con '`o`', en cuanto encuentre un comando que vaya correctamente se parará y no ejecutará el resto.
-
-
-Imaginemos que queremos crear un archivo dentro de un directorio, pero no sabemos si el directorio existe:
-
-```bash
-cd dir1 && touch arch1
-```
-
-De esta forma, el comando '`touch arch1`' sólo se ejecutará si el comando '`cd dir1`' se ha ejecutado correctamente.
-
-
-Otro ejemplo:
-
-```bash
-cd dir1 || echo “No he podido entrar en dir1”
-```
-
-De esta forma, `echo “No he podido entrar en dir1”` sólo se ejecutará si '`cd dir1`' ha fallado, es decir, si no podemos entrar en `dir1` por alguna razón, mostrará un mensaje de error.
-
-```bash
-cd dir1 || cd dir2 && touch arch1
-```
-
-Primero evalúa '`cd dir1`', si todo es correcto, no evaluará '`cd dir2`'. Si '`cd dir1`' o '`cd dir2`' funcionan bien, creará un archivo '`arch1`' dentro de ellos.
-
-Digamos que va evaluando primero los 2 primeros comandos y el resultado lo evalúa junto con el siguiente de la derecha y así sucesivamente.
-
-Si ponemos un símbolo de admiración '`!`' antes de un comando (separado por un espacio), estaremos haciendo una negación, es decir, si el resultado del comando es V, pasará a ser F y viceversa.
-
-```bash
-! cd dir || echo “enhorabuena, estamos dentro de dir”
-cd dir && echo “enhorabuena, estamos dentro de dir”
-```
-
-## 9.2. Evaluación de expresiones. La orden `test`.
-
-En shell script, tenemos una orden o comando llamado `test`, que evalúa una serie de condiciones y devuelve el valor final, es decir, verdadero, o falso. Hay dos formas de llamar a este comando.
-
-- test condición
-- [ condición ]
-
-Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cuenta que se debe dejar un espacio entre el primer corchete y la condición y también al poner el último corchete.
-
-
-1. **Operadores para ficheros**: Trabajan con ficheros y algunos de los que existen son:
-
-| operador | resultado |
-| --- | --- |
-| `-e` fichero | Comprueba si el fichero existe |
-| `-f` fichero | Comprueba si el fichero existe y además es un fichero normal y corriente |
-| `-d` fichero | Comprueba si el fichero existe y además es un directorio | 
-| `-r` fichero | Comprueba si el proceso (script) tiene permiso de lectura sobre el fichero |
-| `-w` fichero | Comprueba si el proceso (script) tiene permiso de escritura sobre el fichero |
-| `-x` fichero | Comprueba si el proceso (script) tiene permiso de ejecución sobre el fichero |
-| `-s` fichero | Comprueba si el fichero no es vacío (tiene más de 0 bytes) |
-| fich1 `-nt` fich2 | Comprueba si fich1 se ha modificado más recientemente que fich2 |
-| fich1 `-ot` fich2 | Comprueba si fich1 se ha modificado antes (es más viejo) que fich2 |
-
-
-2. **Operadores para cadenas de texto**: Trabajan con texto y algunos de los que existen son:
-
-| operador | resultado |
-| --- | --- |
-| texto1 `=` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
-| texto1 `==` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
-| texto1 `!=` texto2 | Comprueba si las dos cadenas de texto son diferentes (no vacías) |
-| `-z` texto | Comprueba si la cadena de texto está vacía (longitud 0) |
-| `-n` texto | Comprueba que la cadena de texto no esté vacía (longitud > 0) |
- 
-3. **Operadores para manejar números**: Trabajan comparando valores numéricos:
-
-| operador | resultado |
-| --- | --- |
-| num1 `-eq` num2 | Comprueba si los números son iguales |
-| num1 `-ne` num2 | Comprueba si los números son distintos |
-| num1 `-gt` num2 | Comprueba si num1 es mayor que num2 |
-| num1 `-ge` num2 | Comprueba si num1 es mayor o igual que num2 |
-| num1 `-lt` num2 | Comprueba si num1 es menor que num2 |
-| num1 `-le` num2 | Comprueba si num1 es menor o igual que num2 |
-
-4. **Operadores `y`, `o`, `no` y `paréntesis`**: Se pueden unir condiciones o negarlas y agruparlas de la siguiente manera:
-
-- El operador 'y' se representa con '`-a`'.
-- El operador 'o' se representa con '`-o`'.
-- El operador 'no' se representa con '`!`'.
-- Para utilizar los paréntesis hay que escaparlos, es decir, poner el símbolo '`\`' antes de cada paréntesis, ya que estos son símbolos especiales para el intérprete y queremos evitar que los interprete como tales.
-
-| operador | resultado |
-| --- | --- |  
-| num1 -`eq` num2 `-a` num1 `-gt` num3 | Comprueba si num1 es igual a num2 y además mayor que num3. |
-| `-r` arch1 `-o` `-x` arch1 | Comprueba si arch1 tiene permisos de lectura o de ejecución. |
-| `!` `-s` arch1 | Comprueba que el fichero arch1 si es vacío |
-| $var `-ne` 0 `-a` `\(` `-f` arch1 `-o` `-d` arch1 `\)` | Comprueba si el valor de la variable $var es distinto de 0 y además, comprueba si arch1 es un fichero normal o un directorio. |
-
-
-# 10. Control de flujo de programa. Estructura `if`.
+# 9. Control de flujo de programa. Estructura `if`.
 
 La estructura `if` permite tomar decisiones de una forma sencilla en el programa, normalmente para decidir si en función de una u otra situación ejecutaremos un código u otro. La estructura es la siguiente:
 
@@ -833,7 +891,7 @@ fi
 
 > **RETO2**. Verifica que hay una "y" o una "o" antes de hacer nada más.
 
-# 11. Bloques dentro de un programa
+# 10. Bloques dentro de un programa
 
 Antes de continuar, y para aclarar del todo el funcionamiento de una estructura como `if`, y otras que veremos más adelante. Vamos a ver lo que es un bloque de instrucciones dentro de un programa y lo que puede significar.
 
@@ -851,7 +909,7 @@ Excepto el bloque principal, el resto de bloques, hemos visto que comienzan con 
 > ***Consejo***: Cada vez que se abra un nuevo bloque, es aconsejable que las instrucciones comiencen un mínimo de 2 o 3 espacios después que las instrucciones del bloque padre. De esta forma diferenciaremos sin problema que instrucciones pertenecen a cada bloque.
 
 
-# 12. Recordando el Redireccionamiento
+# 11. Recordando el Redireccionamiento
 
 Ya hemos visto que podemos construir expresiones del tipo:
 
@@ -945,7 +1003,7 @@ fi
 Como se observa, al ejecutar el comando `ls fichero`, no nos interesa ni mensaje con el listado con el fichero, ni el mensaje de error que pueda dar, solamente si funciona o no. Por eso redirigimos ambas salidas a `/dev/null` , para que no nos muestre ningún mensaje por pantalla
 
 
-# 13. Expresiones matemáticas
+# 12. Expresiones matemáticas
 
 Existen 2 comandos que evalúan expresiones matemáticas y lógicas. 
 
@@ -1052,7 +1110,7 @@ Retorna : 2
 En todo caso, `bc` es una herramienta potente para la realización de calculos matemáticos que tal vez escape al proposito de nuestro curso. Mas informacion en [freeshell: Cálculo numérico con bc](http://marcmmw.freeshell.org/esp/programacion/bc.html)
 
 
-# 14. Metacaracteres y algunos caracteres especiales
+# 13. Metacaracteres y algunos caracteres especiales
 
 Los metacaracteres son caracteres especiales que tienen un significado determinado cuando los utilizamos:
 
@@ -1103,7 +1161,7 @@ Elige una opción:
 ```
 
 
-# 15. Estructura `case`
+# 14. Estructura `case`
 
 Esta estructura es muy fácil de entender una vez entendido como funciona la estructura `if`. Ya que el funcionamiento es similar, pero más limitado. La estructura es la siguiente:
 
@@ -1177,7 +1235,7 @@ echo “Respuesta no válida” 1>&2;;
 esac
 ```
 
-# 16. Bucles
+# 15. Bucles
 
 Hasta ahora, las condiciones que hemos visto nos permiten ejecutar una serie de acciones diferentes según se cumpla una condición determinada, como por ejemplo que el valor de una variable sea 1, 2, 3, o 4, etc...
 
@@ -1192,7 +1250,7 @@ Ejemplo de un bucle infinito. Podemos observar como después de ejecutar todas l
     <img src="../img/Bucle_Infinito.png" alt="Bucle infinito" width="30%" />
 </div>
 
-## 16.1. Estructura `While` (mientras)
+## 15.1. Estructura `While` (mientras)
 
 Esta estructura establece un bucle dentro de si misma. Este bucle de instrucciones se repetirá siempre que la condición que pongamos sea cierta. Se puede decir que es como una estructura `if`, con la diferencia de que cuando termina, vuelve al principio a comprobar otra vez la condición una y otra vez hasta que esta no se cumpla.
 
@@ -1272,7 +1330,7 @@ done
 echo "Hemos creado $total directorios."
 ```
 
-## 16.2. Estructura `for`
+## 15.2. Estructura `for`
 
 La estructura `for` funciona de manera similar a la estructura `while`, aunque está pensada para ser usada en casos más concretos (algo similar a lo que pasa con la estructura case con respecto a `if`). La estructura `if` se puede usar de dos maneras. La primera es la siguiente:
 
@@ -1407,7 +1465,7 @@ done
 
 En el ejemplo con `for`, realiza los pasos de forma idéntica a como los realiza en el ejemplo con `while`, pero sin embargo nos estamos ahorrando 2 líneas en el código del programa.
 
-## 16.3. Ruptura de bucles: `break` y `continue`
+## 15.3. Ruptura de bucles: `break` y `continue`
 
 Hasta ahora hemos visto que para salir de un bucle la condición de entrada en dicho bucle debe ser falsa, y además, sabemos que la instrucciones dentro del bucle se ejecutarán hasta el final antes de volver a repetirse.
 
@@ -1469,7 +1527,7 @@ Como se ha podido observar, la instrucción continue, en el caso de un bucle del
 > ***Importante***: aunque estas dos instrucciones nos pueden resultar muy útiles en varias ocasiones, no conviene abusar de ellas (sólo utilizarlas cuando de verdad se necesite), ya que podrían hacer el código del programa más difícil de entender al alterar el comportamiento normal de un bucle e introducir comportamientos no esperados.
 
 
-# 17. Saltos de línea en los scripts: '`;`' y '`\`'
+# 16. Saltos de línea en los scripts: '`;`' y '`\`'
 
 En ocasiones, tal vez por elegancia, o por pura claridad (aunque suele ser subjetivo), nos podría interesar tener más de 1 instrucción que irían en líneas separadas, en una misma línea o viceversa.
 
@@ -1499,7 +1557,7 @@ do
     mkdir $dir
 done
 ```
-# 18. Vectores (Arrays)
+# 17. Vectores (Arrays)
 
 Un vector o array, básicamente se puede decir que es una variable que en lugar de contener un sólo valor, puede contener varios. Para acceder a cada valor, se utiliza un índice, que es el número que indica la posición que ocupan dentro del vector.
 
@@ -1619,7 +1677,7 @@ vector=( “uno” “dos” “tres” )
 ```
 
 
-# 19. Funciones
+# 18. Funciones
 
 Aunque no vamos a profundizar demasiado en este tema, vamos a aprender lo que es una **función** y su utilidad de forma muy básica.
 
@@ -1722,10 +1780,10 @@ Es importante saber que la funciones en un script de `bash` están más limitada
 - Las funciones deberían poder **devolver un valor** de cualquier tipo básico que soporte el lenguaje (numérico, cadena de texto, etc...). Sin embargo aquí estamos **limitados a un número entero entre 0 y 255** solamente.
 - Normalmente se define la cantidad de parámetros que puede (y debe) recibir una función (y muchas veces el tipo de parámetro también). Este no es el caso de `bash` script, en el cual **podemos enviar a una función cualquiera una cantidad indeterminada de parámetros**.
 
-# 20. ANEXOS
+# 19. ANEXOS
 
  
-## 20.1. El doble paréntesis `(( .. ))`
+## 19.1. El doble paréntesis `(( .. ))`
 
 El doble paréntesis, cuyo uso en un caso muy particular ya hemos visto con el bucle for, forma un estructura con funcionamiento muy similar al comando let. De hecho podemos hacer lo mismo que hacíamos con let (El dólar para leer las variables sigue siendo opcional en este caso solamente, sólo para leer, al darles valor siempre van sin dolar):
 
@@ -1772,7 +1830,7 @@ do
 done
 ```
 
-## 20.2. Expresiones regulares
+## 19.2. Expresiones regulares
 
 Dominar las expresiones regulares es fundamental para realizar todo tipo de operaciones en texto.
 
@@ -1876,7 +1934,7 @@ sergio@sergio-VirtualBox:~/script$ ls  /etc | grep -n ^d
 48:dpkg
 ```
 
-## 20.3. Número aleatorios
+## 19.3. Número aleatorios
 
 A veces, estamos programando algún script en `Bash` y necesitamos (por algún motivo) generar algún **número aleatorio**. `RANDOM` es una variable de shell que se utiliza para generar enteros aleatorios en Linux. Es un comando bash interno que devuelve un entero de 16 bits en el rango 0 - 32767.Devuelve un entero diferente en cada invocación.
 
@@ -1923,7 +1981,7 @@ echo "El número primeado ha sido el `shuf -i0-9 -n5 -rz`"
 ```
 
 
-## 20.4. Comando `awk`
+## 19.4. Comando `awk`
 
 El comando `awk` de linux es una herramienta que te permite procesar y modificar archivos de texto según tus necesidades. Con `awk` puedes buscar palabras o patrones en los archivos y realizar acciones sobre ellos, como imprimir, reemplazar o hacer operaciones matemáticas1. `Awk` también ***tiene su propio lenguaje de programación y scripting***, que te permite escribir programas más complejos y flexibles2.
 
@@ -1969,7 +2027,7 @@ awk 'BEGIN {srand()} {a[NR] = $0} END {for (i=1; i<=NR; i++) {n = int(rand() * N
 awk 'BEGIN {srand()} {a[NR] = $0} END {for (i=1; i<=4; i++) {n = int(rand() * NR) + 1; print a[n]}}' archivo.txt
 ```    
 
-## 20.5. Definir color y posición del texto en la consola
+## 19.5. Definir color y posición del texto en la consola
 
 Para hacer que el texto aparezca de un determinado color o en una determinada posición de la consola (definida por número de columna y de fila), se utilizan una serie de códigos especiales, que luego serán interpretados por el comando echo con la opción -n (igual que cuando queremos que funcionen los saltos de línea o tabuladores `\n\t)`.
 
@@ -2057,7 +2115,7 @@ Para probar estos colores, simplemente debemos meter la variable entre el texto 
 echo -e "${Blue}Texto azul ${UGreen}Texto verde subrayado${Color_Off} Reset"
 ```
 
-## 20.6. Definir la posición
+## 19.6. Definir la posición
 
 Se hace de una forma parecida a usar colores, es decir, mediante un código. Los 3 tipos de códigos que nos interesan son:
 
@@ -2078,7 +2136,7 @@ echo -e '\033[2J\033[1;1fBienvenido a: \033[4;7f La consola\033[4C...Del futuro'
 ```
 
 
-## 20.7. `Zenity`
+## 19.7. `Zenity`
 
 `Zenity` es una herramienta que te permite crear cuadros de diálogo gráficos desde la línea de comandos o desde scripts de shell1. Con `Zenity` puedes interactuar con el usuario y recibir información de forma sencilla y visual. `Zenity` usa las librerías GTK y se integra bien con el entorno de escritorio GNOME, pero también funciona en otros entornos2.
 
@@ -2125,7 +2183,7 @@ Para más informción:
 - [DesdeLinux: Usos prácticos de la caja de dialog Zenity](https://blog.desdelinux.net/usos-practicos-de-la-caja-de-dialog-zenity/)
 
 
-## 20.8. Comandos para mejorar la salida por consola.
+## 19.8. Comandos para mejorar la salida por consola.
 
 Existe una serie de comandos curiosos/divertido/inutiles que permiten mejorar nuestra interaccón con la consola. 
 
@@ -2138,7 +2196,7 @@ Existen suficiente literatura sobre el tema, a continuación un par de enlaces q
 - [Diez herramientas para divertirse con el arte ASCII en la terminal Linux](https://es.linux-console.net/?p=17876)
 
 
-## 20.9. Reflexión final
+## 19.9. Reflexión final
 
 Finalmente cabe resaltar que todavía no hemos aprendido todas las posibilidades de programar con `bash script`. Aunque lo aprendido nos servirá para salir airosos de la mayoría de las situaciones, hay ocasiones en las que se requieren conocimientos más avanzados, y por ello, quien esté interesado puede buscar y consultar en los cientos de tutoriales y ejemplos que existen en internet.
 
