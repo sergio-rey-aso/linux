@@ -21,18 +21,19 @@ permalink: /Linux_02_Bash_Script/
   - [4.1. `echo`](#41-echo)
   - [4.2. `printf`](#42-printf)
   - [4.3. `read`](#43-read)
-- [5. Parámetros](#5-parámetros)
-- [6. Comillas](#6-comillas)
-- [7. Valores devueltos por programas](#7-valores-devueltos-por-programas)
-- [8. Condiciones en shell script](#8-condiciones-en-shell-script)
-  - [8.1. Condiciones al ejecutar comandos](#81-condiciones-al-ejecutar-comandos)
-  - [8.2. Evaluación de expresiones. La orden `test`.](#82-evaluación-de-expresiones-la-orden-test)
-  - [8.3. Evaluación de condiciones booleanas: verdadero (0) y falso (1)](#83-evaluación-de-condiciones-booleanas-verdadero-0-y-falso-1)
-- [9. Control de flujo de programa. Estructura `if`.](#9-control-de-flujo-de-programa-estructura-if)
-- [10. Bloques dentro de un programa](#10-bloques-dentro-de-un-programa)
-- [11. Recordando el Redireccionamiento](#11-recordando-el-redireccionamiento)
-- [12. Expresiones matemáticas](#12-expresiones-matemáticas)
-- [13. Metacaracteres y algunos caracteres especiales](#13-metacaracteres-y-algunos-caracteres-especiales)
+- [5. Metacaracteres y algunos caracteres especiales](#5-metacaracteres-y-algunos-caracteres-especiales)
+- [6. Parámetros](#6-parámetros)
+- [7. Comillas](#7-comillas)
+- [8. Valores devueltos por programas](#8-valores-devueltos-por-programas)
+- [9. Condiciones en shell script](#9-condiciones-en-shell-script)
+  - [9.1. Condiciones al ejecutar comandos](#91-condiciones-al-ejecutar-comandos)
+  - [9.2. Evaluación de expresiones. La orden `test`.](#92-evaluación-de-expresiones-la-orden-test)
+  - [9.3. Diferencias `test`, `[]` y `[[]]`](#93-diferencias-test--y-)
+  - [9.4. Evaluación de condiciones booleanas: verdadero (0) y falso (1)](#94-evaluación-de-condiciones-booleanas-verdadero-0-y-falso-1)
+- [10. Expresiones matemáticas](#10-expresiones-matemáticas)
+- [11. Control de flujo de programa. Estructura `if`.](#11-control-de-flujo-de-programa-estructura-if)
+- [12. Bloques dentro de un programa](#12-bloques-dentro-de-un-programa)
+- [13. Recordando el Redireccionamiento](#13-recordando-el-redireccionamiento)
 - [14. Estructura `case`](#14-estructura-case)
 - [15. Bucles](#15-bucles)
   - [15.1. Estructura `While` (mientras)](#151-estructura-while-mientras)
@@ -434,11 +435,61 @@ Principales opciones del comando `read`, que se resumen en la tabla:
 | `-t` | Permite indicar un timeout para la operación de lectura | 
 
 
-# 5. Parámetros
+# 5. Metacaracteres y algunos caracteres especiales
+
+Los metacaracteres son caracteres especiales que tienen un significado determinado cuando los utilizamos:
+
+| caracter | significado| 
+| --- | --- |
+| `*` | Significa 'cualquier cosa', es decir 0 o más caracteres, da igual cuales. |
+| `?` | Significa 'cualquier carácter'. 1 carácter cualquiera. | 
+| `[]` | Cualquiera de los caracteres encerrados entre los corchetes. | 
+
+Ejemplos de uso:
+
+- `dir*` → palabra *dir*, seguida de cualquier cosa (dir, direct, dir1, directorio, ...)
+- `dir?` → palabra *dir*, seguida de 1 carácter cualquiera (dir1, dira, dirz, dir7, ...)
+- `dir[1234]` → palabra *dir*, seguida de uno de los caracteres entre corchetes (dir1, dir2, dir3 o dir4). Por ejemplo 'dir9' no sería válida.
+- `dir[a-j]` → palabra *dir* seguida de una letra entre la 'a' y la 'j'. El guión significa un rango entre el primer caracter y el segundo (dira, dirf, dird). Por ejemplo 'dirt' no sería válido.
+
+Se pueden unir en una palabra tantos metacaracteres como queramos:
+
+- `ls a*t?[1-9]` → Lista archivos que se llamen por ejemplo: ate1, aperiti2, alto8, alt91.
+- 
+Con el símbolo '`!`' O '`^`' negamos el carácter o el rango que tengamos detrás.
+
+- `ls [!a]*` → Archivos que no empiecen por la letra a
+- `ls [!0-9]*` → Archivos que no empiecen por un número
+- `mv ?m[a-z].txt` → Archivos cuyo primer carácter sea cualquiera, la segunda letra sea una m, la tercera, una letra entre 'a' y 'z', y después la extensión '.txt'.
+- 
+Existen caracteres especiales representar para cadenas de texto, que no simbolizan letras ni números, sino que simbolizan espacios, tabulaciones, saltos de línea, etc... Estos caracteres se pueden consultar por ejemplo en el manual del comando echo (man echo). Algunos son:
+
+- `\n` → Salto de línea
+- `\t` → Tabulación
+
+Para activar estos caracteres utilizando `echo`, hay que utilizar la opción `-e`. Ejemplos:
+
+```bash
+echo -e “Esto es una línea.\nEsta es otra”
+```
+Tiene como resultado el texto en dos líneas separadas:
+Esto es una línea
+Esto es otra
+
+Esto se suele utilizar mucho a la hora de realizar ***menus***:
+
+```bash
+echo -n -e “1)Opción 1 \n2)Opción 2\n\tElige una opción: ”
+1)Opción 1
+2)Opción 2
+Elige una opción:
+```
+
+# 6. Parámetros
 
 Los parámetros son opciones o valores que se le pasan al programa cuando se ejecuta por línea de comandos, la estructura es la siguiente:
 
-    `nombre_progama param1 param2 param3 param4 ...`
+    `nombre_programa param1 param2 param3 param4 ...`
 
 Por ejemplo, al crear un directorio con `mkdir` podemos ver las equivalencias de la siguiente manera:
 
@@ -472,7 +523,7 @@ También tenemos las variables especiales:
 - `$?` : Valor devuelto por el ultimo comando ejecutado (si es 0 es que es se ha ejecutado correctamente)
   
 
-# 6. Comillas
+# 7. Comillas
 
 > Advertencia: Al copiar y pegar trozos de código de este documento que contengan comillas, puede que estas no se copien de forma correcta (caso de las comillas dobles casi siempre) y el programa no funcione bien. Por ello se recomienda, una vez pegado el trozo de código, volver a reescribir todas las comillas que aparezcan.
 
@@ -514,7 +565,7 @@ echo Aquí van   5 espacios
 # Mostrará: Aquí van 5 espacios
 ```
 
-# 7. Valores devueltos por programas
+# 8. Valores devueltos por programas
 
 En shell script de Linux, los programas cuando terminan de ejecutarse, devolverán un valor que indicará si se han ejecutado de forma correcta, o por el contrario, ha ocurrido algún tipo de error durante su ejecución. Cuando todo ha ido correctamente, devolverán el valor 0, mientras que si algo ha ido mal, devolverán un valor diferente de `0`, normalmente `1` o `-1`.
 
@@ -535,11 +586,11 @@ Esto puede liar un poco porque funciona justo al revés que en muchos lenguajes 
 suele asociar al 0 como valor falso.
 
 
-# 8. Condiciones en shell script
+# 9. Condiciones en shell script
 
 Podemos representar un condición de 2 maneras cuando realizamos un script. La primera es ejecutando un comando y evaluando su salida (0 -> correcto, y, otro valor -> falso) y la segunda es mediante la orden test que sirve para evaluar expresiones.
 
-## 8.1. Condiciones al ejecutar comandos
+## 9.1. Condiciones al ejecutar comandos
 
 Cada vez que ejecutemos un comando o programa y este termine nos devuelve un valor que indica si todo ha ido correcto o no, lo equivalente a `verdadero` y `falso` en este caso. Por ejemplo el comando:
 
@@ -586,11 +637,11 @@ Si ponemos un símbolo de admiración '`!`' antes de un comando (separado por un
 cd dir && echo “enhorabuena, estamos dentro de dir”
 ```
 
-## 8.2. Evaluación de expresiones. La orden `test`.
+## 9.2. Evaluación de expresiones. La orden `test`.
 
 En shell script, tenemos una orden o comando llamado `test`, que evalúa una serie de condiciones y devuelve el valor final, es decir, verdadero, o falso. Hay dos formas de llamar a este comando.
 
-- test condición
+- `test` condición
 - [ condición ]
 
 Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cuenta que se debe dejar un espacio entre el primer corchete y la condición y también al poner el último corchete.
@@ -646,7 +697,31 @@ Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cue
 | `!` `-s` arch1 | Comprueba que el fichero arch1 si es vacío |
 | $var `-ne` 0 `-a` `\(` `-f` arch1 `-o` `-d` arch1 `\)` | Comprueba si el valor de la variable $var es distinto de 0 y además, comprueba si arch1 es un fichero normal o un directorio. |
 
-## 8.3. Evaluación de condiciones booleanas: verdadero (0) y falso (1)
+## 9.3. Diferencias `test`, `[]` y `[[]]`
+
+Para comparar en Bash se utiliza `test` o `[`. Ambos son totalmente equivalentes como hemos visto anteriormente, y ambos están implementados, en el propio Bash. 
+
+Por otro lado, también puedes utilizar dobles corchetes `[[`, para realizar tus comparaciones. Los dobles corchetes resultan ser ***una mejora respecto a los simples***. Así, las diferencias entre uno y otro son las siguientes,
+
+1. No tienes que utilizar las comillas con las variables, los dobles corchetes trabajan perfectamente con los espacios. Así `[ -f "$file" ]` es equivalente a `[[ -f $file ]]`.
+2. Con `[[` puedes utilizar los operadores `||` y `&&` , así como para las comparaciones de cadena.
+3. Puedes utilizar el operador `=~` para expresiones regulares, compo por ejemplo `[[ $respuesta =~ ^s(i)?$ ]]`
+4. También puedes utilizar comodines como por ejemplo en la expresión `[[ abc = a\* ]]`
+
+Es posible que te preguntes por la razón para seguir utilizando `[` *simple corchete* en lugar de *doble*. La cuestión es por compatibilidad. Si utilizas Bash en diferentes equipos es posible que te encuentres alguna imcompatibilidad. Así que depende  de ti y de donde lo vayas a utilizar. 
+
+Por ejemplo, el uso de varias condiciones será diferente según utilices cada uno de ellos
+
+
+Operadores booleanos
+| [[ | [ | 
+| --- | --- | 
+| && | -a |
+| || | -o |
+
+Por último, reseñar que debes también advertir que `[[ 001 = 1 ]]` es falso mientras que `[[ 001 -eq 1 ]]` es cierto. Lo mejor probar, probar y volver a probar hasta asegurarte de que lo entiendes y tiene el resultado esperado.
+
+## 9.4. Evaluación de condiciones booleanas: verdadero (0) y falso (1)
 
 Como veremos más adelante, lo que hemos aprendido hasta ahora, nos deja muy limitados.
 
@@ -729,7 +804,114 @@ Otro ejemplo:
 5. verdadero
 
 
-# 9. Control de flujo de programa. Estructura `if`.
+# 10. Expresiones matemáticas
+
+Existen 2 comandos que evalúan expresiones matemáticas y lógicas. 
+
+El primero de ellos es el comando `expr` que evalúa una expresión matemática, lógica, e incluso con cadenas de texto, y
+devuelve el resultado de la evaluación por la salida estándar.
+
+```bash 
+expr 3 + 4
+# obtenemos como resultado un 7
+```
+
+Este comando acepta los operadores matemáticos `+`, `-`, `*`, `/` y `%` (resto de una división). 
+
+También acepta los operadores lógicos `>`, `<` , `>=`, `<=`, `=` y `!=` (distinto de). También acepta operadores de cadenas de texto como `length “cadena de texto”` que te muestra la longitud que tiene una cadena de texto, o `substr “cadena de texto” inicio longitud`, que saca un trozo del texto con una longitud indicada empezando desde la posición indicada también.
+
+```bash
+expr length “esto es un texto”
+# Retorna : 16
+
+# Desde el carácter número 6 -> 'q', devuelve 3 caracteres.
+expr substr “hola que tal” 6 3
+# Retorna : que
+
+# Desde el carácter número 4 -> 'a', devuelve 7 caracteres.
+expr substr “hola que tal” 4 7
+# Retorna : a que t
+```
+
+Además tenemos que tener en cuenta algunos aspectos esenciales a la hora de utilizar la funcion `expr`:
+
+- Los caracteres especiales, como por ejemplo `*`, `>`, `<`, `(`, `)`, han de '***escaparse***', es decir ponerles la barra invertida '`\`' delante para que se interpreten como caracteres normales.
+- Todos los operadores y operandos deben de estar separados por un espacio entre si.
+- Se pueden agrupar expresiones entre paréntesis
+- Los operadores lógicos devuelven 1 si es verdadero y 0 si es falso.
+
+
+Más ejemplos:
+
+```Bash
+expr 2 \* 3
+# Retorna : 6
+
+expr 3 \< 2
+# Retorna : 0
+
+expr \( 2 + 2 \) \> 3
+# Retorna : 1
+```
+
+El otro comando que evalúa expresiones matemáticas y lógicas es `let`. Está limitado a este tipo de expresiones, pero es bastante más flexible que el anterior. Con este comando asignamos la evaluación de una expresión a una variable (es aconsejable casi siempre encerrar la expresión entre comillas ya que nos ahorrará problemas con caracteres especiales. El comando expr no soporta las comillas, pero let si).
+
+Ejemplos:
+
+```bash
+let "var = 4 + 3"
+echo $var
+# Retorna : 7
+
+let "var = 4 > ( 6 – 4 )"
+echo $var
+# Retorna : 0
+
+let "var = 4"
+let "var = $var * 3"
+echo $var
+# Retorna : 12
+```
+
+No hace falta con este comando separar los operadores y los operandos por espacios, además, al estar encerrada la expresión entre comillas no hace falta '***escapar***' los caracteres especiales.
+
+Ahora un par de equivalencias útiles:
+
+- `let "var = $var + 1"` → `let var++`
+- `let "var = $var - 1"` → `let var--`
+
+O sea que `++` y `--` se pueden utilizar con `let` como en otros lenguajes de programación, para incrementar o decrementear un valor entero.
+
+Por último, vamos a ver la diferencia entre asignar un valor a una variable utilizando el comando `expr` y el comando `let`.
+
+```bash
+# Forma clásica con expr, asígnar a una variable la salida de un comando
+var=`expr 3 + 4`
+
+# Con let puede parecer que es más intuitivo, aunque es menos utilizada
+let "var = 3 + 4”
+```
+
+> **Importante**: cuando se utiliza `let`, a diferencia de `expr`, utilizar '`=`' no significa comparar si dos números son iguales, sino asignar un valor a una variable. Para comparar si dos números son iguales se utiliza el doble igual '`==`' (dos símbolos de igual pegados).
+
+Por último, tenemos el comando `bc`, que nos permite hacer operaciones con decimales. Como en realidad este comando es muy potente (se puede programar con él) suele leer los datos desde un archivo, pero en nuestro caso podemos pasarselos con una tubería de la siguiente forma:
+
+```bash
+variable=`echo “5.5 * 2.5” | bc`
+echo $variable
+# Retona : 13.7
+
+y=10
+y=$(echo $y/3 | bc)
+echo $y
+Retorna : 2
+```
+> **Nota**: se debe incluir toda la operacion entre `` acentos abiertos o $()
+
+En todo caso, `bc` es una herramienta potente para la realización de calculos matemáticos que tal vez escape al proposito de nuestro curso. Mas informacion en [freeshell: Cálculo numérico con bc](http://marcmmw.freeshell.org/esp/programacion/bc.html)
+
+
+# 11. Control de flujo de programa. Estructura `if`.
 
 La estructura `if` permite tomar decisiones de una forma sencilla en el programa, normalmente para decidir si en función de una u otra situación ejecutaremos un código u otro. La estructura es la siguiente:
 
@@ -891,7 +1073,7 @@ fi
 
 > **RETO2**. Verifica que hay una "y" o una "o" antes de hacer nada más.
 
-# 10. Bloques dentro de un programa
+# 12. Bloques dentro de un programa
 
 Antes de continuar, y para aclarar del todo el funcionamiento de una estructura como `if`, y otras que veremos más adelante. Vamos a ver lo que es un bloque de instrucciones dentro de un programa y lo que puede significar.
 
@@ -909,7 +1091,7 @@ Excepto el bloque principal, el resto de bloques, hemos visto que comienzan con 
 > ***Consejo***: Cada vez que se abra un nuevo bloque, es aconsejable que las instrucciones comiencen un mínimo de 2 o 3 espacios después que las instrucciones del bloque padre. De esta forma diferenciaremos sin problema que instrucciones pertenecen a cada bloque.
 
 
-# 11. Recordando el Redireccionamiento
+# 13. Recordando el Redireccionamiento
 
 Ya hemos visto que podemos construir expresiones del tipo:
 
@@ -1002,163 +1184,6 @@ fi
 
 Como se observa, al ejecutar el comando `ls fichero`, no nos interesa ni mensaje con el listado con el fichero, ni el mensaje de error que pueda dar, solamente si funciona o no. Por eso redirigimos ambas salidas a `/dev/null` , para que no nos muestre ningún mensaje por pantalla
 
-
-# 12. Expresiones matemáticas
-
-Existen 2 comandos que evalúan expresiones matemáticas y lógicas. 
-
-El primero de ellos es el comando `expr` que evalúa una expresión matemática, lógica, e incluso con cadenas de texto, y
-devuelve el resultado de la evaluación por la salida estándar.
-
-```bash 
-expr 3 + 4
-# obtenemos como resultado un 7
-```
-
-Este comando acepta los operadores matemáticos `+`, `-`, `*`, `/` y `%` (resto de una división). 
-
-También acepta los operadores lógicos `>`, `<` , `>=`, `<=`, `=` y `!=` (distinto de). También acepta operadores de cadenas de texto como `length “cadena de texto”` que te muestra la longitud que tiene una cadena de texto, o `substr “cadena de texto” inicio longitud`, que saca un trozo del texto con una longitud indicada empezando desde la posición indicada también.
-
-```bash
-expr length “esto es un texto”
-# Retorna : 16
-
-# Desde el carácter número 6 -> 'q', devuelve 3 caracteres.
-expr substr “hola que tal” 6 3
-# Retorna : que
-
-# Desde el carácter número 4 -> 'a', devuelve 7 caracteres.
-expr substr “hola que tal” 4 7
-# Retorna : a que t
-```
-
-Además tenemos que tener en cuenta algunos aspectos esenciales a la hora de utilizar la funcion `expr`:
-
-- Los caracteres especiales, como por ejemplo `*`, `>`, `<`, `(`, `)`, han de '***escaparse***', es decir ponerles la barra invertida '`\`' delante para que se interpreten como caracteres normales.
-- Todos los operadores y operandos deben de estar separados por un espacio entre si.
-- Se pueden agrupar expresiones entre paréntesis
-- Los operadores lógicos devuelven 1 si es verdadero y 0 si es falso.
-
-
-Más ejemplos:
-
-```Bash
-expr 2 \* 3
-# Retorna : 6
-
-expr 3 \< 2
-# Retorna : 0
-
-expr \( 2 + 2 \) \> 3
-# Retorna : 1
-```
-
-El otro comando que evalúa expresiones matemáticas y lógicas es `let`. Está limitado a este tipo de expresiones, pero es bastante más flexible que el anterior. Con este comando asignamos la evaluación de una expresión a una variable (es aconsejable casi siempre encerrar la expresión entre comillas ya que nos ahorrará problemas con caracteres especiales. El comando expr no soporta las comillas, pero let si).
-
-Ejemplos:
-
-```bash
-let "var = 4 + 3"
-echo $var
-# Retorna : 7
-
-let "var = 4 > ( 6 – 4 )"
-echo $var
-# Retorna : 0
-
-let "var = 4"
-let "var = $var * 3"
-echo $var
-# Retorna : 12
-```
-
-No hace falta con este comando separar los operadores y los operandos por espacios, además, al estar encerrada la expresión entre comillas no hace falta '***escapar***' los caracteres especiales.
-
-Ahora un par de equivalencias útiles:
-
-- `let "var = $var + 1"` → `let var++`
-- `let "var = $var - 1"` → `let var--`
-
-O sea que `++` y `--` se pueden utilizar con `let` como en otros lenguajes de programación, para incrementar o decrementear un valor entero.
-
-Por último, vamos a ver la diferencia entre asignar un valor a una variable utilizando el comando `expr` y el comando `let`.
-
-```bash
-# Forma clásica con expr, asígnar a una variable la salida de un comando
-var=`expr 3 + 4`
-
-# Con let puede parecer que es más intuitivo, aunque es menos utilizada
-let "var = 3 + 4”
-```
-
-> **Importante**: cuando se utiliza `let`, a diferencia de `expr`, utilizar '`=`' no significa comparar si dos números son iguales, sino asignar un valor a una variable. Para comparar si dos números son iguales se utiliza el doble igual '`==`' (dos símbolos de igual pegados).
-
-Por último, tenemos el comando `bc`, que nos permite hacer operaciones con decimales. Como en realidad este comando es muy potente (se puede programar con él) suele leer los datos desde un archivo, pero en nuestro caso podemos pasarselos con una tubería de la siguiente forma:
-
-```bash
-variable=`echo “5.5 * 2.5” | bc`
-echo $variable
-# Retona : 13.7
-
-y=10
-y=$(echo $y/3 | bc)
-echo $y
-Retorna : 2
-```
-> **Nota**: se debe incluir toda la operacion entre `` acentos abiertos o $()
-
-En todo caso, `bc` es una herramienta potente para la realización de calculos matemáticos que tal vez escape al proposito de nuestro curso. Mas informacion en [freeshell: Cálculo numérico con bc](http://marcmmw.freeshell.org/esp/programacion/bc.html)
-
-
-# 13. Metacaracteres y algunos caracteres especiales
-
-Los metacaracteres son caracteres especiales que tienen un significado determinado cuando los utilizamos:
-
-| caracter | significado| 
-| --- | --- |
-| `*` | Significa 'cualquier cosa', es decir 0 o más caracteres, da igual cuales. |
-| `?` | Significa 'cualquier carácter'. 1 carácter cualquiera. | 
-| `[]` | Cualquiera de los caracteres encerrados entre los corchetes. | 
-
-Ejemplos de uso:
-
-- `dir*` → palabra *dir*, seguida de cualquier cosa (dir, direct, dir1, directorio, ...)
-- `dir?` → palabra *dir*, seguida de 1 carácter cualquiera (dir1, dira, dirz, dir7, ...)
-- `dir[1234]` → palabra *dir*, seguida de uno de los caracteres entre corchetes (dir1, dir2, dir3 o dir4). Por ejemplo 'dir9' no sería válida.
-- `dir[a-j]` → palabra *dir* seguida de una letra entre la 'a' y la 'j'. El guión significa un rango entre el primer carater y el segundo (dira, dirf, dird). Por ejemplo 'dirt' no sería válido.
-
-Se pueden unir en una palabra tantos metacaracteres como queramos:
-
-- `ls a*t?[1-9]` → Lista archivos que se llamen por ejemplo: ate1, aperiti2, algo8, alt91.
-- 
-Con el símbolo '`!`' O '`^`' negamos el carácter o el rango que tengamos detrás.
-
-- `ls [!a]*` → Archivos que no empiecen por la letra a
-- `ls [!0-9]*` → Archivos que no empiecen por un número
-- `mv ?m[a-z].txt` → Archivos cuyo primer carácter sea cualquiera, la segunda letra sea una m, la tercera, una letra entre 'a' y 'z', y después la extensión '.txt'.
-- 
-Existen caracteres especiales representar para cadenas de texto, que no simbolizan letras ni números, sino que simbolizan espacios, tabulaciones, saltos de línea, etc... Estos caracteres se pueden consultar por ejemplo en el manual del comando echo (man echo). Algunos son:
-
-- `\n` → Salto de línea
-- `\t` → Tabulación
-
-Para activar estos caracteres utilizando `echo`, hay que utilizar la opción `-e`. Ejemplos:
-
-```bash
-echo -e “Esto es una línea.\nEsta es otra”
-```
-Tiene como resultado el texto en dos líneas separadas:
-Esto es una línea
-Esto es otra
-
-Esto se suele utilizar mucho a la hora de realizar ***menus***:
-
-```bash
-echo -n -e “1)Opción 1 \n2)Opción 2\n\tElige una opción: ”
-1)Opción 1
-2)Opción 2
-Elige una opción:
-```
 
 
 # 14. Estructura `case`
