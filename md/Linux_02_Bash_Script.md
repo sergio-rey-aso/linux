@@ -63,12 +63,12 @@ permalink: /Linux_02_Bash_Script/
 
 Un script no es más que fichero de texto que contiene una serie de instrucciones y órdenes que se ejecutarán en la línea de comandos de forma seguida. Estas órdenes funcionarían de la misma manera si las fuésemos introduciendo en la línea de comandos nosotros.
 
-En el arranque de una máquina Linux, se ejecuta el shell script `/etc/rc.d` (dependiendo del sistema de inicio utilizado) para restaurar la configuración del sistema y activar los servicios. Es muy importante conocer el funcionamiento de dichos scripts para analizar el comportamiento de la máquina y realizar posibles cambios.
+En el arranque de una máquina Linux, se ejecuta el shell script `/etc/init.d` (dependiendo del sistema de inicio utilizado) para restaurar la configuración del sistema y activar los servicios. Es muy importante conocer el funcionamiento de dichos scripts para analizar el comportamiento de la máquina y realizar posibles cambios.
 
 El procedimiento para **crear un programa o comando** necesita de los siguientes pasos:
 
 1. Escribir el código de nuestra herramienta. Si ya sabes qué necesitas o qué quieres, escribe el código fuente de tu herramienta sea la que sea y sea cual sea el lenguaje que hayas elegido. Por ejemplo, puedes hacerlo en *C*, *Python*, *Perl*, o como un script para *Bash*.
-2. Compilar nuestro código fuente para generar el ejecutable. Por ejemplo, si es en C* o *C++,* etc., puedes hacerlo con ayuda del compilador gcc de una forma fácil. Si se trata de un lenguaje interpretado, como *Python*, *Perl*, *Ruby*, etc., tendremos que tener instalado el intérprete de éste y hacer ejecutable el fichero con el código fuente. Ese también es el caso de un script para Bash, en este caso el intérprete es el propio *Bash* y para hacerlo ejecutable podemos usar: `chmod +x nombre_script.sh`
+2. Compilar nuestro código fuente para generar el ejecutable. Por ejemplo, si es en *C* o *C++,* etc., puedes hacerlo con ayuda del compilador ***gcc*** de una forma fácil. Si se trata de un lenguaje interpretado, como *Python*, *Perl*, *Ruby*, etc., tendremos que tener instalado el intérprete de éste y hacer ejecutable el fichero con el código fuente. Ese también es el caso de un script para Bash, en este caso el intérprete es el propio *Bash* y para hacerlo ejecutable podemos usar: `chmod +x nombre_script.sh`
 3. Una vez compilado o tenemos el fichero ejecutable, lo copiamos o movemos a una ruta incluida en la variable de entorno `$PATH`, como por ejemplo `/usr/bin`. Puedes ver las rutas con `echo $PATH`. Con esto podemos ejecutarlo simplemente introduciendo su nombre y no tendremos que poner la ruta absoluta.
 
 Para ejecutar un script tenemos 2 alternativas. La primera es llamar al intérprete pasándole el fichero de texto que contiene el script como primer parámetro, para esto sólo requiere que el archivo tenga permiso de lectura. 
@@ -76,11 +76,10 @@ Para ejecutar un script tenemos 2 alternativas. La primera es llamar al intérpr
 ```bash
 sh script.sh    # se ejecuta utilizando la shell `sh`
 bash script.sh  # se ejecuta utilizando la shell `bash`
-/bin/dash script_ejemplo.sh  # tambien
-/bin/bash script_ejemplo.sh
+/bin/dash script_ejemplo.sh  # también
 ```
 
-La segunda es indicando en el archivo la ruta del intérprete de comandos en la primera línea de la siguiente forma: `#!/bin/bash` (en este caso `/bin/bash` es la ruta al intérprete bash, que será el que utilicemos, pero aquí se puede poner la ruta a nuestro intérprete favorito). En este último caso basta con darle permiso de ejecución y llamar directamente al script
+La tercera es indicando en el archivo la ruta del intérprete de comandos en la primera línea de la siguiente forma: `#!/bin/bash` (en este caso `/bin/bash` es la ruta al intérprete bash, que será el que utilicemos, pero aquí se puede poner la ruta a nuestro intérprete favorito). En este último caso basta con darle permiso de ejecución y llamar directamente al script
 
 ```
 ./script.sh
@@ -118,7 +117,7 @@ exit # The right and proper method of "exiting" from a script.
 
 ## 1.2. Empezando el script con el sha-­bang (`#!`) 
 
-Este símbolo (`#!`) en la cabecera del script, le indica a tu sistema este fichero (script) es un conjunto de comandos a interpretar por el intérprete de comandos que se indica. Inmediatamente a continuación del ***sha-­bang*** está el pathname. Éste es el path al programa que interpreta los comandos en el script, sea un shell, un lenguaje de programación o una utilidad. Este intérprete de comandos, entonces, ejecuta los comandos comentarios.
+Este símbolo (`#!`) en la cabecera del script, le indica a tu sistema este fichero (script) es un conjunto de comandos a interpretar por el intérprete de comandos que se indica. Inmediatamente a continuación del ***sha-­bang*** está el *pathname*. Éste es el path al programa que interpreta los comandos en el script, sea un shell, un lenguaje de programación o una utilidad. Este intérprete de comandos, entonces, ejecuta los comandos comentarios.
 
 ```bash 
 #!/bin/sh
@@ -133,21 +132,21 @@ Este símbolo (`#!`) en la cabecera del script, le indica a tu sistema este fich
 
 # 2. Comentarios
 
-Un comentario en un script es una línea que será ignorada por el intérprete de comandos. En estas líneas podemos poner cualquier nota o  apunte que nos resulte útil, por ejemplo, para recordar en el futuro que es lo que realizaba una parte del script que hicimos hace tiempo.
+Un comentario en un script es una línea que será ignorada por el intérprete de comandos. En estas líneas podemos poner cualquier nota o apunte que nos resulte útil, por ejemplo, para recordar en el futuro que es lo que realizaba una parte del script que hicimos hace tiempo.
 
 Un comentario siempre empieza por '`#`', lo que haya detrás será completamente ignorado hasta que pasemos a la siguiente línea:
 
 ```bash
 #!/bin/bash
-#Este es un comentario cualquiera
+# Este es un comentario cualquiera
 
-#Creamos el directorio “dir1” y dentro creamos el archivo “arch1”
+# Creamos el directorio “dir1” y dentro creamos el archivo “arch1”
 mkdir dir1
 cd dir1
 touch arch1
 cd ..
 
-#Creamos un enlace a dir1/arch1
+# Creamos un enlace a dir1/arch1
 ln -s dir1/arch1 enl1
 ```
 
@@ -160,16 +159,16 @@ Una variable se puede decir que es un nombre que se le da a un dato cualquiera p
 #!/bin/bash
 echo “Escribe tu nombre”
 
-#Almacenamos el nombre que escriba el usuario en una variable llamada nombre
+# Almacenamos el nombre que escriba el usuario en una variable llamada nombre
 read nombre
 
-#Ahora no sabemos su nombre, pero cuando lo escriba lo tendremos guardado en nombre 
-#correcto
+# Ahora no sabemos su nombre, pero cuando lo escriba lo tendremos guardado en nombre 
+# correcto
 echo “Hola $nombre”
 #incorrecto
 echo “Hola nombre”
 
-#También podemos dar el valor a una variable de esta forma
+# También podemos dar el valor a una variable de esta forma
 var=”Hola”
 echo “$var $nombre”
 ```
@@ -199,6 +198,7 @@ Debemos tener en cuenta que hay varios tipos de variables en tu script de `Bash`
 - Variables de entorno
 - Variables especiales
 
+> **Nota**: Tradicionalmente se sigue la regla de que las variables de entorno definidas por el sistema irán en mayúsculas (pueden usar números y _ ), mientras que las variables definidas por las aplicaciones, usarán únicamente minúsculas (y por supuesto número y símbolos permitidos)
 
 ## 3.1. Variables de usuario/script
 
@@ -225,7 +225,7 @@ Si lo ejecutas puedes encontrar algunas variables tan interesantes como:
 IFS=: 
 ```
 
-> nota: `$*` usa el primer carácter almacenado en IFS
+> **nota**: `$*` usa el primer carácter almacenado en IFS. `$*` veremos más adelante qué es. 
 
 
 Para **crear una nueva variable de entorno** en Linux seguiremos la siguiente sintaxis básica :
@@ -237,7 +237,7 @@ export VAR="value"
 Vamos a desglosarlo:
     - `export`: el comando utilizado para crear la variable.
     - `VAR`: el nombre de la variable.
-    -= `indica` que la siguiente sección es el valor.
+    - `=`: indica que la siguiente sección es el valor.
     - `«value»`: el valor real
 
 Por ejemplo:
@@ -264,7 +264,7 @@ export TZ="US/Pacific"
 
 Ahora que modificaste el valor de la variable, puedes verificar la hora nuevamente utilizando el comando `date`, que generará una hora diferente, acorde a los cambios realizados en la variable de entorno Linux.
 
-Para deshacer un cambio realizado sobre una variale de entorno, y volver a su valor por defecto, lo podemos hacer con el comando `unset`. La sintaxis del comando se ve de la siguiente manera:
+Para deshacer un cambio realizado sobre una variable de entorno, y volver a su valor por defecto, lo podemos hacer con el comando `unset`. La sintaxis del comando se ve de la siguiente manera:
 
 ```bash
 unset VAR
@@ -300,7 +300,7 @@ En Bash, hay algunas variables especiales y que están definidas por defecto, y 
 
 # 4. `echo`, `read` y `printf`
 
-En este apartado comentaremos detalladamente los comandos echo, printf y read, los cuales
+En este apartado comentaremos detalladamente los comandos `echo`, `printf` y `read`, los cuales
 nos permiten realizar las operaciones de entrada/salida que requiere un script.
 
 ## 4.1. `echo`
@@ -375,7 +375,7 @@ printf "%s" "Hola, Linux!"
 # Hola, Linux!
 
 # Dos cadena separadas por un salto de línea
-printf "%b\n" "Hola, Linux! \n" "Gracias por vuestra labor\n"
+printf "%b%b" "Hola, Linux! \n" "Gracias por vuestra labor\n"
 # Hola, Linux!
 # Gracias por vuestra labor
 
@@ -422,7 +422,7 @@ hola que tal bien
 # var1 contendrá “hola”, var2 contendrá “que” y var3 contendrá “tal bien”
 ```
 
-A cada variable se le asigna una palabra, y a a la última, el resto del texto.
+A cada variable se le asigna una palabra, y a la última, el resto del texto.
 
 Principales opciones del comando `read`, que se resumen en la tabla:
 
@@ -433,6 +433,14 @@ Principales opciones del comando `read`, que se resumen en la tabla:
 | `-p` | Permite indicar un texto de prompt | 
 | `-s` | Ocultar los caracteres introducidos (para contraseñas). | 
 | `-t` | Permite indicar un timeout para la operación de lectura | 
+
+Reseñar la opción `-p`:
+
+```bash
+read -p "Introduce un valor para la variable "valor": " hola
+# Imprimirá el mensaje y al final del mensaje esperará la entrada de la variable.
+
+```
 
 
 # 5. Metacaracteres y algunos caracteres especiales
@@ -471,10 +479,10 @@ Para activar estos caracteres utilizando `echo`, hay que utilizar la opción `-e
 
 ```bash
 echo -e “Esto es una línea.\nEsta es otra”
+# Tiene como resultado el texto en dos líneas separadas:
+# Esto es una línea
+# Esto es otra
 ```
-Tiene como resultado el texto en dos líneas separadas:
-Esto es una línea
-Esto es otra
 
 Esto se suele utilizar mucho a la hora de realizar ***menus***:
 
@@ -525,7 +533,7 @@ También tenemos las variables especiales:
 
 # 7. Comillas
 
-> Advertencia: Al copiar y pegar trozos de código de este documento que contengan comillas, puede que estas no se copien de forma correcta (caso de las comillas dobles casi siempre) y el programa no funcione bien. Por ello se recomienda, una vez pegado el trozo de código, volver a reescribir todas las comillas que aparezcan.
+> Advertencia: Al copiar y pegar trozos de código de internet en tus scripts que contengan comillas, puede que estas no se copien de forma correcta (caso de las comillas dobles casi siempre) y el programa no funcione bien. Por ello se recomienda, una vez pegado el trozo de código, verificar o volver a reescribir todas las comillas que aparezcan.
 
 En la programación en el shell `Bash` existen 3 tipos de comillas:
 
@@ -554,22 +562,12 @@ echo 'La variable $var tiene el valor:' “$var” `date`
 #Esto mostrara: La variable $var tiene el valor: Mensaje lun feb 26 12:23:36 CET 2023
 ```
 
-Cuando pongamos una cadena de texto sin encerrarla en comillas de ningún tipo se comportará principalmente como si la hubiéramos encerrado entre comillas dobles, pero cualquier cantidad de espacios seguidos, tabuladores o saltos de línea los interpretará como un sólo espacio.
-
-```bash
-#!/bin/bash
-echo “Aquí van  5 espacios”
-#Mostrará: Aquí van 5 espacios
-
-echo Aquí van   5 espacios
-# Mostrará: Aquí van 5 espacios
-```
 
 # 8. Valores devueltos por programas
 
-En shell script de Linux, los programas cuando terminan de ejecutarse, devolverán un valor que indicará si se han ejecutado de forma correcta, o por el contrario, ha ocurrido algún tipo de error durante su ejecución. Cuando todo ha ido correctamente, devolverán el valor 0, mientras que si algo ha ido mal, devolverán un valor diferente de `0`, normalmente `1` o `-1`.
+En shell script de Linux, los programas cuando terminan de ejecutarse, devolverán un valor que indicará si se han ejecutado de forma correcta, o por el contrario, ha ocurrido algún tipo de error durante su ejecución. Cuando todo ha ido **correctamente**, devolverán el valor `0`, mientras que si algo ha ido **mal**, devolverán un valor diferente de `0`, normalmente `1` o `-1`.
 
-Para terminar un programa devolviendo uno de estos valores hay que ejecutar la orden `exit` dentro del programa pasándole como primer y único parámetro el valor de salida. Si no se le pasa ningún parámetro se interpreta como valor 0, es decir, el programa ha ido  correctamente.
+Para terminar un programa devolviendo uno de estos valores hay que ejecutar la orden `exit` dentro del programa pasándole como primer y único parámetro el valor de salida. Si no se le pasa ningún parámetro se interpreta como valor 0, es decir, el programa ha ido correctamente.
 
 ```bash
 #!/bin/bash
@@ -582,13 +580,12 @@ exit 1
 
 > ***Con esto se puede deducir que el valor verdadero (todo correcto), se representa con el número 0, y otro valor diferente, por ejemplo el 1, se interpretará como falso***. 
 
-Esto puede liar un poco porque funciona justo al revés que en muchos lenguajes de programación ya que normalmente se
-suele asociar al 0 como valor falso.
+Esto puede liar un poco porque funciona justo al revés que en muchos lenguajes de programación ya que normalmente sevsuele asociar al 0 como valor falso.
 
 
 # 9. Condiciones en shell script
 
-Podemos representar un condición de 2 maneras cuando realizamos un script. La primera es ejecutando un comando y evaluando su salida (0 -> correcto, y, otro valor -> falso) y la segunda es mediante la orden test que sirve para evaluar expresiones.
+Podemos representar un condición de 2 maneras cuando realizamos un script. La primera es ejecutando un comando y evaluando su salida (0 -> correcto, y otro valor -> falso) y la segunda es mediante la orden test que sirve para evaluar expresiones.
 
 ## 9.1. Condiciones al ejecutar comandos
 
@@ -666,8 +663,8 @@ Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cue
 
 | operador | resultado |
 | --- | --- |
-| texto1 `=` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
-| texto1 `==` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) |
+| texto1 `=` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) (estandar POSIX) |
+| texto1 `==` texto2 | Comprueba si las dos cadenas de texto son idénticas (no pueden ser cadenas de texto vacías) (estandar Bash) |
 | texto1 `!=` texto2 | Comprueba si las dos cadenas de texto son diferentes (no vacías) |
 | `-z` texto | Comprueba si la cadena de texto está vacía (longitud 0) |
 | `-n` texto | Comprueba que la cadena de texto no esté vacía (longitud > 0) |
