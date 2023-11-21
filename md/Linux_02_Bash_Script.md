@@ -25,12 +25,15 @@ permalink: /Linux_02_Bash_Script/
 - [6. Parámetros](#6-parámetros)
 - [7. Comillas](#7-comillas)
 - [8. Valores devueltos por programas](#8-valores-devueltos-por-programas)
-- [9. Condiciones en shell script](#9-condiciones-en-shell-script)
-  - [9.1. Condiciones al ejecutar comandos](#91-condiciones-al-ejecutar-comandos)
-  - [9.2. Evaluación de expresiones. La orden `test`.](#92-evaluación-de-expresiones-la-orden-test)
-  - [9.3. Diferencias `test`, `[]` y `[[]]`](#93-diferencias-test--y-)
-  - [9.4. Evaluación de condiciones booleanas: verdadero (0) y falso (1)](#94-evaluación-de-condiciones-booleanas-verdadero-0-y-falso-1)
-- [10. Expresiones matemáticas](#10-expresiones-matemáticas)
+- [9. Expresiones matemáticas](#9-expresiones-matemáticas)
+  - [9.1. `expr`](#91-expr)
+  - [9.2. `let`](#92-let)
+  - [9.3. `bc`](#93-bc)
+- [10. Condiciones en shell script](#10-condiciones-en-shell-script)
+  - [10.1. Condiciones al ejecutar comandos](#101-condiciones-al-ejecutar-comandos)
+  - [10.2. Evaluación de expresiones. La orden `test`.](#102-evaluación-de-expresiones-la-orden-test)
+  - [10.3. Diferencias `test`, `[]` y `[[]]`](#103-diferencias-test--y-)
+  - [10.4. Evaluación de condiciones booleanas: verdadero (0) y falso (1)](#104-evaluación-de-condiciones-booleanas-verdadero-0-y-falso-1)
 - [11. Control de flujo de programa. Estructura `if`.](#11-control-de-flujo-de-programa-estructura-if)
 - [12. Bloques dentro de un programa](#12-bloques-dentro-de-un-programa)
 - [13. Recordando el Redireccionamiento](#13-recordando-el-redireccionamiento)
@@ -243,7 +246,7 @@ Vamos a desglosarlo:
 Por ejemplo:
 
 ```bash
-export MAIN_USER = "Sergio Rey"
+export MAIN_USER="Sergio Rey"
 ```
 
 Veamos ahora cómo podrías **cambiar el valor de una variable de entorno**, por ejemplo la variable TZ (zona horaria):
@@ -583,11 +586,126 @@ exit 1
 Esto puede liar un poco porque funciona justo al revés que en muchos lenguajes de programación ya que normalmente sevsuele asociar al 0 como valor falso.
 
 
-# 9. Condiciones en shell script
+
+# 9. Expresiones matemáticas
+
+Básicamente existen 3 comandos que evalúan expresiones matemáticas y lógicas. 
+
+
+## 9.1. `expr`
+
+El primero de ellos es el comando `expr` que evalúa una expresión matemática, lógica, e incluso con cadenas de texto, y
+devuelve el resultado de la evaluación por la salida estándar.
+
+```bash 
+expr 3 + 4
+# obtenemos como resultado un 7
+```
+
+Este comando acepta los operadores matemáticos `+`, `-`, `*`, `/` y `%` (resto de una división). 
+
+También acepta los operadores lógicos `>`, `<` , `>=`, `<=`, `=` y `!=` (distinto de). También acepta operadores de cadenas de texto como `length “cadena de texto”` que te muestra la longitud que tiene una cadena de texto, o `substr “cadena de texto” inicio longitud`, que saca un trozo del texto con una longitud indicada empezando desde la posición indicada también.
+
+```bash
+expr length “esto es un texto”
+# Retorna : 16
+
+# Desde el carácter número 6 -> 'q', devuelve 3 caracteres.
+expr substr “hola que tal” 6 3
+# Retorna : que
+
+# Desde el carácter número 4 -> 'a', devuelve 7 caracteres.
+expr substr “hola que tal” 4 7
+# Retorna : a que t
+```
+
+Además tenemos que tener en cuenta algunos aspectos esenciales a la hora de utilizar la funcion `expr`:
+
+- Los caracteres especiales, como por ejemplo `*`, `>`, `<`, `(`, `)`, han de '***escaparse***', es decir ponerles la barra invertida '`\`' delante para que se interpreten como caracteres normales.
+- Todos los operadores y operandos deben de estar separados por un espacio entre si.
+- Se pueden agrupar expresiones entre paréntesis
+- Los operadores lógicos devuelven 1 si es verdadero y 0 si es falso.
+
+
+Más ejemplos:
+
+```Bash
+expr 2 \* 3
+# Retorna : 6
+
+expr 3 \< 2
+# Retorna : 0
+
+expr \( 2 + 2 \) \> 3
+# Retorna : 1
+```
+
+## 9.2. `let`
+
+El otro comando que evalúa expresiones matemáticas y lógicas es `let`. Está limitado a este tipo de expresiones, pero es bastante más flexible que el anterior. Con este comando asignamos la evaluación de una expresión a una variable (es aconsejable casi siempre encerrar la expresión entre comillas ya que nos ahorrará problemas con caracteres especiales. El comando expr no soporta las comillas, pero let si).
+
+Ejemplos:
+
+```bash
+let "var = 4 + 3"
+echo $var
+# Retorna : 7
+
+let "var = 4 > ( 6 – 4 )"
+echo $var
+# Retorna : 0
+
+let "var = 4"
+let "var = $var * 3"
+echo $var
+# Retorna : 12
+```
+
+No hace falta con este comando separar los operadores y los operandos por espacios, además, al estar encerrada la expresión entre comillas no hace falta '***escapar***' los caracteres especiales.
+
+Ahora un par de equivalencias útiles:
+
+- `let "var = $var + 1"` → `let var++`
+- `let "var = $var - 1"` → `let var--`
+
+O sea que `++` y `--` se pueden utilizar con `let` como en otros lenguajes de programación, para incrementar o decrementear un valor entero.
+
+Por último, vamos a ver la diferencia entre asignar un valor a una variable utilizando el comando `expr` y el comando `let`.
+
+```bash
+# Forma clásica con expr, asignar a una variable la salida de un comando
+var=`expr 3 + 4`
+
+# Con let puede parecer que es más intuitivo, aunque es menos utilizada
+let "var = 3 + 4”
+```
+
+> **Importante**: cuando se utiliza `let`, a diferencia de `expr`, utilizar '`=`' no significa comparar si dos números son iguales, sino asignar un valor a una variable. Para comparar si dos números son iguales se utiliza el doble igual '`==`' (dos símbolos de igual pegados).
+
+
+## 9.3. `bc`
+Por último, tenemos el comando `bc`, que nos permite hacer operaciones con decimales. Como en realidad este comando es muy potente (se puede programar con él) suele leer los datos desde un archivo, pero en nuestro caso se los podemos pasarse con una tubería de la siguiente forma:
+
+```bash
+variable=`echo “5.5 * 2.5” | bc`
+echo $variable
+# Retona : 13.7
+
+y=10
+y=$(echo $y/3 | bc)
+echo $y
+Retorna : 2
+```
+> **Nota**: se debe incluir toda la operación entre `` acentos abiertos o $()
+
+En todo caso, `bc` es una herramienta potente para la realización de cálculos matemáticos que tal vez escape al propósito de nuestro curso. Mas información en [freeshell: Cálculo numérico con bc](http://marcmmw.freeshell.org/esp/programacion/bc.html)
+
+
+# 10. Condiciones en shell script
 
 Podemos representar un condición de 2 maneras cuando realizamos un script. La primera es ejecutando un comando y evaluando su salida (0 -> correcto, y otro valor -> falso) y la segunda es mediante la orden test que sirve para evaluar expresiones.
 
-## 9.1. Condiciones al ejecutar comandos
+## 10.1. Condiciones al ejecutar comandos
 
 Cada vez que ejecutemos un comando o programa y este termine nos devuelve un valor que indica si todo ha ido correcto o no, lo equivalente a `verdadero` y `falso` en este caso. Por ejemplo el comando:
 
@@ -634,7 +752,7 @@ Si ponemos un símbolo de admiración '`!`' antes de un comando (separado por un
 cd dir && echo “enhorabuena, estamos dentro de dir”
 ```
 
-## 9.2. Evaluación de expresiones. La orden `test`.
+## 10.2. Evaluación de expresiones. La orden `test`.
 
 En shell script, tenemos una orden o comando llamado `test`, que evalúa una serie de condiciones y devuelve el valor final, es decir, verdadero, o falso. Hay dos formas de llamar a este comando.
 
@@ -694,7 +812,7 @@ Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cue
 | `!` `-s` arch1 | Comprueba que el fichero arch1 si es vacío |
 | $var `-ne` 0 `-a` `\(` `-f` arch1 `-o` `-d` arch1 `\)` | Comprueba si el valor de la variable $var es distinto de 0 y además, comprueba si arch1 es un fichero normal o un directorio. |
 
-## 9.3. Diferencias `test`, `[]` y `[[]]`
+## 10.3. Diferencias `test`, `[]` y `[[]]`
 
 Para comparar en Bash se utiliza `test` o `[`. Ambos son totalmente equivalentes como hemos visto anteriormente, y ambos están implementados, en el propio Bash. 
 
@@ -705,20 +823,20 @@ Por otro lado, también puedes utilizar dobles corchetes `[[`, para realizar tus
 3. Puedes utilizar el operador `=~` para expresiones regulares, compo por ejemplo `[[ $respuesta =~ ^s(i)?$ ]]`
 4. También puedes utilizar comodines como por ejemplo en la expresión `[[ abc = a\* ]]`
 
-Es posible que te preguntes por la razón para seguir utilizando `[` *simple corchete* en lugar de *doble*. La cuestión es por compatibilidad. Si utilizas Bash en diferentes equipos es posible que te encuentres alguna imcompatibilidad. Así que depende  de ti y de donde lo vayas a utilizar. 
+Es posible que te preguntes por la razón para seguir utilizando `[` *simple corchete* en lugar de *doble*. La cuestión es por compatibilidad. Si utilizas Bash en diferentes equipos es posible que te encuentres alguna incompatibilidad. Así que depende  de ti y de donde lo vayas a utilizar. 
 
 Por ejemplo, el uso de varias condiciones será diferente según utilices cada uno de ellos
 
 
-Operadores booleanos
-| [[ | [ | 
+Operadores booleanos que son diferentes según el tipo de corchetes elegido
+| [[ ]] | [ ] | 
 | --- | --- | 
 | && | -a |
-| || | -o |
+| \|\| | -o |
 
 Por último, reseñar que debes también advertir que `[[ 001 = 1 ]]` es falso mientras que `[[ 001 -eq 1 ]]` es cierto. Lo mejor probar, probar y volver a probar hasta asegurarte de que lo entiendes y tiene el resultado esperado.
 
-## 9.4. Evaluación de condiciones booleanas: verdadero (0) y falso (1)
+## 10.4. Evaluación de condiciones booleanas: verdadero (0) y falso (1)
 
 Como veremos más adelante, lo que hemos aprendido hasta ahora, nos deja muy limitados.
 
@@ -734,8 +852,8 @@ Una condición puede ser por ejemplo “x es mayor que y”, siendo 'x'  e 'y' n
 
 | condición | resultado | 
 | ---       | :---:     |
-| verdadero | **1**     |
-| falso     | **0**     |
+| verdadero | **0**     |
+| falso     | **1**     |
 
 Cuando queremos unir 2 o más condiciones para evaluar si son ciertas o no, es decir, podemos crear un programa que te pregunte la altura y el peso, y en función de eso mostrar mensajes diferentes. En este caso podemos evaluar 2 condiciones (altura y peso) de la siguiente forma:
 
@@ -761,7 +879,7 @@ Imaginemos la evaluación de: “condición1 **y** condición2 **y** condición3
 En definitiva si cualquier valor evaluado con “y” es falso, el resultado será falso.
 
 - **Operador `o`**: El operador “o” se evalúa como falso si todas las condiciones unidas con este operador son falsas, y verdadero en el caso contrario. Es decir, es suficiente con que se cumpla una de las condiciones.
-- 
+
 Imaginemos la evaluación de: “condición1 **o** condición2 **o** condición3”
 
 | condición1 | condicion2 | condicion3 | ***resultado*** |
@@ -771,7 +889,7 @@ Imaginemos la evaluación de: “condición1 **o** condición2 **o** condición3
 | Falso | Verdadero | Falso | ***Verdadero*** | 
 | Falso | Falso | Falso | ***Falso*** | 
 
-También existe otro operador lógico que es la negación, en este caso lo vamos a representar como “`!`”, cualquier condición que tenga delante esta negación da como resultado el valor contrario al de la condición, es decir, se niega el resultado de la condición dando como resultado lo contrario.
+También existe otro **operador lógico** que es la **negación**, en este caso lo vamos a representar como **“`!`”**, cualquier condición que tenga delante esta negación da como resultado el valor contrario al de la condición, es decir, se niega el resultado de la condición dando como resultado lo contrario.
 
 | **condición** | **!condicion** | 
 | ---       | :---:     |
@@ -799,113 +917,6 @@ Otro ejemplo:
 3. !(verdadero y falso)
 4. !(falso)
 5. verdadero
-
-
-# 10. Expresiones matemáticas
-
-Existen 2 comandos que evalúan expresiones matemáticas y lógicas. 
-
-El primero de ellos es el comando `expr` que evalúa una expresión matemática, lógica, e incluso con cadenas de texto, y
-devuelve el resultado de la evaluación por la salida estándar.
-
-```bash 
-expr 3 + 4
-# obtenemos como resultado un 7
-```
-
-Este comando acepta los operadores matemáticos `+`, `-`, `*`, `/` y `%` (resto de una división). 
-
-También acepta los operadores lógicos `>`, `<` , `>=`, `<=`, `=` y `!=` (distinto de). También acepta operadores de cadenas de texto como `length “cadena de texto”` que te muestra la longitud que tiene una cadena de texto, o `substr “cadena de texto” inicio longitud`, que saca un trozo del texto con una longitud indicada empezando desde la posición indicada también.
-
-```bash
-expr length “esto es un texto”
-# Retorna : 16
-
-# Desde el carácter número 6 -> 'q', devuelve 3 caracteres.
-expr substr “hola que tal” 6 3
-# Retorna : que
-
-# Desde el carácter número 4 -> 'a', devuelve 7 caracteres.
-expr substr “hola que tal” 4 7
-# Retorna : a que t
-```
-
-Además tenemos que tener en cuenta algunos aspectos esenciales a la hora de utilizar la funcion `expr`:
-
-- Los caracteres especiales, como por ejemplo `*`, `>`, `<`, `(`, `)`, han de '***escaparse***', es decir ponerles la barra invertida '`\`' delante para que se interpreten como caracteres normales.
-- Todos los operadores y operandos deben de estar separados por un espacio entre si.
-- Se pueden agrupar expresiones entre paréntesis
-- Los operadores lógicos devuelven 1 si es verdadero y 0 si es falso.
-
-
-Más ejemplos:
-
-```Bash
-expr 2 \* 3
-# Retorna : 6
-
-expr 3 \< 2
-# Retorna : 0
-
-expr \( 2 + 2 \) \> 3
-# Retorna : 1
-```
-
-El otro comando que evalúa expresiones matemáticas y lógicas es `let`. Está limitado a este tipo de expresiones, pero es bastante más flexible que el anterior. Con este comando asignamos la evaluación de una expresión a una variable (es aconsejable casi siempre encerrar la expresión entre comillas ya que nos ahorrará problemas con caracteres especiales. El comando expr no soporta las comillas, pero let si).
-
-Ejemplos:
-
-```bash
-let "var = 4 + 3"
-echo $var
-# Retorna : 7
-
-let "var = 4 > ( 6 – 4 )"
-echo $var
-# Retorna : 0
-
-let "var = 4"
-let "var = $var * 3"
-echo $var
-# Retorna : 12
-```
-
-No hace falta con este comando separar los operadores y los operandos por espacios, además, al estar encerrada la expresión entre comillas no hace falta '***escapar***' los caracteres especiales.
-
-Ahora un par de equivalencias útiles:
-
-- `let "var = $var + 1"` → `let var++`
-- `let "var = $var - 1"` → `let var--`
-
-O sea que `++` y `--` se pueden utilizar con `let` como en otros lenguajes de programación, para incrementar o decrementear un valor entero.
-
-Por último, vamos a ver la diferencia entre asignar un valor a una variable utilizando el comando `expr` y el comando `let`.
-
-```bash
-# Forma clásica con expr, asígnar a una variable la salida de un comando
-var=`expr 3 + 4`
-
-# Con let puede parecer que es más intuitivo, aunque es menos utilizada
-let "var = 3 + 4”
-```
-
-> **Importante**: cuando se utiliza `let`, a diferencia de `expr`, utilizar '`=`' no significa comparar si dos números son iguales, sino asignar un valor a una variable. Para comparar si dos números son iguales se utiliza el doble igual '`==`' (dos símbolos de igual pegados).
-
-Por último, tenemos el comando `bc`, que nos permite hacer operaciones con decimales. Como en realidad este comando es muy potente (se puede programar con él) suele leer los datos desde un archivo, pero en nuestro caso podemos pasarselos con una tubería de la siguiente forma:
-
-```bash
-variable=`echo “5.5 * 2.5” | bc`
-echo $variable
-# Retona : 13.7
-
-y=10
-y=$(echo $y/3 | bc)
-echo $y
-Retorna : 2
-```
-> **Nota**: se debe incluir toda la operacion entre `` acentos abiertos o $()
-
-En todo caso, `bc` es una herramienta potente para la realización de calculos matemáticos que tal vez escape al proposito de nuestro curso. Mas informacion en [freeshell: Cálculo numérico con bc](http://marcmmw.freeshell.org/esp/programacion/bc.html)
 
 
 # 11. Control de flujo de programa. Estructura `if`.
@@ -1164,6 +1175,7 @@ Estamos redirigiendo la salida de error a `/dev/null`, lo que quiere decir que e
 Otra forma de saber, por ejemplo, si existe un fichero, además de `[ -e fichero ]`, es ejecutar el comando ls sobre ese fichero. Si existe el fichero el comando funcionará bien, y si no existe dará un error. Como hemos visto, eso es equivalente a devolver verdadero o falso.
 
 ```bash
+# opción 1
 if [ -e fichero]
 then
     echo “fichero ya existe”
@@ -1171,6 +1183,7 @@ else
     echo “fichero no existe”
 fi
 
+# opción equivalente. En este caso redirigimos para no obtener mensajes.
 if ls fichero &> /dev/null
 then
     echo “fichero ya existe”
