@@ -1001,7 +1001,7 @@ then
 else
     if [ $1 != “s” -a $1 != “n” ]
     then
-        echo “El primer parámetro debe ser \”s \”o \”n\”.”
+        echo “El primer parámetro debe ser 's' o 'n'. ”
         exit 1
     fi
 fi
@@ -1040,19 +1040,19 @@ valor1=55
 valor2=22
 valor3=36
 
+# comprueba si valor1 es el mayor de todos los valores
 if [ $valor1 -ge $valor2 ] || [ $valor2 -ge $valor3 ]
 then
     echo "el valor mayor de todos es $valor1"
 fi
-# comprueba si valor1 es el mayor de todos los valores
 
+# Comprueba si valor1 es par o impar realizando una operación en la propia condición.
 if [[ $(($valor1 % 2)) == 0 ]]
 then
     echo Par
 else
     echo Impar
 fi
-# Comprueba si valor1 es par o impar realizando una operación en la propia condición.
 
 ```
 
