@@ -829,22 +829,13 @@ Por ejemplo, el uso de varias condiciones será diferente según utilices cada u
 
 
 Operadores booleanos que son diferentes según el tipo de corchetes elegido
-| [[ ]] | [ ] | 
-| --- | --- | 
-| && | -a |
-| \|\| | -o |
+
+- `[[ ]]` → `&&` , `||`
+- `[ ]`   → `-a`, `-o`
 
 Por último, reseñar que debes también advertir que `[[ 001 = 1 ]]` es falso mientras que `[[ 001 -eq 1 ]]` es cierto. Lo mejor probar, probar y volver a probar hasta asegurarte de que lo entiendes y tiene el resultado esperado.
 
 ## 10.4. Evaluación de condiciones booleanas: verdadero (0) y falso (1)
-
-Como veremos más adelante, lo que hemos aprendido hasta ahora, nos deja muy limitados.
-
-¿Cómo podríamos hacer un script que preguntase un número y dependiendo del número introducido hiciese una cosa u otra?, ¿Cómo se podría hacer una operación 100 veces seguidas sin tener que escribir nosotros el comando 100 veces dentro del script?. 
-
-Este tipo de cosas tan simples no se pueden hacer simplemente con lo que hemos aprendido hasta ahora.
-
-Antes de aprender a hacer cosas como las mencionadas anteriormente, vamos a aprender que es una **condición**, y como representarlas en el intérprete de comandos `bash`.
 
 Una condición es algo que cuando se comprueba sólo puede dar 2 valores como resultado, el valor `verdadero` (**se representa como 0** en `bash` script) que indica que la condición es válida, y el valor `falso` (**se representa como 1**) que indica lo contrario. 
 
