@@ -1195,11 +1195,14 @@ Esta estructura es muy fácil de entender una vez entendido como funciona la est
 # Se pueden poner tantas opciones como se quieran
 case valor in
 valor1)
-    # ordenes a ejecutar si el valor coincide con valor1;;
+    # ordenes a ejecutar si el valor coincide con valor1
+    ;;
 valor2)
-    # ordenes a ejecutar si el valor coincide con valor2;;
+    # ordenes a ejecutar si el valor coincide con valor2
+    ;;
 valor3)
-    # ordenes a ejecutar si el valor coincide con valor3;;
+    # ordenes a ejecutar si el valor coincide con valor3
+    ;;
 esac
 ```
 > **Importante**: Las instrucciones a ejecutar se pueden poner inmediatamente a continuación del valor o en la línea siguiente, eso no importa, lo que sí hay que tener en cuenta es que después de la última instrucción dentro de un valor debe haber siempre dos punto y coma '`;;`' seguidos, justo después de la instrucción o en la línea de abajo, como se prefiera.
@@ -1251,13 +1254,13 @@ Aquí podemos ver un ejemplo, simple utilizando metacaracteres. En este caso vam
 echo “¿Desea continuar?:”
 read resp
 case $resp in
-[sS]*) #Si la respuesta es una s o una S seguido de 'lo que sea'
-echo “Ha elegido continuar”;;
-[nN]*) #Si la respuesta es una n o una N seguido de 'lo que sea'
-echo “Ha elegido no continuar”
-exit;;
-*)
-echo “Respuesta no válida” 1>&2;;
+    [sS]*) #Si la respuesta es una s o una S seguido de 'lo que sea'
+        echo “Ha elegido continuar”;;
+    [nN]*) #Si la respuesta es una n o una N seguido de 'lo que sea'
+        echo “Ha elegido no continuar”
+        exit;;
+    *)
+        echo “Respuesta no válida” 1>&2;;
 esac
 ```
 
@@ -1315,7 +1318,7 @@ then
     exit
 fi
 
-# y en caso de pulsar s, seguiria la ejecución por aqui...
+# y en caso de pulsar s, seguiría la ejecución por aquí...
 ```
 
 Otro uso que le podemos dar a esta estructura es el de repetir algo un número determinado de veces:
@@ -1405,7 +1408,7 @@ do
 done
 ```
 
-Tambien podemos añadir grupos de valores o **rangos**, si vamos a iterar por valores enteros:
+También podemos añadir grupos de valores o **rangos**, si vamos a iterar por valores enteros:
 
 Ejemplo: 
 

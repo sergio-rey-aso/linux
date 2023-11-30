@@ -735,6 +735,134 @@ Mas info: [Somebooks](http://somebooks.es/ldap-parte-8-instalar-y-configurar-la-
 
 # Configurar un equipo cliente con Ubuntu para autenticarse en el servidor OpenLDAP
 
-http://somebooks.es/capitulo-11-instalar-y-configurar-openldap-en-ubuntu-14-04-lts/8/
+http://somebooks.es/ldap-parte-6-configurar-un-cliente-ubuntu-para-autenticarse-en-el-servidor-openldap/
 
-http://somebooks.es/capitulo-11-instalar-y-configurar-openldap-en-ubuntu-14-04-lts/9/
+## Instalar el software necesario
+
+En Ubuntu, necesitaremos ajustar el comportamiento de los servicios NSS y PAM en cada cliente que debamos configurar. Para lograrlo, necesitaremos instalar los siguientes paquetes:
+
+- ***libnss-ldap***: Permitirá que NSS obtenga de LDAP información administrativa de los usuarios (Información de las cuentas, de los grupos, información de la máquina, los alias, etc.)
+- ***libpam-ldap***: Que facilitará la autenticación con LDAP a los usuarios que utilicen PAM.
+- **ldap-utils**: Facilita la interacción don LDAP desde cualquier máquina de la red.
+
+El proceso de instalación es realmente sencillo. Primero actualizamos el sistema y una vez completada la actualización, pasamos a la instalación propiamente dicha.
+
+Como los dos paquetes que necesitamos se encuentran en los repositorios oficiales de Ubuntu, sólo tenemos que escribir en la terminal la siguiente orden:
+
+```bash
+sudo apt-get install libnss-ldap libpam-ldap ldap-utils -y
+```
+
+Durante el proceso, se activa un asistente que nos permite configurar el comportamiento de *ldap-auth-config*. 
+
+En el primar paso, nos solicita la dirección URi del servidor LDAP. En nuestro caso, escribiremos la dirección IP del servidor y sustituiremos el protocolo `ldapi:///` por `ldap://`.
+
+
+Después indicamos el nombre global único *(Distinguished Name – DN)*. Según el ejemplo `dc=simarrilandia,dc=local`
+
+
+Despúes nos pide versión del protocolo LDAP, dejamos el 3 y después indicaremos si las utilidades que utilicen PAM deberán comportarse del mismo modo que cuando cambiamos contraseñas locales (respondemos `yes`). Esto hará que las contraseñas se guarden en un archivo independiente que sólo podrá ser leído por el superusuario.
+
+
+Después, el sistema nos pregunta si queremos que sea necesario identificarse para realizar consultas en la base de datos de LDAP, respondemos `No`
+
+
+Ya sólo nos queda indicar el nombre de la cuenta ***LDAP*** que tendrá privilegios para realizar cambios en las contraseñas. Como antes, deberemos escribir un nombre global único *(Distinguished Name – DN)*, según el ejemplo (cn=admin,dc=simarrilandia,dc=local).
+
+
+En el último paso, el asistente nos solicita la contraseña que usará la cuenta anterior. Deberá coincidir con la que escribimos en el apartado Instalar ***OpenLDAP*** en el servidor.
+
+
+En caso de ocurrir algún error o necesitamos efectuar alguna modificación, podemos repetir el proceso mediante el siguiente comando:
+
+```bash
+sudo dpkg-reconfigure ldap-auth-config
+```
+
+## Ajustes en los fichero de configuración.
+
+Deberemos cambiar algunos parámetros en los archivos de configuración del cliente. En concreto, deberemos editar 
+- `/etc/nsswitch.conf`
+- `/etc/pam.d/common-password` 
+- `/etc/pam.d/common-session`
+
+### Fichero `/etc/nsswitch.conf`
+
+Cambiamos la configuraicón de usuarios y grupos a `ldap` en vez de `systemd`
+
+
+
+Para saber si la configuración anterior funciona adecuadamente, usaremos el comando getent, que consultará el contenido del archivo /etc/nsswitch.conf para mostrarnos la lista de usuarios, grupos, equipos, etc., que se encuentran registrados en el sistema. Si la configuración que hemos hecho es correcta, aparecerán también las cuentas de usuario definidas en el servidor LDAP.
+
+Su sintaxis es como sigue:
+
+```bash
+sudo getent passwd
+```
+
+El comando nos responderá con la lista de todos los usuarios, grupos, etc., que sean conocidos. Entre ellos, deben aparecer las cuentas LDAP.
+
+
+
+### Fichero `/etc/pam.d/common-password` 
+
+Este fichero ofrece un conjunto de reglas PAM para el inicio de sesión, tanto si éste es interactivo como si es no interactivo.
+
+Aquí será donde indiquemos que se debe crear un directorio home durante el primer inicio de sesión, también para los usuarios autenticados mediante LDAP. Este comportamiento lo conseguiremos añadiendo al final del archivo la siguiente línea:
+
+```
+session optional       pam_mkhomedir.so skel=/etc/skel umask=077
+```
+
+Esta línea debemos insertarla al final del fichero.
+
+
+
+### Fichero `/etc/pam.d/common-session`???????????????
+
+
+## Comprobar funcionamiento
+
+Para asegurarnos de que todo funciona correctamente, comenzaremos haciendo una consulta en el directorio LDAP, al estilo que lo que hacíamos cuanto trabajábamos en el servidor:
+
+```bash
+ldapsearch -x -H ldap://192.168.56.254 -b "dc=simarrilandia,dc=local"
+```
+
+Si hasta aquí todo es correcto, afrontaremos la prueba definitiva: identificarnos el el ordenador cliente con una cuenta de usuario definida en el servidor LDAP. Para lograrlo, podemos utilizar una orden como esta:
+
+```bash
+sudo su - srey
+```
+
+Verás que aparece un mensaje, avisando de que se está creando, dentro de /home, el directorio local para la cuenta. Esto es porque se trata de la primera vez que iniciamos sesión con esta cuenta en el equipo cliente. Como es lógico, esto no ocurrirá el resto de las veces que nos autentiquemos con esta cuenta.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+http://somebooks.es/ldap-parte-7-iniciar-sesion-grafica-en-el-equipo-cliente-con-un-usuario-ldap/
