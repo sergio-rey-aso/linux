@@ -735,19 +735,51 @@ Mas info: [Somebooks](http://somebooks.es/ldap-parte-8-instalar-y-configurar-la-
 
 # Configurar un equipo cliente con Ubuntu para autenticarse en el servidor OpenLDAP
 
-http://somebooks.es/ldap-parte-6-configurar-un-cliente-ubuntu-para-autenticarse-en-el-servidor-openldap/
+Una vez configurado el servidor, es momento de configurar los clientes para hacer un ser del servidor creado.
+
+Hay muchas formas de añadir una máquina cliente al servidor OpenLDAP, pero la más sencilla es utilizar los paquetes ‘libnss-ldap’ y ‘libpam-ldap’. Ambos paquetes están disponibles en los repositorios de las distros de Linux (con un nombre diferente del paquete), lo que facilita la instalación del administrador y acelera el aprovisionamiento de las máquinas cliente.
+
+## Preparación del equipo
+
+Por supuesto el primer paso es asegurarnos de que tenemos conexión con el servidor y a partir de ahí realizar las configuraciones que se detalla a continuación.
+
+<div align="center">
+    <img src="../img/ldap_client00.png" alt="Configuración ldap en cliente" width="50%" />
+</div>
+
+Es interesante dar un nombre al equipo representativo, tenemos varias opciones: mediante el fichero `/etc/hostname` o mediante el comando `hostnamectl set-hostname`
+
+A continuación nos asegurarnos que el cliente resuelve el nombre del servidor, de esta manera, nos evitamos trabajar con direcciones IP. En un entorno de producción tendríamos un servidor DNS dando servicio, pero como estamos realizando un laboratorio de prueba, nos conformaremos con introducir la dirección en el archivo de hosts del cliente, aunque puedes hacerlo con un servidor DNS.
+
+<div align="center">
+    <img src="../img/ldap_client06.png" alt="Configuración ldap en cliente" width="60%" />
+</div>
+
+Antes de continuar, podemos verificar que accedemos al servidor y obtenemos la lista de usuarios disponibles en el servidor OpenLDAP. Para ello utilizamos el comando `ldapsearch` tal y como hemos visto en la configuracón del servidor. Si no lo tenemos instalado, lo instalamos mediante el paquete `ldap-utils`;
+
+```bash
+sudo apt install ldap-utils
+sudo ldapsearch -x -b "ou=asix,dc=simarrilandia,dc=local"
+```
+
+<div align="center">
+    <img src="../img/ldap_client07.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
+
+Aqui vemos lo mismo que cuando lo ejecutamos desde el servidor.
+
 
 ## Instalar el software necesario
 
-En Ubuntu, necesitaremos ajustar el comportamiento de los servicios NSS y PAM en cada cliente que debamos configurar. Para lograrlo, necesitaremos instalar los siguientes paquetes:
+En un sistema Linux, la autenticación de los usuarios se realiza básicamente mediante la consulta a dos archivos `/etc/passwd` con la información básica del usuario y `/etc/shadow` con la información relativa a la password de inicio de sesión. El acceso a estos archivos se realiza básicamente mediante los servicios PAM (Pluggable Authentication Module) y NSS (Name Service Switch). Por tanto, se modificará la configuración de estos servicios para que además de consultar los archivos locales, también lo hagan al servicio ldap, ello se consigue instalando dos liberías *libpam-ldap* y *libnss-ldap*.
+
+Así pues el siguiente paso será ajustar el comportamiento de los servicios NSS y PAM en cada cliente que debamos configurar. Para lograrlo, necesitaremos instalar los siguientes paquetes:
 
 - ***libnss-ldap***: Permitirá que NSS obtenga de LDAP información administrativa de los usuarios (Información de las cuentas, de los grupos, información de la máquina, los alias, etc.)
 - ***libpam-ldap***: Que facilitará la autenticación con LDAP a los usuarios que utilicen PAM.
-- **ldap-utils**: Facilita la interacción don LDAP desde cualquier máquina de la red.
+- ***ldap-utils***: Facilita la interacción don LDAP desde cualquier máquina de la red.
 
-El proceso de instalación es realmente sencillo. Primero actualizamos el sistema y una vez completada la actualización, pasamos a la instalación propiamente dicha.
-
-Como los dos paquetes que necesitamos se encuentran en los repositorios oficiales de Ubuntu, sólo tenemos que escribir en la terminal la siguiente orden:
+Previamente debemos instalar estos paquetes en el sistema, junto con el de utilidades que ya hemos instalado antes. Como los dos paquetes que necesitamos se encuentran en los repositorios oficiales de Ubuntu, sólo tenemos que escribir en la terminal la siguiente orden:
 
 ```bash
 sudo apt-get install libnss-ldap libpam-ldap ldap-utils -y
@@ -755,23 +787,33 @@ sudo apt-get install libnss-ldap libpam-ldap ldap-utils -y
 
 Durante el proceso, se activa un asistente que nos permite configurar el comportamiento de *ldap-auth-config*. 
 
-En el primar paso, nos solicita la dirección URi del servidor LDAP. En nuestro caso, escribiremos la dirección IP del servidor y sustituiremos el protocolo `ldapi:///` por `ldap://`.
+En el primar paso, nos solicita la dirección URi del servidor LDAP. En nuestro caso, escribiremos la dirección IP del servidor y sustituiremos el protocolo `ldapi:///` por `ldap://`. **Cuidado con las dos barras**.
 
+<div align="center">
+    <img src="../img/ldap_client01.png" alt="Configuración ldap en cliente" width="50%" />
+</div>
 
 Después indicamos el nombre global único *(Distinguished Name – DN)*. Según el ejemplo `dc=simarrilandia,dc=local`
 
+<div align="center">
+    <img src="../img/ldap_client02.png" alt="Configuración ldap en cliente" width="50%" />
+</div>
 
 Despúes nos pide versión del protocolo LDAP, dejamos el 3 y después indicaremos si las utilidades que utilicen PAM deberán comportarse del mismo modo que cuando cambiamos contraseñas locales (respondemos `yes`). Esto hará que las contraseñas se guarden en un archivo independiente que sólo podrá ser leído por el superusuario.
 
-
 Después, el sistema nos pregunta si queremos que sea necesario identificarse para realizar consultas en la base de datos de LDAP, respondemos `No`
 
+Ya sólo nos queda indicar el nombre de la cuenta ***LDAP*** que tendrá privilegios para realizar cambios en las contraseñas. Como antes, deberemos escribir un nombre global único *(Distinguished Name – DN)*, según el ejemplo `cn=admin,dc=simarrilandia,dc=local`.
 
-Ya sólo nos queda indicar el nombre de la cuenta ***LDAP*** que tendrá privilegios para realizar cambios en las contraseñas. Como antes, deberemos escribir un nombre global único *(Distinguished Name – DN)*, según el ejemplo (cn=admin,dc=simarrilandia,dc=local).
-
+<div align="center">
+    <img src="../img/ldap_client03.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
 
 En el último paso, el asistente nos solicita la contraseña que usará la cuenta anterior. Deberá coincidir con la que escribimos en el apartado Instalar ***OpenLDAP*** en el servidor.
 
+<div align="center">
+    <img src="../img/ldap_client05.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
 
 En caso de ocurrir algún error o necesitamos efectuar alguna modificación, podemos repetir el proceso mediante el siguiente comando:
 
@@ -788,11 +830,13 @@ Deberemos cambiar algunos parámetros en los archivos de configuración del clie
 
 ### Fichero `/etc/nsswitch.conf`
 
-Cambiamos la configuraicón de usuarios y grupos a `ldap` en vez de `systemd`
+Cambiamos la configuración de usuarios y grupos a `ldap` en vez de `systemd`
 
+<div align="center">
+    <img src="../img/ldap_client04.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
 
-
-Para saber si la configuración anterior funciona adecuadamente, usaremos el comando getent, que consultará el contenido del archivo /etc/nsswitch.conf para mostrarnos la lista de usuarios, grupos, equipos, etc., que se encuentran registrados en el sistema. Si la configuración que hemos hecho es correcta, aparecerán también las cuentas de usuario definidas en el servidor LDAP.
+Para saber si la configuración anterior funciona adecuadamente, usaremos el comando 'getent', que consultará el contenido del archivo `/etc/nsswitch.conf` para mostrarnos la lista de usuarios, grupos, equipos, etc., que se encuentran registrados en el sistema. Si la configuración que hemos hecho es correcta, aparecerán también las cuentas de usuario definidas en el servidor LDAP.
 
 Su sintaxis es como sigue:
 
@@ -802,9 +846,22 @@ sudo getent passwd
 
 El comando nos responderá con la lista de todos los usuarios, grupos, etc., que sean conocidos. Entre ellos, deben aparecer las cuentas LDAP.
 
+Aqui tenemos el listado filtrado: 
+
+<div align="center">
+    <img src="../img/ldap_client11.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
 
 
 ### Fichero `/etc/pam.d/common-password` 
+
+El siguiente archivo a editar será `/etc/pam.d/common-password` y eliminaremos el parámetro `use_authtok` de la línea 26. La función de este parámetro es evitar que si un determinado usuario falla la autenticación con un método, no pueda validarse con un segundo.
+
+<div align="center">
+    <img src="../img/ldap_client08.png" alt="Configuración ldap en cliente" width="50%" />
+</div>
+
+### Fichero `/etc/pam.d/common-session`
 
 Este fichero ofrece un conjunto de reglas PAM para el inicio de sesión, tanto si éste es interactivo como si es no interactivo.
 
@@ -816,9 +873,9 @@ session optional       pam_mkhomedir.so skel=/etc/skel umask=077
 
 Esta línea debemos insertarla al final del fichero.
 
-
-
-### Fichero `/etc/pam.d/common-session`???????????????
+<div align="center">
+    <img src="../img/ldap_client09.png" alt="Configuración ldap en cliente" width="50%" />
+</div>
 
 
 ## Comprobar funcionamiento
@@ -837,32 +894,62 @@ sudo su - srey
 
 Verás que aparece un mensaje, avisando de que se está creando, dentro de /home, el directorio local para la cuenta. Esto es porque se trata de la primera vez que iniciamos sesión con esta cuenta en el equipo cliente. Como es lógico, esto no ocurrirá el resto de las veces que nos autentiquemos con esta cuenta.
 
+<div align="center">
+    <img src="../img/ldap_client12.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
+
+
+
+## Iniciar sesión gráfica en el equipo cliente con un usuario LDAP
+
+La solución para configurar el sistema operativo cliente para que se pueda autenticar una cuenta de usuario del servidor OpenLDAP usando la interfaz gráfica es tan sencilla como instalar el programa `nslcd`, un servicio que se encarga de facilitar consultas LDAP a procesos locales. De este modo, permitiremos que dichos procesos locales puedan obtener información sobre los usuarios y grupos del directorio LDAP.
+
+### Instalar nslcd
+
+Como `nslcd` se encuentra en los repositorios oficiales de *Ubuntu*, su instalación es tan sencilla como ejecutar la siguiente orden:
+
+```bash
+sudo apt install nslcd
+```
+
+Durante el proceso, se activa un asistente que nos permite configurar el comportamiento de `nslcd`. En el primar paso, nos solicita la dirección URi del servidor LDAP. Escribiremos la dirección IP del servidor, precedido del protocolo usado. Después el nombre global único (Distinguished Name – DN). En nuestro caso:
+
+```
+ldap://192.168.56.254/
+```
+<div align="center">
+    <img src="../img/ldap_client13.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
+
+```
+dc=simarrilandia,dc=local
+```
+
+<div align="center">
+    <img src="../img/ldap_client14.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
+
+Y reiniciamos el sistema.
+
+### Iniciar sesión gráfica con un usuario LDAP
+
+Una vez completado el reinicio ya podemos introducir nuestro usuario dado de alta en el servidor ldap. 
+
+<div align="center">
+    <img src="../img/ldap_client15.png" alt="Configuración ldap en cliente" width="40%" />
+</div>
+
+Recuerda que la pantalla de autenticación de Ubuntu solo muestra los usuarios que ya han iniciado sesión en el sistema, de forma gráfica, al menos una vez.
+
+<div align="center">
+    <img src="../img/ldap_client16.png" alt="Configuración ldap en cliente" width="30%" />
+</div>
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-http://somebooks.es/ldap-parte-7-iniciar-sesion-grafica-en-el-equipo-cliente-con-un-usuario-ldap/
+Fuentes: 
+- [somebooks.es. Instalación de openldap](http://somebooks.es/ldap-parte-1-instalar-openldap-en-ubuntu-20-04-lts/)
+- [Openldap y II: configurando el cliente](https://waytoit.wordpress.com/2018/02/12/openldap-i-ii-configurando-el-cliente/)
+- [HowToForge: Cómo añadir un sistema Ubuntu al servidor OpenLDAP](https://howtoforge.es/como-anadir-un-sistema-ubuntu-al-servidor-openldap/)
+- [Youtube: Instalar y configurar OpenLDAP en SERVIDOR y CLIENTE en Ubuntu Server & Desktop 22.04](https://www.youtube.com/watch?v=Rl032gHFu88)
