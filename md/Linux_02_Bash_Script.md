@@ -1687,10 +1687,10 @@ do
 done
 ```
 
-> **Nota**: Se puede borrar el valor de una posición del vector con el comando `unset`. Asimismo también se puede borrar el valor asignado a una variable (es como si ya no existiese).
+> **Nota**: Se puede borrar el valor de una posición del vector con el comando `unset` visto anteriormente. Asimismo también se puede borrar el valor asignado a una variable (es como si ya no existiese).
 > ```bash
 > vector=( 4 5 3 6 7 )
-> unset ${vector[4]}
+> unset vector[4]
 > ```
 > Ahora vector tendrá 4 elementos en lugar de 5, ya que hemos eliminado el último (índice 4).
 
