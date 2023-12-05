@@ -1732,7 +1732,7 @@ echo "Vamos a llamar a la función..."
 funcion
 ```
 
-Una función, al igual que el programa principal cuando se ejecuta, puede recibir **parámetro**, y trabaja con ellos de forma idéntica. Es decir el primer **parámetro** se accederá con `$1`, el segundo con $`2`, el número de parámetros con `$#,` la lista con `$*,` etc...
+Una función, al igual que el programa principal cuando se ejecuta, puede recibir **parámetro**, y trabaja con ellos de forma idéntica. Es decir el primer **parámetro** se accederá con `$1`, el segundo con `$2`, el número de parámetros con `$#,` la lista con `$*,` etc...
 
 Hay que tener en cuenta, que debido a ello, ***una función no tiene acceso directamente a los parámetros que recibe el programa***, sino solamente a los parámetros con los cuales se llama a la función.
 
@@ -1814,7 +1814,7 @@ Es importante saber que la funciones en un script de `bash` están más limitada
  
 ## 19.1. El doble paréntesis `(( .. ))`
 
-El doble paréntesis, cuyo uso en un caso muy particular ya hemos visto con el bucle for, forma un estructura con funcionamiento muy similar al comando let. De hecho podemos hacer lo mismo que hacíamos con let (El dólar para leer las variables sigue siendo opcional en este caso solamente, sólo para leer, al darles valor siempre van sin dolar):
+El doble paréntesis, cuyo uso en un caso muy particular ya hemos visto con el bucle for, forma un estructura con funcionamiento muy similar al comando `let`. De hecho podemos hacer lo mismo que hacíamos con `let` (El dólar para leer las variables sigue siendo opcional en este caso solamente, sólo para leer, al darles valor siempre van sin dólar):
 
 ```bash
 #!/bin/bash
@@ -1850,7 +1850,7 @@ do
 done
 ```
 
-Otra posibilidad del doble paréntesis es la de poder hacer operaciones con vaariables, para mostrarlas por pantalla, por ejemplo, si tenemos una posición de un array, y queremos mostrar una posición más (para empezar desde la 1 y no desde la 0), en ese caso se pone el símbolo `$`, seguido del doble paréntesis y la operación dentro. Ejemplo:
+Otra posibilidad del doble paréntesis es la de poder hacer operaciones con variables, para mostrarlas por pantalla, por ejemplo, si tenemos una posición de un array, y queremos mostrar una posición más (para empezar desde la 1 y no desde la 0), en ese caso se pone el símbolo `$`, seguido del doble paréntesis y la operación dentro. Ejemplo:
 
 ```bash
 for (( i = 0; i < ${#vector[*]}; i++ ))
