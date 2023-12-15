@@ -8,7 +8,42 @@ permalink: /Linux_ldap/
 
 <h3>Tabla de contenidos</h3>
 
-# Introducción
+- [1. Introducción](#1-introducción)
+  - [1.1. ¿Qué es **NSS**?](#11-qué-es-nss)
+  - [1.2. ¿Qué es **PAM**?](#12-qué-es-pam)
+  - [1.3. ¿Qué es **LDAP**?](#13-qué-es-ldap)
+  - [1.4. ¿Qué es **OpenLDAP**?](#14-qué-es-openldap)
+- [2. Funcionamiento de **LDAP** y **OpenLDAP**](#2-funcionamiento-de-ldap-y-openldap)
+- [3. Instalar **OpenLDAP** en Ubuntu](#3-instalar-openldap-en-ubuntu)
+  - [3.1. Configuración inicial](#31-configuración-inicial)
+  - [3.2. Instalación de software necesario](#32-instalación-de-software-necesario)
+  - [3.3. Realizar la configuración básica](#33-realizar-la-configuración-básica)
+  - [3.4. Comprobación de la instalación. `slapcat`](#34-comprobación-de-la-instalación-slapcat)
+- [4. Configuración de **OpenLDAP**](#4-configuración-de-openldap)
+  - [4.1. Iniciar estructura de directorio. `ldapadd`](#41-iniciar-estructura-de-directorio-ldapadd)
+  - [4.2. Añadir un grupo de forma manual. `ldapadd`](#42-añadir-un-grupo-de-forma-manual-ldapadd)
+  - [4.3. Añadir un usuario de forma manual. `ldapadd` y `slappasswd`](#43-añadir-un-usuario-de-forma-manual-ldapadd-y-slappasswd)
+  - [4.4. Recuperar información del usuario. `ldapsearch`](#44-recuperar-información-del-usuario-ldapsearch)
+  - [4.5. Modificar entradas del directorio. `ldapmodify`](#45-modificar-entradas-del-directorio-ldapmodify)
+  - [4.6. Borrar entradas del directorio. `ldapdelete`](#46-borrar-entradas-del-directorio-ldapdelete)
+  - [4.7. El paquete `ldapscripts`](#47-el-paquete-ldapscripts)
+- [5. La interfaz web ***LDAP Account Manager***](#5-la-interfaz-web-ldap-account-manager)
+  - [5.1. Instalacion de ***LDAP Account Manager***](#51-instalacion-de-ldap-account-manager)
+  - [5.2. Configuración de ***LDAP Account Manager***](#52-configuración-de-ldap-account-manager)
+- [6. Configurar un equipo cliente con Ubuntu para autenticarse en el servidor OpenLDAP](#6-configurar-un-equipo-cliente-con-ubuntu-para-autenticarse-en-el-servidor-openldap)
+  - [6.1. Preparación del equipo](#61-preparación-del-equipo)
+  - [6.2. Instalar el software necesario](#62-instalar-el-software-necesario)
+  - [6.3. Ajustes en los fichero de configuración.](#63-ajustes-en-los-fichero-de-configuración)
+    - [6.3.1. Fichero `/etc/nsswitch.conf`](#631-fichero-etcnsswitchconf)
+    - [6.3.2. Fichero `/etc/pam.d/common-password`](#632-fichero-etcpamdcommon-password)
+    - [6.3.3. Fichero `/etc/pam.d/common-session`](#633-fichero-etcpamdcommon-session)
+  - [6.4. Comprobar funcionamiento](#64-comprobar-funcionamiento)
+  - [6.5. Iniciar sesión gráfica en el equipo cliente con un usuario LDAP](#65-iniciar-sesión-gráfica-en-el-equipo-cliente-con-un-usuario-ldap)
+    - [6.5.1. Instalar nslcd](#651-instalar-nslcd)
+    - [6.5.2. Iniciar sesión gráfica con un usuario LDAP](#652-iniciar-sesión-gráfica-con-un-usuario-ldap)
+
+
+# 1. Introducción
 
 Sabemos que Linux mantiene a los usuarios registrados en el archivo `/etc/passwd` por lo que , si deseas acceder al dispositivo, debes tener un usuario definido en ese archivo.
 
@@ -26,7 +61,7 @@ De hecho, éste es el método que suele utilizarse en GNU/Linux para obtener una
 
 Fuente : [Somebooks: Instalar y configurar OpenLDAP en Ubuntu](http://somebooks.es/sistemas-operativos-red-2a-edicion/#conte)
 
-## ¿Qué es **NSS**?
+## 1.1. ¿Qué es **NSS**?
 
 **NSS** (*Name Service Switch*) es un servicio que permite la resolución de nombres de usuario y contraseñas (o grupos) mediante el acceso a diferentes orígenes de información. En condiciones normales, esta información se encuentra en los archivos locales del sistema operativo, en concreto en `/etc/passwd`, `/etc/shadow` y `/etc/group`, pero puede proceder de otras fuentes, como **DNS** (Domain Name System), **NIS** (Network Information Service), **LDAP** (Lightweight Directory Access Protocol) o **WINS** (Windows Internet Name Service).
 
@@ -38,7 +73,7 @@ El objetivo de **NSS** es que los programas o los comandos del sistema operativo
     <img src="../img/ldap_nss.png" alt="Estructura LDAP mediante NSS" width="50%" />
 </div>
 
-## ¿Qué es **PAM**?
+## 1.2. ¿Qué es **PAM**?
 
 **PAM** (*Pluggable Authentication Modules*) establece una interfaz entre los programas de usuario y distintos métodos de autenticación. De esta forma, el método de autenticación se hace transparente para los programas.
 
@@ -52,13 +87,13 @@ En la actualidad, **PAM** es el método que utilizan la mayoría de las aplicaci
     <img src="../img/ldap_pam.png" alt="Estructura LDAP mediante PAM y NSS" width="50%" />
 </div>
 
-## ¿Qué es **LDAP**?
+## 1.3. ¿Qué es **LDAP**?
 
 **LDAP** es un protocolo que ofrece el acceso a un servicio de directorio implementado sobre un entorno de red, con el objeto de acceder a una determinada información. Puede ejecutarse sobre *TCP/IP* o sobre cualquier otro servicio de trasferencia orientado a la conexión.
 
 **LDAP** son las siglas en inglés de ***Lightweight Directory Access Protocol*** (Protocolo Ligero de Acceso a Directorios) y podemos considerarlo como un sistema de almacenamiento de red (normalmente construido como una base de datos) al que se pueden realizar consultas.
 
-## ¿Qué es **OpenLDAP**?
+## 1.4. ¿Qué es **OpenLDAP**?
 
 La respuesta es muy sencilla: **OpenLDAP** es un desarrollo del protocolo **LDAP**, implementado con la filosofía del software libre y código abierto.
 
@@ -68,7 +103,7 @@ Por el contrario, si utilizáramos un directorio **OpenLDAP** para guardar datos
 
 No sólo podemos encontrar **OpenLDAP** en la mayoría de de las distribuciones GNU/Linux, sino que también lo encontramos para *Microsoft Windows*, *Apple OSX*, *Solaris*, *HP-UX*, *BSD*, etc. 
 
-# Funcionamiento de **LDAP** y **OpenLDAP**
+# 2. Funcionamiento de **LDAP** y **OpenLDAP**
 
 El modelo de información de **LDAP** se basa en entradas, entendiendo por entrada un conjunto de atributos identificados por un nombre global único (***Distinguished Name*** – `DN`), que se utiliza para identificarla de forma específica. Las entradas se organizan de forma lógica y jerárquica mediante un esquema de directorio, que contiene la definición de los objetos que pueden formar parte del directorio.
 
@@ -134,9 +169,9 @@ Aunque ya hemos visto al principio un esquema de funcionamiento mucho más detal
 
 Por último, LDAP incluye servicios de integridad y confidencialidad de los datos que contiene. 
 
-# Instalar **OpenLDAP** en Ubuntu
+# 3. Instalar **OpenLDAP** en Ubuntu
 
-## Configuración inicial
+## 3.1. Configuración inicial
 
 Existen algunas cuestiones que deberemos tener en cuenta antes de instalar y configurar Ubuntu como servidor LDAP:
 
@@ -161,7 +196,7 @@ cat /etc/netplan/00-installer-config.yaml
 192.168.56.254 srv-ldap.simarrilandia.local srv-ldap
 ```
 
-## Instalación de software necesario
+## 3.2. Instalación de software necesario
 
 Como siempre, debemos asegurarnos de que nuestro servidor esta actualizado, por ejemplo mendiante :
 
@@ -179,7 +214,7 @@ Durante el proceso, aparece el asistente de instalación de **OpenLDAP**, que re
 
 En realidad, no es importante el valor que incluyas ahora, porque después realizaremos la configuración de forma manual.
 
-## Realizar la configuración básica
+## 3.3. Realizar la configuración básica
 
 Una vez concluida la instalación, debemos realizar la configuración que te mencionaba más arriba. Y para lograrlo, basta con usar el siguiente comando:
 
@@ -209,7 +244,7 @@ Así conseguiremos que se inicie de nuevo el asistente de configuración, pero e
 6. Por último, el asistente nos avisa de que aún quedan archivos en la carpeta de LDAP, que pueden estropear el proceso de configuración y nos pide autorización para retirarlos antes de creare la nueva base de datos. Confirmaremos con ```yes```
 7. Al hacerlo, se cierra el asistente la ventana vuelve a su aspecto inicia, donde podemos comprobar que las operaciones de configuración se han realizado correctamente.
 
-## Comprobación de la instalación. `slapcat`
+## 3.4. Comprobación de la instalación. `slapcat`
 
 Una vez concluida la instalación, podemos comprobar que todo es correcto usando el comando `slapcat`:
 
@@ -225,9 +260,9 @@ El objetivo de este comando consiste en obtener la información de la base de da
 
 La salida se produce en formado ***LDIF***, lo que nos facilitará exportar la estructura del directorio LDAP o, sencillamente, obtener una copia de respaldo de su contenido. Para lograrlo, bastará con con redirigir su salida a un archivo. 
 
-# Configuración de **OpenLDAP**
+# 4. Configuración de **OpenLDAP**
 
-## Iniciar estructura de directorio. `ldapadd`
+## 4.1. Iniciar estructura de directorio. `ldapadd`
 
 Vamos a crear una plantilla con la que crearemos una ***Unidad Organizativa***. Este será el elemento lógico que agrupará al resto de los objetos que creemos en el directorio a partir del próximo artículo.
 
@@ -271,7 +306,7 @@ La salida nos muestra la estructura del directorio hasta el momento, en formado 
 </div>
 
 
-## Añadir un grupo de forma manual. `ldapadd`
+## 4.2. Añadir un grupo de forma manual. `ldapadd`
 
 Para crear un grupo lo haremos de un modo muy parecido al que hemos utilizado en el punto anterior, cuando creamos la ***unidad organizativa***. Es decir, crearemos un nuevo archivo ***ldif*** y, a continuación, lo integraremos en la base de datos con el comando `ldapadd`.
 
@@ -308,7 +343,7 @@ Comprobamos que el grupo se ha creado correctamente y  como siempre mediante `sl
     <img src="../img/ladp_slapd6.png" alt="Configuración slapd" width="50%" />
 </div>
 
-## Añadir un usuario de forma manual. `ldapadd` y `slappasswd`
+## 4.3. Añadir un usuario de forma manual. `ldapadd` y `slappasswd`
 
 Para añadir el usuario, repetimos el proceso anterior, pero lo primero será evitar que la contraseña del usuario se almacene en texto plano dentro del archivo ldif.
 
@@ -383,7 +418,7 @@ sudo slapcat
 >> **Importante**: Aquí hemos intentado ser lo más didácticos posible, pero podríamos haber usado un solo archivo ***ldif*** que incluyese todos los grupos y usuarios que necesitemos. Bastaría con dejar una línea en blanco entre la definición de un elemento y la del siguiente.
 
 
-## Recuperar información del usuario. `ldapsearch`
+## 4.4. Recuperar información del usuario. `ldapsearch`
 
 Por último, podemos comprobar que el contenido anterior se recupera correctamente. Para lograrlo podemos utilizar el comando `ldapsearch`, que nos permite hacer una búsqueda en el directorio.
 
@@ -407,7 +442,7 @@ En el ejemplo anterior:
 
 Como puedes ver el resultado de la consulta se obtiene en formato ***LDIF***, lo que facilitará redirigirlo a un archivo y usarlo como copia de seguridad o incluso como método de exportación de datos a otra implementación de **OpenLDAP**.
 
-## Modificar entradas del directorio. `ldapmodify`
+## 4.5. Modificar entradas del directorio. `ldapmodify`
 
 El comando `ldapmodify` permite cambiar el contenido de cualquier atributo, añadir atributos nuevos, eliminarlos etc. Dado que la sintaxis es más compleja nos apoyaremos en un archivo ***LDIF*** que especifique los cambios que necesitamos realizar. 
 
@@ -438,7 +473,7 @@ Ejecutamos los cambios y utilizamos el comando anterior `ldapsearch` para compro
     <img src="../img/ladp_slapd10.png" alt="Configuración slapd" width="50%" />
 </div>
 
-## Borrar entradas del directorio. `ldapdelete`
+## 4.6. Borrar entradas del directorio. `ldapdelete`
 
 La utilidad que permite eliminar entradas del directorio se llama `ldapdelete`. Para utilizarla, sólo tenemos que aportar los datos del objeto a borrar y los datos de la cuenta administrador que debe permitirlo. La sintaxis será como sigue:
 
@@ -451,7 +486,7 @@ Después de escribir la contraseña, parecerá que no ha ocurrido nada. Sin emba
     <img src="../img/ladp_slapd11.png" alt="Configuración slapd" width="50%" />
 </div>
 
-## El paquete `ldapscripts`
+## 4.7. El paquete `ldapscripts`
 
 Debido a la incomodidad de manejo directo de las herramientas de **ldap-utils** es frecuente la utilización de las mismas a través de algún script. En particular, tenemos un paquete en el que se incluyen algunos bastante útiles que nos facilitarían el trabajo y que se denomina `ldapscripts`.
 
@@ -619,7 +654,7 @@ Como hemos visto, es una forma fácil de gestionar un dominio sencillo, pero tie
 > Video: [Tutorial OpenLDAP en Ubuntu. Parte IV (LDAPscripts. Altas, bajas y modificaciones)](https://www.youtube.com/watch?v=hHRxO0eIhto)
 
 
-#  La interfaz web ***LDAP Account Manager***
+#  5. La interfaz web ***LDAP Account Manager***
 
 Como hemos visto en los apartados anteriores, podemos realizar toda la administración de LDAP usando comandos. Sin embargo, la tarea puede resultar más agradable utilizando una interfaz web, ejecutada en un equipo cliente de la red.
 
@@ -627,7 +662,7 @@ Ese es, precisamente el objetivo de LDAP Account Manager, una interfaz web que p
 
 LDAP Account Manager también se conoce de forma abreviada como LAM y fue creado en 2003 por Michael Dürgner, Roland Gruber, Tilo Lutz y Leonhard Walchshäusl con el objetivo de administrar cuentas de usuarios, equipos y grupos bajo los protocolos POSIX y SAMBA. Realizaron su desarrollo en PHP y lo ofrecieron a la comunidad informática bajo licencia GPL.
 
-## Instalacion de ***LDAP Account Manager***
+## 5.1. Instalacion de ***LDAP Account Manager***
 
 Antes de comanenzar, necesitamos los paquetes necesarios para su funcionamiento, Apache y php, así que ejecutaremos:
 
@@ -676,7 +711,7 @@ Para la ejecución de LDAP Account Manager, utilizamos un navegador y accedemos 
 </div>
 
 
-## Configuración de ***LDAP Account Manager***
+## 5.2. Configuración de ***LDAP Account Manager***
 
 Para entrar en la configuración, entramos en *LAM Configuration* 
 
@@ -733,13 +768,13 @@ y ahora ya podemos entrar y encontrar la configuración realizada hasta ahora:
 Mas info: [Somebooks](http://somebooks.es/ldap-parte-8-instalar-y-configurar-la-interfaz-web-ldap-account-manager-para-administrar-openldap/)
 
 
-# Configurar un equipo cliente con Ubuntu para autenticarse en el servidor OpenLDAP
+# 6. Configurar un equipo cliente con Ubuntu para autenticarse en el servidor OpenLDAP
 
 Una vez configurado el servidor, es momento de configurar los clientes para hacer un ser del servidor creado.
 
 Hay muchas formas de añadir una máquina cliente al servidor OpenLDAP, pero la más sencilla es utilizar los paquetes ‘libnss-ldap’ y ‘libpam-ldap’. Ambos paquetes están disponibles en los repositorios de las distros de Linux (con un nombre diferente del paquete), lo que facilita la instalación del administrador y acelera el aprovisionamiento de las máquinas cliente.
 
-## Preparación del equipo
+## 6.1. Preparación del equipo
 
 Por supuesto el primer paso es asegurarnos de que tenemos conexión con el servidor y a partir de ahí realizar las configuraciones que se detalla a continuación.
 
@@ -769,7 +804,7 @@ sudo ldapsearch -x -b "ou=asix,dc=simarrilandia,dc=local"
 Aqui vemos lo mismo que cuando lo ejecutamos desde el servidor.
 
 
-## Instalar el software necesario
+## 6.2. Instalar el software necesario
 
 En un sistema Linux, la autenticación de los usuarios se realiza básicamente mediante la consulta a dos archivos `/etc/passwd` con la información básica del usuario y `/etc/shadow` con la información relativa a la password de inicio de sesión. El acceso a estos archivos se realiza básicamente mediante los servicios PAM (Pluggable Authentication Module) y NSS (Name Service Switch). Por tanto, se modificará la configuración de estos servicios para que además de consultar los archivos locales, también lo hagan al servicio ldap, ello se consigue instalando dos liberías *libpam-ldap* y *libnss-ldap*.
 
@@ -821,14 +856,14 @@ En caso de ocurrir algún error o necesitamos efectuar alguna modificación, pod
 sudo dpkg-reconfigure ldap-auth-config
 ```
 
-## Ajustes en los fichero de configuración.
+## 6.3. Ajustes en los fichero de configuración.
 
 Deberemos cambiar algunos parámetros en los archivos de configuración del cliente. En concreto, deberemos editar 
 - `/etc/nsswitch.conf`
 - `/etc/pam.d/common-password` 
 - `/etc/pam.d/common-session`
 
-### Fichero `/etc/nsswitch.conf`
+### 6.3.1. Fichero `/etc/nsswitch.conf`
 
 Cambiamos la configuración de usuarios y grupos a `ldap` en vez de `systemd`
 
@@ -853,7 +888,7 @@ Aqui tenemos el listado filtrado:
 </div>
 
 
-### Fichero `/etc/pam.d/common-password` 
+### 6.3.2. Fichero `/etc/pam.d/common-password` 
 
 El siguiente archivo a editar será `/etc/pam.d/common-password` y eliminaremos el parámetro `use_authtok` de la línea 26. La función de este parámetro es evitar que si un determinado usuario falla la autenticación con un método, no pueda validarse con un segundo.
 
@@ -861,7 +896,7 @@ El siguiente archivo a editar será `/etc/pam.d/common-password` y eliminaremos 
     <img src="../img/ldap_client08.png" alt="Configuración ldap en cliente" width="50%" />
 </div>
 
-### Fichero `/etc/pam.d/common-session`
+### 6.3.3. Fichero `/etc/pam.d/common-session`
 
 Este fichero ofrece un conjunto de reglas PAM para el inicio de sesión, tanto si éste es interactivo como si es no interactivo.
 
@@ -878,7 +913,7 @@ Esta línea debemos insertarla al final del fichero.
 </div>
 
 
-## Comprobar funcionamiento
+## 6.4. Comprobar funcionamiento
 
 Para asegurarnos de que todo funciona correctamente, comenzaremos haciendo una consulta en el directorio LDAP, al estilo que lo que hacíamos cuanto trabajábamos en el servidor:
 
@@ -900,11 +935,11 @@ Verás que aparece un mensaje, avisando de que se está creando, dentro de /home
 
 
 
-## Iniciar sesión gráfica en el equipo cliente con un usuario LDAP
+## 6.5. Iniciar sesión gráfica en el equipo cliente con un usuario LDAP
 
 La solución para configurar el sistema operativo cliente para que se pueda autenticar una cuenta de usuario del servidor OpenLDAP usando la interfaz gráfica es tan sencilla como instalar el programa `nslcd`, un servicio que se encarga de facilitar consultas LDAP a procesos locales. De este modo, permitiremos que dichos procesos locales puedan obtener información sobre los usuarios y grupos del directorio LDAP.
 
-### Instalar nslcd
+### 6.5.1. Instalar nslcd
 
 Como `nslcd` se encuentra en los repositorios oficiales de *Ubuntu*, su instalación es tan sencilla como ejecutar la siguiente orden:
 
@@ -931,7 +966,7 @@ dc=simarrilandia,dc=local
 
 Y reiniciamos el sistema.
 
-### Iniciar sesión gráfica con un usuario LDAP
+### 6.5.2. Iniciar sesión gráfica con un usuario LDAP
 
 Una vez completado el reinicio ya podemos introducir nuestro usuario dado de alta en el servidor ldap. 
 
