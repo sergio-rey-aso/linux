@@ -3,7 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 # layout: normal
-title: Apuntes de Bash
+title: Apuntes de GNU/Linux
 ---
 
 # Apuntes de **GNU/Linux**
