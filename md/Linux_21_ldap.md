@@ -1,10 +1,10 @@
 ---
 title: Linux
 description: open ldap
-permalink: /Linux_ldap/
+permalink: /ldap/
 ---
 
-<h1>LDAP</h1>
+<h1>Open LDAP</h1>
 
 <h3>Tabla de contenidos</h3>
 
