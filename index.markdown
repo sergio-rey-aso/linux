@@ -6,13 +6,14 @@
 title: Apuntes de Bash
 ---
 
-# Apuntes de **Bash**
+# Apuntes de **GNU/Linux**
 
-Apuntes de **Bash**  para el módulo de ASO del CFGS de ASIX.
+Apuntes de **GNU/Linux**  para el módulo de ASO del CFGS de ASIX.
 
 Apartados:
 
 - [Bash Script](./Linux_02_Bash_Script/)
+- [Open LDAP](./ldap/)
 
 
 
