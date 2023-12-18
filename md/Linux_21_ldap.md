@@ -116,7 +116,7 @@ Cada atributo de una entrada tendrá un tipo y un valor con el formato atributo/
 
 Las entradas se indexan mediante el nombre completo (`dn`), que facilita la identificación singular a cada elemento del árbol. El nombre completo se formará con una serie de pares atributo/valor, separados por comas, que reflejan la ruta inversa desde la posición lógica del objeto hasta la raíz del árbol.
 
-Para referirse al nombre completo suelen utilizarse las siglas **RDN**, que provienen del inglés R****elative Distinguished Name****.
+Para referirse al nombre completo suelen utilizarse las siglas **RDN**, que provienen del inglés ***Relative Distinguished Name***.
 
 Entre los atributos que suelen emplearse habitualmente, encontramos los siguientes, aunque puede haber muchos más:
 
@@ -224,25 +224,25 @@ sudo dpkg-reconfigure slapd
 
 Así conseguiremos que se inicie de nuevo el asistente de configuración, pero esta vez nos pedirá todos los datos.
 
-1. Lo primero que nos pregunta el asistente es si queremos omitir la configuración de OpenLDAP.
-2. Después, deberemos escribir el nombre DNS del dominio que usaremos en nuestro directorio LDAP, por ejemplo ```simarrilandia.local```
+- Lo primero que nos pregunta el asistente es si queremos omitir la configuración de OpenLDAP.
+- Después, deberemos escribir el nombre DNS del dominio que usaremos en nuestro directorio LDAP, por ejemplo ```simarrilandia.local```
 <div align="center">
     <img src="../img/ladp_slapd1.png" alt="Configuración slapd" width="40%" />
 </div>
 
-3. A continuación, deberemos escribir el nombre de la empresa o entidad en la que estemos realizando la instalación
+- A continuación, deberemos escribir el nombre de la empresa o entidad en la que estemos realizando la instalación
 <div align="center">
     <img src="../img/ladp_slapd2.png" alt="Configuración slapd" width="40%" />
 </div>
 
-4. Lo siguiente será escribir la contraseña de administración. 
-5. Seguidamente, el asistente nos pregunta si queremos eliminar la base de datos de configuración antigua, responderemos que ```yes```
+- Lo siguiente será escribir la contraseña de administración. 
+- Seguidamente, el asistente nos pregunta si queremos eliminar la base de datos de configuración antigua, responderemos que ```yes```
 <div align="center">
     <img src="../img/ladp_slapd3.png" alt="Configuración slapd" width="40%" />
 </div>
 
-6. Por último, el asistente nos avisa de que aún quedan archivos en la carpeta de LDAP, que pueden estropear el proceso de configuración y nos pide autorización para retirarlos antes de creare la nueva base de datos. Confirmaremos con ```yes```
-7. Al hacerlo, se cierra el asistente la ventana vuelve a su aspecto inicia, donde podemos comprobar que las operaciones de configuración se han realizado correctamente.
+- Por último, el asistente nos avisa de que aún quedan archivos en la carpeta de LDAP, que pueden estropear el proceso de configuración y nos pide autorización para retirarlos antes de creare la nueva base de datos. Confirmaremos con ```yes```
+- Al hacerlo, se cierra el asistente la ventana vuelve a su aspecto inicia, donde podemos comprobar que las operaciones de configuración se han realizado correctamente.
 
 ## 3.4. Comprobación de la instalación. `slapcat`
 
