@@ -1,7 +1,7 @@
 ---
 title: Linux
 description: NFS. Network File System
-permalink: /Linux_nfs/
+permalink: /nfs/
 ---
 
 <h1>NFS. Network File System</h1>
