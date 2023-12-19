@@ -593,7 +593,7 @@ Más ejemplos:
 - Delete user: `sudo ldapdeleteuser george`
 - Add group: `sudo ldapaddgroup testgroup`
 - Add user to a group: `sudo ldapaddusertogroup george testgroup`
-- Remove user from a group: sudo ldapdeleteuserfromgroup george testgroup
+- Remove user from a group: `sudo ldapdeleteuserfromgroup george testgroup`
 
 Otros ejemplos creando un grupo y añadiendo usuarios al grupo creado o al grupos anteriores:
 
