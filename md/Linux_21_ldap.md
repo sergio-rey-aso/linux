@@ -400,7 +400,7 @@ Observa que hemos incluido al usuario como miembro del grupo que hemos creado m�
 Con esto estamos listos para cargar el nuevo usuario en el directorio. Sólo tenemos que escribir el siguiente comando:
 
 ```bash
-sudo ldapadd -x -D cn=admin,dc=somebooks,dc=local -W -f usr.ldif
+sudo ldapadd -x -D cn=admin,dc=simarrilandia,dc=local -W -f usr.ldif
 ```
 
 <div align="center">
@@ -497,14 +497,14 @@ sudo apt install ldapscripts
 ```
 
 El listado de scripts de este paquete es:
-• `ldapadduser` usuario grupo
-• `ldapsetpasswd` usuario
-• `ldapdeleteuser` usuario
-• `ldapaddgroup` grupo
-• `ldapdeletegroup` grupo
-• `ldapsetprimarygroup` usuario grupo
-• `ldapaddusertogroup` usuario grupo
-• `ldapdeleteuserfromgroup` usuario grupo
+- `ldapadduser` usuario grupo
+- `ldapsetpasswd` usuario
+- `ldapdeleteuser` usuario
+- `ldapaddgroup` grupo
+- `ldapdeletegroup` grupo
+- `ldapsetprimarygroup` usuario grupo
+- `ldapaddusertogroup` usuario grupo
+- `ldapdeleteuserfromgroup` usuario grupo
 
 Hay más scripts en el paquete, para ver la lista entera ejecuta:
 
@@ -530,7 +530,7 @@ USHELL="/bin/bash"
 UHOMES="/home/ldap-asix/%u"
 ```
 
-Todas estas variables estan dipersas por todo el fichero de configuración, algunas de ellas comentadas. Debemos descomentar y cambiar las necesarias, según lo indicado anteiormente
+Todas estas variables estan dipersas por todo el fichero de configuración, algunas de ellas comentadas. Debemos descomentar y cambiar las necesarias, según lo indicado anteriormente
 
 <div align="center">
     <img src="../img/ldap_ldapscripts1.png" alt="Configuración slapscript" width="50%" />
@@ -553,7 +553,7 @@ echo -n 'password-del-administrador' > /etc/ldapscripts/ldapscripts.passwd"
 sudo chmod 400 /etc/ldapscripts/ldapscripts.passwd
 ```
 
-> **Nota**: El password **solo funciona si lo hacemos mediante un `echo -n`**, y no funciona si lo editamos con un editor como *nano*, *vi* o *vim*, por lo que debemos ejecutar los pasos anteriores. En mi caso, como no tengo el usuario root activo y me resisto a activarlo, debo dar un pequeño rodeo para ejecutar el primero de los dos comando. 
+> **Nota**: El password **solo funciona si lo hacemos mediante un `echo -n`**, y no funciona si lo editamos con un editor como *nano*, *vi* o *vim*, por lo que debemos ejecutar los pasos anteriores. En mi caso, como no tengo el usuario *root* activo y me resisto a activarlo, debo dar un pequeño rodeo para ejecutar el primero de los dos comando. 
 
 <div align="center">
     <img src="../img/ladp_slapd13.png" alt="Configuración slapd" width="60%" />
@@ -641,9 +641,9 @@ UTEMPLATE=”/etc/ldapscripts/ldapadduser.template”
 ```
 
 Como hemos visto, es una forma fácil de gestionar un dominio sencillo, pero tiene **algunas limitaciones**:
-• No hay comandos para crear, modificar o eliminar unidades organizativas.
-• Todos los usuarios se crean en la misma unidad organizativa.
-• Los usuarios se crean con una plantilla diferente de la que utilizada anteriormente, por tanto pueden haber campos diferentes.
+- No hay comandos para crear, modificar o eliminar unidades organizativas.
+- Todos los usuarios se crean en la misma unidad organizativa.
+- Los usuarios se crean con una plantilla diferente de la que utilizada anteriormente, por tanto pueden haber campos diferentes.
 
 > Recuros sobre `ldapscripts`
 > 
@@ -772,7 +772,7 @@ Mas info: [Somebooks](http://somebooks.es/ldap-parte-8-instalar-y-configurar-la-
 
 Una vez configurado el servidor, es momento de configurar los clientes para hacer un ser del servidor creado.
 
-Hay muchas formas de añadir una máquina cliente al servidor OpenLDAP, pero la más sencilla es utilizar los paquetes ‘libnss-ldap’ y ‘libpam-ldap’. Ambos paquetes están disponibles en los repositorios de las distros de Linux (con un nombre diferente del paquete), lo que facilita la instalación del administrador y acelera el aprovisionamiento de las máquinas cliente.
+Hay muchas formas de añadir una máquina cliente al servidor OpenLDAP, pero la más sencilla es utilizar los paquetes ‘`libnss-ldap`’ y ‘`libpam-ldap`’. Ambos paquetes están disponibles en los repositorios de las distros de Linux (con un nombre diferente del paquete), lo que facilita la instalación del administrador y acelera el aprovisionamiento de las máquinas cliente.
 
 ## 6.1. Preparación del equipo
 
@@ -806,7 +806,7 @@ Aqui vemos lo mismo que cuando lo ejecutamos desde el servidor.
 
 ## 6.2. Instalar el software necesario
 
-En un sistema Linux, la autenticación de los usuarios se realiza básicamente mediante la consulta a dos archivos `/etc/passwd` con la información básica del usuario y `/etc/shadow` con la información relativa a la password de inicio de sesión. El acceso a estos archivos se realiza básicamente mediante los servicios PAM (Pluggable Authentication Module) y NSS (Name Service Switch). Por tanto, se modificará la configuración de estos servicios para que además de consultar los archivos locales, también lo hagan al servicio ldap, ello se consigue instalando dos liberías *libpam-ldap* y *libnss-ldap*.
+En un sistema Linux, la autenticación de los usuarios se realiza básicamente mediante la consulta a dos archivos `/etc/passwd` con la información básica del usuario y `/etc/shadow` con la información relativa a la password de inicio de sesión. El acceso a estos archivos se realiza básicamente mediante los servicios **PAM** (*Pluggable Authentication Module*) y **NSS** (*Name Service Switch*). Por tanto, se modificará la configuración de estos servicios para que además de consultar los archivos locales, también lo hagan al servicio ldap, ello se consigue instalando dos liberías *libpam-ldap* y *libnss-ldap*.
 
 Así pues el siguiente paso será ajustar el comportamiento de los servicios NSS y PAM en cada cliente que debamos configurar. Para lograrlo, necesitaremos instalar los siguientes paquetes:
 

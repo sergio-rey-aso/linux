@@ -29,6 +29,7 @@ http://somebooks.es/nfs-parte-3-instalacion-en-un-cliente-windows-10/
 
 http://somebooks.es/nfs-parte-4-compartir-almacenamiento-en-un-servidor-ubuntu-20-04-lts/
 
+
 # Acceder a la carpeta compartida con NFS desde un cliente con Ubuntu
 
 http://somebooks.es/nfs-parte-5-acceder-a-la-carpeta-compartida-desde-un-cliente-ubuntu-20-04-lts/

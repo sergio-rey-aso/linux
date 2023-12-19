@@ -1,7 +1,7 @@
 ---
 title: Linux
 description: samba
-permalink: /Linux_samba/
+permalink: /samba/
 ---
 
 <h1>Samba</h1>
