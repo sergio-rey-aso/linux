@@ -334,7 +334,7 @@ cn: aso
 Con esto ya estamos listos para cargar el nuevo usuario en el directorio. Sólo tenemos que escribir el siguiente comando:
 
 ```bash
-sudo ldapadd -x -D cn=aso,dc=simarrilandia,dc=local -W -f grp-aso.ldif
+sudo ldapadd -x -D cn=admin,dc=simarrilandia,dc=local -W -f grp-aso.ldif
 ```
 
 Comprobamos que el grupo se ha creado correctamente y  como siempre mediante `slapcat` obtendremos todas las entradas para comprobar que todo se ha ejecutado correctamente. 
