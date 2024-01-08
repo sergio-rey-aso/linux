@@ -32,9 +32,11 @@ permalink: /nfs/
       - [4.2.2.2. Creamos unidad de red mediante un script en el inicio de sesión.](#4222-creamos-unidad-de-red-mediante-un-script-en-el-inicio-de-sesión)
 - [5. Mejorando el uso compartido. Gestionando permisos.](#5-mejorando-el-uso-compartido-gestionando-permisos)
   - [5.1. Control de permisos desde servidor o desde cliente.](#51-control-de-permisos-desde-servidor-o-desde-cliente)
-  - [5.2. Compartir con un grupo en concreto](#52-compartir-con-un-grupo-en-concreto)
-  - [5.3. Otras consideraciones a al hora de compartir](#53-otras-consideraciones-a-al-hora-de-compartir)
-  - [5.4. Problemas con los permisos en NFS](#54-problemas-con-los-permisos-en-nfs)
+  - [5.2. Consideraciones a la hora de compartir](#52-consideraciones-a-la-hora-de-compartir)
+  - [5.3. Problemas con los permisos en NFS](#53-problemas-con-los-permisos-en-nfs)
+  - [5.4. Integración NFS con LDAP](#54-integración-nfs-con-ldap)
+  - [5.5. Compartir con unos equipos en concreto](#55-compartir-con-unos-equipos-en-concreto)
+- [6. Conclusiones](#6-conclusiones)
 
 
 # 1. Introducción
@@ -143,7 +145,7 @@ Para comenzar vamos a crear una carpeta compartida en la propia carpeta `/home`,
 En nuestro caso vamos a crear un carpeta llamada compartido dentro de /`home/sergio` y ahí compartiremos todo: 
 
 <div align="center">
-    <img src="../img/nfs/nfs-02.png" alt="Compartiendo con NFS" width="70%" />
+    <img src="../img/nfs/nfs-02.png" alt="Compartiendo con NFS" width="40%" />
 </div>
 
 De momento vamos a compartir sin mas, pero más adelante veremos que debemos tener en cuenta, los permisos, puesto que los usuarios con los que compartamos elementos, deben poder acceder a la ruta compartida.
@@ -180,11 +182,14 @@ Observa que cada cliente tiene dos partes:
    - `async`: Deshabilita la característica anterior. Mejora el rendimiento a cambio de que exista el riesgo de corrupción en los archivos o, incluso, en todo el sistema de archivos, si se produjese una interrupción del fluido eléctrico o un bloqueo del sistema.
    - `subtree_check`: Cuando el directorio compartido es un subdirectorio de un sistema de archivos mayor, NFS comprueba los directorios por encima de éste para verificar sus permisos y características. Es la opción predeterminada.
    - `no_subtree_check`: Deshabilita la característica anterior, lo que hace que el envío de la lista de archivos sea más rápido, pero puede reducir la seguridad.
+   - `anonuid` y `anongid`: Estas opciones le permiten especificar el *uid* y el *gid* de la cuenta anónima. Esto es útil si tiene un volumen exportado para montajes públicos y queremos limitar accesos concretos.
 
 En nuestro caso, incluiremos estas dos nuevas líneas en el archivo `/etc/exports`:
 
+```bash
 /home *(rw,sync,no_root_squash,no_subtree_check)
 /srv/nfs *(rw,sync,no_subtree_check)
+```
 
 Y para lograrlo, recurriremos, como es habitual, al editor de textos nano: 
 
@@ -341,7 +346,7 @@ En la siguiente captura, podemos ver como desmontamos la unidad previamente mont
 
 
 <div align="center">
-    <img src="../img/nfs/nfs-10.png" alt="Compartiendo con NFS" width="60%" />
+    <img src="../img/nfs/nfs-10.png" alt="Compartiendo con NFS" width="50%" />
 </div>
 
 
@@ -371,11 +376,10 @@ Poco después el asistente nos informa de que la instalación se ha completado.
 
 ## 4.2. Configuración y acceso
 
-
 Para ello, previamente debemos asegurarnos que ambos equipos se encuentran en la misma subred y que desde nuestro cliente windows podemos acceder a nuestro servidor Ubuntu, o sea que si hacemos un `ping` el resultado es satisfactorio.
 
 <div align="center">
-    <img src="../img/nfs/nfs-12.png" alt="Compartiendo con NFS" width="30%" />
+    <img src="../img/nfs/nfs-12.png" alt="Compartiendo con NFS" width="50%" />
 </div>
 
 Ahora ya podemos acceder de dos formas: de forma puntual o montando las unidades al inicio de Windows.
@@ -399,7 +403,7 @@ Entramos en la carpeta compartida e incluso podemos abrir el fichero que tenemos
 Desde este punto podemos incluso abrir el fichero e intentar modificar su contenido. Aparentemenente todo va a funcionar correctamente hasta que intentemos guardar los cambios, momento en el que tendremos un error; no tenemos permisos de escritura:
 
 <div align="center">
-    <img src="../img/nfs/nfs-14.pncg" alt="Compartiendo con NFS" width="50%" />
+    <img src="../img/nfs/nfs-14.png" alt="Compartiendo con NFS" width="50%" />
 </div>
 
 **¿qué ha pasado?**
@@ -523,14 +527,21 @@ El contenido del fichero `/etc/exports` nos permite especificar cómo se gestion
 
 Tal y como hemos visto en la sección [2.2.1. Exportar contenido de las carpetas](#221-exportar-contenido-de-las-carpetas) a la hora de compartir tenemos varias secciones; comenzamos por la opciones:
 
+- `ro` (read-only): La carpeta compartida será de sólo lectura. Es la opción predeterminada.
+- `rw` (read-write): El usuario podrá realizar cambios en el contenido de la carpeta compartida.
+
+Estas opciones son obvias, se explican por si solas, pero la complicación llega con las siguientes opciones, que permiten establecer variantes sobre el control de los permisos, mas allá de los especificados de `ro` o `rw`, así pues tenemos: 
+
 - `root_squash`: Evita que los usuarios con privilegios administrativos los mantengan, sobre la carpeta compartida, cuando se conectan remotamente. En su lugar, se les trata como a un usuario remoto más. Es la opción predeterminada. 
 - `no_root_squash`: Deshabilita la característica anterior.
 
 Esto se traduce en que si especificamos `no_root_squash` entonces el control de los permisos recae en el equipo cliente, y si no lo especificamos o indicamos `root_squash` el control de los permisos recae en el equipo servidor.
 
+Dicho de otra manera, `root_squash` previene a los usuarios *root* conectados remotamente de tener privilegios como *root* asignándole el userid de '`nobody`'. Esto reconvierte el poder del usuario *root* remoto al de usuario local más bajo, previniendo que los usuarios *root* remotos puedan convertirse en usuarios *root* en el sistema local. Alternativamente, la opción `no_root_squash` lo desactiva. Para reconvertir a todos los usuarios, incluyendo a *root*, use la opción `all_squash`. 
+
 Ejemplo: 
 
-Tenemos un la carpeta /srv/nfs exportada como 
+Tenemos un la carpeta `/srv/nfs` exportada como 
 
 ```bash
 /srv/nfs *(rw,sync,no_root_squash,no_subtree_check)
@@ -538,9 +549,10 @@ Tenemos un la carpeta /srv/nfs exportada como
 <div align="center">
     <img src="../img/nfs/nfs-18.png" alt="Compartiendo con NFS" width="50%" />
 </div>
-> recordad que al cambiar el fichero `/etc/export` se debe reiniciar el servicio `nfs-server`
 
 o sea, el control de permisos recae sobre el **cliente**, de esta forma que si en el servidor tenemos que no se puede escribir en esa carpeta y en el cliente se indica que si se puede escribir, entonces se escribe.
+
+> recordad que al realizar cualquier cambio en el fichero `/etc/export` se debe reiniciar el servicio `nfs-server` para que tengan efecto.
 
 En la siguiente captura podemos ver que montamos la carpeta exportada, inicialmente no tenemos permisos de escritura (somo *otros*) y no podemos escribir, y tras dar permisos de escritura ya somo capaces de escribir. Realmente lo que ha ocurrido es que al cambiar los permisos, los hemos cambiado directamente en la carpeta compartida desde el servidor:
 
@@ -579,43 +591,39 @@ Antes de acabar este punto debemos volver también sobre las opciones
 
 Estas opciones indican que se tienen o no en cuenta los permisos de las carpetas *padres* o contenedoras de las carpetas compartidas, tanto en el cliente como en el servidor, o sea si en `/mnt` quitamos el permiso de entrar en la carpeta (`x`) y tenemos el control en el cliente, pues entonces tendremos un problema y no podremos acceder.
 
-## 5.2. Compartir con un grupo en concreto
-
-Si deseas compartir la carpeta solo con un grupo en particular, debes agregar la siguiente línea al archivo `/etc/exports`:
+Por último, podemos especificar los ID de usuario y grupo para usar con usuarios remotos desde una máquina particular, use las opciones `anonuid` y `anongid`, respectivamente. De esta manera, puede crear una cuenta de usuario especial para usuarios NFS remotos para compartir y especificar (anonuid=<uid-value>,anongid=<gid-value>), donde <uid-value> es el número ID de usuario y <gid-value> es el número ID de grupo.
 
 ```bash
-/srv/nfs *(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000)
+/srv/nfs *(rw,sync,root_squash,no_subtree_check,anonuid=1000,anongid=1000)
 ```
-Las opciones `anonuid` y `anongid` permiten crear una cuenta especial de usuario y de grupo para que los usuarios remotos de NFS la compartan. Aquí, `uid` y `gid` son el número de identificación del usuario y el número de identificación del grupo, respectivamente
 
-En este ejemplo, el grupo en particular tiene un gid de 1000. Asegúrate de reemplazar 1000 con el gid de tu grupo.
+## 5.2. Consideraciones a la hora de compartir
 
-
-
-
-## 5.3. Otras consideraciones a al hora de compartir
-
-En ocasiones, a la hora de compartir y evitar problemas se suelen utilizar los usuarios y grupos `noboty` y `nogroup`, que no habíamos visto hasta ahora.
+En ocasiones, a la hora de compartir y evitar problemas se suelen utilizar los usuarios y grupos `nobody` y `nogroup`, que no habíamos visto hasta ahora.
 
 Veamos un ejemplo:
 
 ```bash
 sudo mkdir -p /srv/nfs
 sudo chown nobody:nogroup /srv/nfs
-sudo chmod -R 007 /srv/nfs/comp_todos
+sudo chmod 007 /srv/nfs
 ```
 
 Donde podemos establecer las siguientes puntualizaciones: 
 - En el comando `mkdir` se usa del argumento `-p` (también podemos escribir `–parents`). Su cometido es doble: por un lado evitar que se produzca un error si alguna de las carpetas ya existiese (aunque este no es el caso); por el otro, crea automáticamente la parte de la estructura del árbol que sea necesaria. Es decir, en la primera orden, se crea la carpeta nfs (que aún no existía). 
-- El usuario `nobody` y el grupo `nogroup` son dos conceptos importantes en el sistema operativo Linux. El usuario `nobody` está destinado a representar al usuario con los permisos más bajos en el sistema. En el mejor de los casos, este usuario y su grupo no están asignados a ningún archivo o directorio (como propietario). El grupo `nogroup` se utiliza para restringir el acceso a archivos y directorios a usuarios no autorizados. Por ejemplo, si un archivo o directorio tiene permisos de lectura y escritura para el grupo `nogroup`, solo los usuarios que pertenecen a ese grupo pueden acceder a ese archivo o directorio.
+- El usuario `nobody` y el grupo `nogroup` son dos conceptos importantes en el sistema operativo Linux. El usuario `nobody` está destinado a representar al usuario con ***los permisos más bajos*** en el sistema. En el mejor de los casos, este usuario y su grupo no están asignados a ningún archivo o directorio (como propietario). El grupo `nogroup` se utiliza para restringir el acceso a archivos y directorios a usuarios no autorizados. 
 - Finalmente, solo tienen sentido los permisos que asignamos a otros, con lo que establecemos todo tipo de permisos a *otros* pero no a los propietarios del grupo. 
 
+O sea, en ocasiones utilizamos el usuario `nobody` y el grupo `nogroup` para enfatizar que nadie va a tener acceso a nivel de usuario y grupo, y que toda la gestión se realiza a través del **otros**
 
-## 5.4. Problemas con los permisos en NFS
+> Personalmente no soy muy partidario de este tipo de configuraciones; en mi caso prefiero dejar en manos de `root` el control del recurso compartida, para evitar posibles errores futuros al intentar gestionar carpetas y ficheros de usuarios como `nobody` y `nogroup`
 
-Uno de los problemas que plantea el uso de NFS es que no permite validar a los usuarios que tratan de acceder a una carpeta compartida. En realidad, el servidor NFS envía al cliente los permisos de cada archivo y subcarpeta que encuentre dentro de la carpeta compartida. Además, también se envía el UID del usuario propietario y el GID de su grupo principal.
 
-El problema es que, cuando existan usuarios y/o grupos en los equipos cliente que tengan asignado el mismo UID o dispongan del mismo GID para su grupo principal, estos usuarios locales asumirán los permisos que tenían los usuarios del equipo servidor sobre el contenido de las carpetas compartidas.
+## 5.3. Problemas con los permisos en NFS
+
+Uno de los problemas que plantea el uso de *NFS* es que no permite validar a los usuarios que tratan de acceder a una carpeta compartida. En realidad, el servidor *NFS* envía al cliente los permisos de cada archivo y subcarpeta que encuentre dentro de la carpeta compartida. Además, también se envía el ***UID*** del usuario propietario y el ***GID*** de su grupo principal.
+
+El problema es que, cuando existan usuarios y/o grupos en los equipos cliente que tengan asignado el mismo ***UID*** o dispongan del mismo ***GID*** para su grupo principal, estos usuarios locales asumirán los permisos que tenían los usuarios del equipo servidor sobre el contenido de las carpetas compartidas.
 
 Dicho así, parece un poco lioso, pero vamos a tratar de explicarlo usando el siguiente ejemplo:
 
@@ -624,10 +632,10 @@ Dicho así, parece un poco lioso, pero vamos a tratar de explicarlo usando el si
 </div>
 
 Este ejemplo ilustra varias posibles situaciones:
-- Los usuarios root y usuario existen tanto en el servidor como en los clientes y tienen los mismos valores UID y GID, por lo que podrán utilizar los elementos compartidos sin ningún problema.
-- El usuario *jlopez* existe tanto en el servidor como en los clientes, sin embargo, como no coinciden ni sus UID ni sus GID, el usuario de un equipo cliente no podrá usar los datos compartidos que pertenezcan a la misma cuenta del equipo servidor.
-- Sin embargo, sí que podrá beneficiarse de los permisos heredados del grupo cuyo GID es 1030, aunque se trate de grupos diferentes (en el servidor corresponde con el grupo *Direccion* y en los clientes con el grupo *Almacen*).
-- Igual de curioso resulta el caso del usuario *fgil*, que podrá acceder desde un equipo cliente a los datos compartidos que pertenezcan a la cuenta *aperez* del servidor, ya que, aunque el nombre de las cuentas es diferente, sus valores UID y GID son los mismos.
+- Los usuarios root y usuario existen tanto en el servidor como en los clientes y tienen los mismos valores ***UID*** y ***GID***, por lo que podrán utilizar los elementos compartidos sin ningún problema.
+- El usuario *jlopez* existe tanto en el servidor como en los clientes, sin embargo, como no coinciden ni sus ***UID*** ni sus ***GID***, el usuario de un equipo cliente no podrá usar los datos compartidos que pertenezcan a la misma cuenta del equipo servidor.
+- Sin embargo, sí que podrá beneficiarse de los permisos heredados del grupo cuyo ***GID*** es 1030, aunque se trate de grupos diferentes (en el servidor corresponde con el grupo *Direccion* y en los clientes con el grupo *Almacen*).
+- Igual de curioso resulta el caso del usuario *fgil*, que podrá acceder desde un equipo cliente a los datos compartidos que pertenezcan a la cuenta *aperez* del servidor, ya que, aunque el nombre de las cuentas es diferente, sus valores ***UID*** y ***GID*** son los mismos.
 
 Afortunadamente, si estamos usando la opción `root_squash` en las definiciones de las carpetas compartidas que incluimos en el archivo `/etc/exports`, el superusuario del equipo cliente no tendrá plenos poderes sobre los archivos compartidos por el servidor. Lógicamente, sí que mantendrá los privilegios sobre sus propios archivos.
 
@@ -635,12 +643,75 @@ La opción `root_squash` es el valor predeterminado, por lo que no es necesario 
 
 Como vemos, el tratamiento que hace NFS de las cuentas de usuarios y grupos se aleja bastante de lo deseable. Sin embargo, ***los problemas que hemos ilustrado más arriba desaparecen cuando combinamos el uso de NFS con la autenticación centralizada de LDAP***. 
 
+## 5.4. Integración NFS con LDAP
+
+Tal y como se ha planteado, la gestión más adecuada es implantar un sistema LDAP y después compartir a partir teniendo en cuenta lo usuarios y sobretodo los ***grupos creados en LDAP***.
+
+Esto se implementa de forma sencilla, simplemente asignado el grupo el recurso compartido:
+
+```bash
+sudo chown root:10000 /srv/nfs
+sudo chmod g+rwx,o-rwx /srv/nfs
+```
+
+Con estos comandos, si tenemos el control desde el servidor mediante `root_squash`, asignamos al grupo 10000 de nuestro ldap, que en nuestro caso era la *Unidad Organizativa Asix*. Posteriormente, asignamos permisos adecuados y ya lo tenemos.
+
+Veamos cómo se aplica de forma práctica: 
+
+Primero configuramos el servidor como siempre, para que todos tengan acceso desde ***otros***
+
+<div align="center">
+    <img src="../img/nfs/nfs-25.png" alt="Compartiendo con NFS" width="60%" />
+</div>
+
+y podemos escribir desde todo tipo de usuarios en este recurso compartido
+
+<div align="center">
+    <img src="../img/nfs/nfs-26.png" alt="Compartiendo con NFS" width="60%" />
+</div>
+
+Pero si ajustamos el servidor para que ***otros*** no pueda escribir y hacemos que la carpeta sea del grupo 10000 que era el grupo de *asix* en *LDAP*, 
+
+<div align="center">
+    <img src="../img/nfs/nfs-27.png" alt="Compartiendo con NFS" width="60%" />
+</div>
+
+entonces veremos que yo no se tiene acceso desde un usuario que no pertenezca al grupo que hemos asignado.
+
+<div align="center">
+    <img src="../img/nfs/nfs-28.png" alt="Compartiendo con NFS" width="60%" />
+</div>
+
+Como vemos, se trata de nuevo de gestión de permisos, pero ahora a partir de un recurso exportado por NFS. La única salvedad es que el comando `chwon` no es capaz de leer LDAP y por lo tanto no podemos asignar directamente propiedad al grupo *asix* o *iso* o *aso*, pero si lo podemos hacer indicando directamente el ***gid*** del grupo
+
+
+## 5.5. Compartir con unos equipos en concreto
+
+Podemos también restringir el acceso a los recursos compartidos a una ip o conjunto de ips. Esto se soluciona de forma muy sencilla:
+
+Para compartir con una ip específica:
+```bash
+/srv/nfs 192.168.56.201(rw,no_root_squash,async)
+```
+
+Para compartir con una subred: 
+```bash
+/srv/nfs 192.168.56.0/24(rw,no_root_squash,async)
+```
+
+
+# 6. Conclusiones
+
+NFS es una herramienta muy útil, pero debe tener en cuenta sus limitaciones especialmente en cuestiones de seguridad: todos los datos pasan a través de la red sin cifrar (un sniffer puede interceptarlos); el servidor fuerza restricciones de acceso basado en la dirección IP del cliente (que puede ser falsificada); y, finalmente, cuando se provee acceso a una máquina cliente a un espacio NFS compartido mal configurado, el usuario root del cliente puede acceder a todos los archivos en el espacio compartido (aún aquellos que pertenezcan a otros usuarios) ya que el servidor confía en el nombre de usuario que recibe del cliente (esta es una limitación histórica del protocolo). 
+Por ello, es un sistema aconsejable en entorno Linux controlados, pero cuando estos sistemas son susceptibles de ataques o se involucran sistemas Windows, debe utilizar `Samba` en su lugar.
 
 
 **Fuentes**: 
+- [Wikipedia: Network File System](https://es.wikipedia.org/wiki/Network_File_System)
 - [somebooks.es. Instalar y configurar NFS en Ubuntu](http://somebooks.es/capitulo-10-instalar-y-configurar-nfs-en-ubuntu-14-04-lts/)
 - [Tutorial montar particiones NFS en una red GNU/Linux](https://fortinux.gitbooks.io/humble_tips/content/administrar_gnulinux/tutorial_montar_particiones_nfs_en_una_red_gnulinux.html)
 - [DigitalOcena: Cómo configurar NFS Mount en Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-20-04-es#requisitos-previos)
 - [Pasos para instalar el cliente de NFS en Windows 10](https://imperioweb.net/pasos-instalar-cliente-nfs-windows)
 - [RedesZone: Qué es el protocolo NFS y cómo se puede usar](https://www.redeszone.net/tutoriales/internet/protocolo-archivos-nfs/)
-- [El Fichero exports](http://es.tldp.org/Manuales-LuCAS/GARL2/garl2/x-087-2-nfs.exports.html)
+- [Ubuntu man pages. exports - Sistemas de ficheros NFS a exportar](https://manpages.ubuntu.com/manpages/focal/es/man5/exports.5.html)
+- [El Rincón De Juanjo. Cuentas Centralizadas con LDAP y NFS](https://juanjoselo.wordpress.com/2017/11/01/cuentas-centralizadas-con-ldap-y-nfs/)
