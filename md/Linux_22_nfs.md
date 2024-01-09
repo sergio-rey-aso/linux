@@ -48,7 +48,7 @@ El protocolo **NFS** ofrece grandes ventajas en una instalación de red, como ev
 Se trata de un protocolo, implementado en 1984 por la empresa *Sun Microsystems*, que se utiliza en redes de área local para crear un sistema de archivos distribuido.
 
 *Sun Microsystems* desarrolló **NFS** como un estándar abierto y lo incluyó en la publicación Request for Comments (RFC es una publicación de la *Internet Engineering Task Force* (IETF)) para que cualquiera pudiese implementarlo.
-l
+
 El objetivo de **NFS** es que varios usuarios (o programas) de una red local puedan acceder a archivos y directorios compartidos como si fuesen locales. De esta forma, se puede centralizar la capacidad de almacenamiento de la red, pudiendo ser más reducida en los clientes.
 
 Para lograrlo, la instalación de **NFS** se divide en dos partes:
@@ -59,7 +59,7 @@ Actualmente, el protocolo **NFS** está incluido en la mayoría de las distribuc
 
 El protocolo **NFS** actúa en el nivel de aplicación del modelo ***OSI***.
 
-En los sistemas Microsoft, a partir de la versión de Windows 8 ya se incluyó de fábrica, inicialmente sólo en la versión Enterprise edition. Por su parte, hasta no hace mucho tiempo, para que Windows 10 permitiera trabajar de forma nativa con NFS, necesitabas la versión Enterprise. Sin embargo, esto ha cambiado y ya puedes usarlo desde la versión Pro.
+En los sistemas *Microsoft*, a partir de la versión de Windows 8 ya se incluyó de fábrica, inicialmente sólo en la versión *Enterprise Edition*. Por su parte, hasta no hace mucho tiempo, para que Windows 10 permitiera trabajar de forma nativa con NFS, necesitabas la versión *Enterprise*. Sin embargo, esto ha cambiado y ya puedes usarlo desde la versión ***Pro***.
 
 <div align="center">
     <img src="../img/nfs/EsquemaNFS.png" alt="Esquema NFS" width="40%" />
@@ -68,13 +68,13 @@ En los sistemas Microsoft, a partir de la versión de Windows 8 ya se incluyó d
 Cuando implementamos **NFS** en una red local obtenemos las siguiente ventajas:
 - Al facilitar el acceso centralizado a la información, se evita la duplicidad de la misma en diferentes puntos de la red.
 - De forma predeterminada, obliga a que todas las operaciones de escritura relacionadas con una actualización concluyan antes de continuar (incluida la actualización de la estructura de directorios). Así se asegura la integridad de los datos.
-- Permite almacenar todo el perfil de los usuarios en el servidor (su directorio /home), de modo que cualquier usuario podrá acceder a sus datos desde cualquier lugar de la red.
+- Permite almacenar todo el perfil de los usuarios en el servidor (su directorio */home*), de modo que cualquier usuario podrá acceder a sus datos desde cualquier lugar de la red.
 - Permite compartir dispositivos de almacenamiento completos (como unidades ópticas, discos externos, memorias flash, etc), lo que facilita la reducción de costes en este tipo de dispositivos a la vez que mejora su aprovechamiento.
 - Desde la versión 4, se incluyen características de seguridad Kerberos y Listas de Control de Acceso (ACL – Access Control List), entre otras.
 
 Como hemos dicho más arriba, para que NFS funcione en una red, debemos instalar dos componentes: uno en el servidor, que se encargará de ofrecer los recursos compartidos y otro en cada cliente que pretenda utilizar estos recursos.
 
-> NFS es un protocolo muy útil para compartir archivos entre diferentes hosts, pero también tiene algunos problemas de seguridad conocidos. Por ejemplo, NFS no proporciona cifrado de datos, lo que significa que los datos que se transmiten a través de NFS no están protegidos y pueden ser interceptados por un atacante. Además, NFS no tiene autenticación incorporada, lo que significa que cualquier persona que tenga acceso a la red puede acceder a los archivos compartidos. Por lo tanto, es importante asegurarse de que los sistemas NFS estén configurados correctamente y se implementen medidas de seguridad adicionales, como el cifrado de datos y la autenticación de usuarios
+> NFS es un protocolo muy útil para compartir archivos entre diferentes hosts, pero también tiene algunos problemas de seguridad conocidos. Por ejemplo, **NFS no proporciona cifrado de datos**, lo que significa que los datos que se transmiten a través de NFS no están protegidos y pueden ser interceptados por un atacante. Además, **NFS no tiene autenticación incorporada**, lo que significa que cualquier persona que tenga acceso a la red puede acceder a los archivos compartidos. Por lo tanto, es importante asegurarse de que los sistemas NFS estén configurados correctamente y se implementen medidas de seguridad adicionales, como el cifrado de datos y la autenticación de usuarios
 
 A continuación veremos cómo se instala **NFS** en un servidor Ubuntu 22.04 LTS. Después, veremos cómo se realiza la instalación en los equipos cliente, tanto en Ubuntu 22.04 LTS como en Windows 10. De esta forma, cuando terminemos la instalación, estaremos listos para comenzar a configurar nuestro sistema de archivos de red.
 
@@ -194,7 +194,7 @@ En nuestro caso, incluiremos estas dos nuevas líneas en el archivo `/etc/export
 Y para lograrlo, recurriremos, como es habitual, al editor de textos nano: 
 
 <div align="center">
-    <img src="../img/nfs/nfs-03.png" alt="Compartiendo con NFS" width="50%" />
+    <img src="../img/nfs/nfs-03.png" alt="Compartiendo con NFS" width="60%" />
 </div>
 
 Una vez modificado el fichero, debemos reiniciar el servicio para que tengan efectos los cambios:
@@ -208,7 +208,7 @@ Con estos pasos tan sencillos tenemos nuestro servidor configurado, ahora veamos
 Aprovechamos para crear y compartir un fichero para después poder acceder desde los clientes: 
 
 <div align="center">
-    <img src="../img/nfs/nfs-06.png" alt="Compartiendo con NFS" width="50%" />
+    <img src="../img/nfs/nfs-06.png" alt="Compartiendo con NFS" width="70%" />
 </div>
 
 # 3. Instalación y configuración de un cliente Ubuntu
@@ -329,8 +329,9 @@ En nuestro ejemplo seria:
 
 ```bash
 192.168.56.254:/home/sergio/compartido  /home/sergio/nfs_compartido nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
-Mas opciones en el [manual de ubuntu](https://manpages.ubuntu.com/manpages/noble/en/man5/nfs.5.html)
 ```
+
+Mas opciones en el [manual de ubuntu](https://manpages.ubuntu.com/manpages/noble/en/man5/nfs.5.html)
 
 <div align="center">
     <img src="../img/nfs/nfs-09.png" alt="Compartiendo con NFS" width="60%" />
@@ -358,7 +359,7 @@ En nuestro caso, vamos a ver cómo acceder desde un sistema Windows 10, por lo q
 
 ## 4.1. Instalación
 
-El cliente *Network File System* (NFS) no está instalado de forma predeterminada en las versiones de escritorio de Windows Server 2022/2019/2016/2012R2 y Windows 11/10. 
+El cliente *Network File System* (NFS) no está instalado de forma predeterminada en las versiones de escritorio de *Windows Server 2022/2019/2016/2012R2* y *Windows 11/10*. 
 
 Para instalarlo en un servidor abrimos  el *Administrador del servidor* y seleccionamos *Agregar funciones y características* -> *Cliente para NFS* .
 
@@ -408,7 +409,7 @@ Desde este punto podemos incluso abrir el fichero e intentar modificar su conten
 
 **¿qué ha pasado?**
 
-Hasta ahora hemos compartido una carpeta, hemos puesto un fichero, se ha accedido desde un sistema Linux sin problemas, ahora hemos accedido desde un sistema Windows, sin embargo desde eel sistema Linux hemos modificado el fichero y desde Windows no, entonces *¿cuál es el problema?*. Respuesta : **Permisos**.
+Hasta ahora hemos compartido una carpeta, hemos puesto un fichero, se ha accedido desde un sistema Linux sin problemas, ahora hemos accedido desde un sistema Windows, sin embargo desde el sistema Linux hemos modificado el fichero y desde Windows no, entonces *¿cuál es el problema?*. Respuesta : **Permisos**.
 
 <div align="center">
     <img src="../img/nfs/nfs-15.png" alt="Compartiendo con NFS" width="70%" />
@@ -458,7 +459,7 @@ Otro método sería crear un script sencillo donde utilicemos el comando `mount`
 
 Esto se puede realizar de diferentes formas, una de ellas es la siguientes:
 
-El sistema operativo Windows dispone de una carpeta especial, llamada Inicio, donde podemos incluir archivos para que se ejecuten durante el arranque del equipo.
+El sistema operativo Windows dispone de una carpeta especial, llamada *Inicio*, donde podemos incluir archivos para que se ejecuten durante el arranque del equipo.
 
 Para abrirla, comenzaremos usando la combinación de teclas `Windows + R`, para obtener la ventana Ejecutar. En ella, escribiremos la siguiente orden: `shell:startup`
 
@@ -466,9 +467,9 @@ Para abrirla, comenzaremos usando la combinación de teclas `Windows + R`, para 
     <img src="../img/nfs/nfs-win-11.png" alt="Compartiendo con NFS" width="30%" />
 </div>
 
-Al hacerlo, se abrirá el Explorador de archivos, mostrando el contenido de la carpeta Inicio.
+Al hacerlo, se abrirá el Explorador de archivos, mostrando el contenido de la carpeta *Inicio*.
 
-Como nos interesa que se muestren las extensiones de los archivos, comenzaremos haciendo clic sobre el menú Vista, desplegando las opciones Mostrar y ocultar, y asegurándonos de marcar la opción Extensiones de nombre de archivo.
+Como nos interesa que se muestren las extensiones de los archivos, comenzaremos haciendo clic sobre el menú Vista, desplegando las opciones *Mostrar y oculta*r, y asegurándonos de marcar la opción *Extensiones de nombre de archivo*.
 
 <div align="center">
     <img src="../img/nfs/nfs-win-12.png" alt="Compartiendo con NFS" width="40%" />
@@ -513,7 +514,7 @@ Vamos a crear una carpeta en la ruta `/srv/nfs` y ahí vamos a compartir a parti
 > Antes de continuar, puesto que vamos a eliminar la carpeta compartida inicialmente, eliminamos los recursos compartidos en los clientes; 
 > - Eliminamos el acceso directo en nuestro Windows 
 > - Eliminamos o comentamos la línea del archivo `nfs.bat` (para comentar en dos, mediante el comando `rem` delante de la línea)
-> - Comentamos o eliminamos la línea de /etc/fstab en nuestro Ubuntu Desktop
+> - Comentamos o eliminamos la línea de `/etc/fstab` en nuestro *Ubuntu Desktop*
 > - Comentamos o eliminamos la línea de exportación de la carpeta en el servidor `/etc/exports`, en caso contrario, si eliminamos la carpeta el servicio puede entrar en error y esto provocará que no podamos exportar nada mas:
 <div align="center">
     <img src="../img/nfs/nfs-17.png" alt="Compartiendo con NFS" width="50%" />
@@ -537,7 +538,7 @@ Estas opciones son obvias, se explican por si solas, pero la complicación llega
 
 Esto se traduce en que si especificamos `no_root_squash` entonces el control de los permisos recae en el equipo cliente, y si no lo especificamos o indicamos `root_squash` el control de los permisos recae en el equipo servidor.
 
-Dicho de otra manera, `root_squash` previene a los usuarios *root* conectados remotamente de tener privilegios como *root* asignándole el userid de '`nobody`'. Esto reconvierte el poder del usuario *root* remoto al de usuario local más bajo, previniendo que los usuarios *root* remotos puedan convertirse en usuarios *root* en el sistema local. Alternativamente, la opción `no_root_squash` lo desactiva. Para reconvertir a todos los usuarios, incluyendo a *root*, use la opción `all_squash`. 
+Dicho de otra manera, `root_squash` previene a los usuarios *root* conectados remotamente de tener privilegios como *root* asignándole el userid de '`nobody`'. Esto reconvierte el poder del usuario *root* remoto al de usuario local más bajo, previniendo que los usuarios *root* remotos puedan convertirse en usuarios *root* en el sistema local. Alternativamente, la opción `no_root_squash` lo desactiva.  
 
 Ejemplo: 
 
@@ -554,7 +555,7 @@ o sea, el control de permisos recae sobre el **cliente**, de esta forma que si e
 
 > recordad que al realizar cualquier cambio en el fichero `/etc/export` se debe reiniciar el servicio `nfs-server` para que tengan efecto.
 
-En la siguiente captura podemos ver que montamos la carpeta exportada, inicialmente no tenemos permisos de escritura (somo *otros*) y no podemos escribir, y tras dar permisos de escritura ya somo capaces de escribir. Realmente lo que ha ocurrido es que al cambiar los permisos, los hemos cambiado directamente en la carpeta compartida desde el servidor:
+En la siguiente captura podemos ver que montamos la carpeta exportada, inicialmente no tenemos permisos de escritura (somos *otros*) y no podemos escribir, y tras dar permisos de escritura ya somo capaces de escribir. Realmente lo que ha ocurrido es que al cambiar los permisos, los hemos cambiado directamente en la carpeta compartida desde el servidor:
 
 <div align="center">
     <img src="../img/nfs/nfs-18.png" alt="Compartiendo con NFS" width="50%" />
@@ -610,7 +611,7 @@ sudo chmod 007 /srv/nfs
 ```
 
 Donde podemos establecer las siguientes puntualizaciones: 
-- En el comando `mkdir` se usa del argumento `-p` (también podemos escribir `–parents`). Su cometido es doble: por un lado evitar que se produzca un error si alguna de las carpetas ya existiese (aunque este no es el caso); por el otro, crea automáticamente la parte de la estructura del árbol que sea necesaria. Es decir, en la primera orden, se crea la carpeta nfs (que aún no existía). 
+- En el comando `mkdir` se usa del argumento `-p` (también podemos escribir `–parents`). Su cometido es doble: por un lado evitar que se produzca un error si alguna de las carpetas ya existiese (aunque este no es el caso); por el otro, crea automáticamente la parte de la estructura del árbol que sea necesaria. Es decir, en la primera orden, se crea la carpeta `nfs` (que aún no existía). 
 - El usuario `nobody` y el grupo `nogroup` son dos conceptos importantes en el sistema operativo Linux. El usuario `nobody` está destinado a representar al usuario con ***los permisos más bajos*** en el sistema. En el mejor de los casos, este usuario y su grupo no están asignados a ningún archivo o directorio (como propietario). El grupo `nogroup` se utiliza para restringir el acceso a archivos y directorios a usuarios no autorizados. 
 - Finalmente, solo tienen sentido los permisos que asignamos a otros, con lo que establecemos todo tipo de permisos a *otros* pero no a los propietarios del grupo. 
 
@@ -702,7 +703,11 @@ Para compartir con una subred:
 
 # 6. Conclusiones
 
-NFS es una herramienta muy útil, pero debe tener en cuenta sus limitaciones especialmente en cuestiones de seguridad: todos los datos pasan a través de la red sin cifrar (un sniffer puede interceptarlos); el servidor fuerza restricciones de acceso basado en la dirección IP del cliente (que puede ser falsificada); y, finalmente, cuando se provee acceso a una máquina cliente a un espacio NFS compartido mal configurado, el usuario root del cliente puede acceder a todos los archivos en el espacio compartido (aún aquellos que pertenezcan a otros usuarios) ya que el servidor confía en el nombre de usuario que recibe del cliente (esta es una limitación histórica del protocolo). 
+NFS es una herramienta muy útil, pero debe tener en cuenta sus limitaciones especialmente en cuestiones de seguridad: 
+- todos los datos pasan a través de la red sin cifrar (un sniffer puede interceptarlos); 
+- el servidor fuerza restricciones de acceso basado en la dirección IP del cliente (que puede ser falsificada); 
+- y, finalmente, cuando se provee acceso a una máquina cliente a un espacio NFS compartido mal configurado, el usuario ***root*** del cliente puede acceder a todos los archivos en el espacio compartido (aún aquellos que pertenezcan a otros usuarios) ya que el servidor confía en el nombre de usuario que recibe del cliente (esta es una limitación histórica del protocolo). 
+
 Por ello, es un sistema aconsejable en entorno Linux controlados, pero cuando estos sistemas son susceptibles de ataques o se involucran sistemas Windows, debe utilizar `Samba` en su lugar.
 
 

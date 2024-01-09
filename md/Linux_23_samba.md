@@ -30,14 +30,21 @@ En este tutorial se hace una instalación sencilla de `samba` y se puede ver su 
 
 Otros enlaces desde donde extraer recursos:
 
-- [Instalar y configurar Samba Share en Ubuntu 22.04|20.04|18.04](https://es.linux-console.net/?p=21480). Este enlace es bueno, se podría copiar todo el contenido por que hace configuración para todo el mundo, para usuarios logados y después faltaría hacer para Active Directory
+- [Instalar y configurar Samba Share en Ubuntu 22.04|20.04|18.04](https://es.linux-console.net/?p=21480). Este enlace es bueno, se podría copiar todo el contenido por que hace configuración para todo el mundo, para usuarios logueados y después faltaría hacer para Active Directory
 
 - [Samba](https://pfc.upnfm.edu.hn/cursos/redes/REDES_LINUX/samba/Que_es_samba.html). De aquí ha cogido Ximo parte de sus apuntes.
 
 # puntos
 
-- Compartir anonimo
+- Compartir anónimo
 - Compartir usuarios
 - Crear usuarios para compartir
-- Compartir por otros usuarios no root
+- Compartir por otros usuarios **no** `root`
 - webadmin
+
+
+**Fuentes:**
+
+- [Install and Configure Samba](https://ubuntu.com/tutorials/install-and-configure-samba#1-overview)
+- [Instalar y configurar Samba Share en Ubuntu 22.04, 20.04 y 18.04](https://es.linux-console.net/?p=21480)
+- [YouTube: Uso de Samba para compartir carpetas con equipos Windows](https://www.youtube.com/watch?v=2fF1etV7iYY)
