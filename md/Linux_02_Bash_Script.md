@@ -924,7 +924,7 @@ fi
 De esta forma podemos incluir en el programa un conjunto de instrucciones que sólo se ejecutarán si la condición impuesta se cumple. Si no se cumple, no ejecutará ninguna instrucción que haya inmediatamente después de la palabra `then`.
 
 <div align="center">
-    <img src="../img/Estructura_IF.png" alt="Estructura IF" width="30%" />
+    <img src="../img/bash/Estructura_IF.png" alt="Estructura IF" width="30%" />
 </div>
 
 Hay una manera de que ejecute una serie de instrucciones cuando no se cumpla la condición. De esta forma podemos ejecutar instrucciones cuando se cumple la condición, y cuando no se cumple ejecutar otras.
@@ -941,7 +941,7 @@ fi
 La condición `else`no es obligatoria si no se necesita. Después de la palabra `else` no se debe poner `then`.
 
 <div align="center">
-    <img src="../img/Estructura_IF_ELSE.png" alt="Estructura IF ELSE" width="40%" />
+    <img src="../img/bash/Estructura_IF_ELSE.png" alt="Estructura IF ELSE" width="40%" />
 </div>
 
 Por último, si queremos que cuando una condición se cumpla ejecutar unas instrucciones, cuando se cumpla otra, ejecutar otras, y así podemos hacer lo siguiente:
@@ -961,7 +961,7 @@ fi
 Puede haber tantas instrucciones `elif` como creamos necesario, pero sólo una instrucción `else` como máximo (puede no haber ninguna), ya que es lo que se ejecutará cuando no se haya cumplido ninguna de las anteriores condiciones.
 
 <div align="center">
-    <img src="../img/Estructura_IF_ELSEIF.png" alt="Estructura IF ELSE" width="50%" />
+    <img src="../img/bash/Estructura_IF_ELSEIF.png" alt="Estructura IF ELSE" width="50%" />
 </div>
 
 Después de cada condición `elif` también se pone la palabra `then` en la siguiente línea.
@@ -1080,7 +1080,7 @@ Un **bloque de instrucciones** se puede decir que es un conjunto de instruccione
 marcados por el inicio y el final del fichero.
 
 <div align="center">
-    <img src="../img/Estructura_IF_Bloques.png" alt="Estructura IF ELSE" width="30%" />
+    <img src="../img/bash/Estructura_IF_Bloques.png" alt="Estructura IF ELSE" width="30%" />
 </div>
 
 Como se puede observar en la figura anterior, se pueden meter bloques de instrucciones, unos dentro de otros. A esto se le llama anidar bloques. De esta forma cuando un bloque contiene otro dentro, se puede decir que el que contiene es el bloque padre, y el contenido es el bloque hijo.
@@ -1276,7 +1276,7 @@ Se puede decir que un bucle, es un conjunto de instrucciones que se repiten, es 
 Ejemplo de un bucle infinito. Podemos observar como después de ejecutar todas las instrucciones vuelve a empezar desde el principio:
 
 <div align="center">
-    <img src="../img/Bucle_Infinito.png" alt="Bucle infinito" width="30%" />
+    <img src="../img/bash/Bucle_Infinito.png" alt="Bucle infinito" width="30%" />
 </div>
 
 ## 15.1. Estructura `While` (mientras)
@@ -1292,7 +1292,7 @@ do
 done
 ```
 <div align="center">
-    <img src="../img/Bucle_WHILE.png" alt="Bucle infinito" width="50%" />
+    <img src="../img/bash/Bucle_WHILE.png" alt="Bucle infinito" width="50%" />
 </div>
 
 Como podemos observar, siempre que la condición sea cierta, se ejecutarán las instrucciones dentro del bucle una y otra vez, hasta que la condición sea falsa.
@@ -1451,7 +1451,7 @@ done
 ```
 
 <div align="center">
-    <img src="../img/Bucle_FOR.png" alt="Bucle infinito" width="50%" />
+    <img src="../img/bash/Bucle_FOR.png" alt="Bucle infinito" width="50%" />
 </div>
 
 En esta estructura tenemos un bucle `for`, y encerrados entre un doble paréntesis una instrucción que se ejecutará justo antes de comenzar el bucle por primera vez (instr1), una condición que indicará si se ejecutan las instrucciones dentro del bucle o se terminará y una instrucción final que se ejecutará como última instrucción dentro del bucle (instr2). Se podría expresar así en *pseudocódigo*:
@@ -1613,7 +1613,7 @@ Como se ve, si intentamos acceder a un elemento que no existe, el que tiene índ
 Digamos que la estructura de la variable vector en este caso se podría representar así.
 
 <div align="center">
-    <img src="../img/Ejemplo_Vector_1.png" alt="Vector con datos 1" width="40%" />
+    <img src="../img/bash/Ejemplo_Vector_1.png" alt="Vector con datos 1" width="40%" />
 </div>
 
 Podemos añadir un elemento adicional al vector, o modificar uno existente, de la misma forma que accedemos a él.
@@ -1624,7 +1624,7 @@ vector[4]=3
 ```
 
 <div align="center">
-    <img src="../img/Ejemplo_Vector_2.png" alt="Vector con datos 2" width="40%" />
+    <img src="../img/bash/Ejemplo_Vector_2.png" alt="Vector con datos 2" width="40%" />
 </div>
 
 Podemos asignar un valor a un índice, por ejemplo el 7, dejando índices vacíos en medio, aunque esta no es un práctica muy aconsejable en la mayoría de las ocasiones.
@@ -1634,7 +1634,7 @@ vector[7]=20
 ```
 
 <div align="center">
-    <img src="../img/Ejemplo_Vector_3.png" alt="Vector con datos 3" width="40%" />
+    <img src="../img/bash/Ejemplo_Vector_3.png" alt="Vector con datos 3" width="40%" />
 </div>
 
 Hay un propiedad muy útil en la vectores, y es el hecho de que si utilizamos '`*`' como índice, nos muestra el vector como si fuera una lista.
@@ -1713,7 +1713,7 @@ Aunque no vamos a profundizar demasiado en este tema, vamos a aprender lo que es
 Una **función** se puede describir como un trozo del código o conjunto de instrucciones que se agrupan para realizar alguna función específica dentro del programa. Esta función específica puede ser una operación matemática, una búsqueda, ordenación, etc...
 
 <div align="center">
-    <img src="../img/Estructura_Funcion.png" alt="Estructura de uso de una función" width="40%" />
+    <img src="../img/bash/Estructura_Funcion.png" alt="Estructura de uso de una función" width="40%" />
 </div>
 
 Una función se define con un nombre seguido de '`()`' y '`{`'. A continuación se escriben las instrucciones que formarán parte de la función y se terminará cerrando la llave '`}`'.

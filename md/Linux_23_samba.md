@@ -311,11 +311,13 @@ sudo systemctl restart smbd.service
 
 # 6. puntos
 
+Hacer tarea que contenga los siguientes puntos
+
 - Compartir anónimo
 - Compartir usuarios
 - Crear usuarios para compartir
 - Compartir por otros usuarios **no** `root`
-- webadmin
+- Instalación webadmin y creación de nuevo recurso
 
 
 **Fuentes:**
@@ -326,3 +328,6 @@ sudo systemctl restart smbd.service
 - [Teycen: Configurar Samba en Ubuntu para compartir archivos e impresoras en redes Windows](http://www.teycen.com/pages/linux/linux_samba.php)
 - [Guía Ubuntu: Samba](https://www.guia-ubuntu.com/index.php/Samba#Para_compartir_una_carpeta)
 - [YouTube: Uso de Samba para compartir carpetas con equipos Windows](https://www.youtube.com/watch?v=2fF1etV7iYY)
+
+- [DigitalOcean: How To Install Webmin on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-install-webmin-on-ubuntu-22-04)
+- [HowtoForge; Cómo instalar Webmin con el certificado SSL gratuito Let’s Encrypt en Ubuntu 22.04](https://howtoforge.es/como-instalar-webmin-con-el-certificado-ssl-gratuito-let-s-encrypt-en-ubuntu-22-04/)

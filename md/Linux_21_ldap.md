@@ -54,7 +54,7 @@ Existen diferentes formas de autenticar clientes en una red GNU/Linux, pero una 
 La idea consiste en disponer de un servidor que facilite la autenticación de los clientes, de modo que éstos recurran al servidor cada vez que un usuario necesite identificarse.De esta forma, la cuenta de usuario no es específica de un equipo cliente, sino que será válida en cualquier equipo de la red que haya sido debidamente configurado.
 
 <div align="center">
-    <img src="../img/ldap01.png" alt="Estructura LDAP" width="50%" />
+    <img src="../img/ldap/ldap01.png" alt="Estructura LDAP" width="50%" />
 </div>
 
 De hecho, éste es el método que suele utilizarse en GNU/Linux para obtener una gestión de usuarios globales similar a la que ofrecen los Servidores Windows a través de una estructura de dominios.
@@ -70,7 +70,7 @@ Los primeros sistemas operativos de tipo *Unix* accedían directamente a los arc
 El objetivo de **NSS** es que los programas o los comandos del sistema operativo puedan manejar información administrativa relacionada con los usuarios, las contraseñas y los grupos (incluidos aspectos como la caducidad de una contraseña o su nivel de complejidad) sin tener que conocer el lugar donde se encuentran almacenados. 
 
 <div align="center">
-    <img src="../img/ldap_nss.png" alt="Estructura LDAP mediante NSS" width="50%" />
+    <img src="../img/ldap/ldap_nss.png" alt="Estructura LDAP mediante NSS" width="50%" />
 </div>
 
 ## 1.2. ¿Qué es **PAM**?
@@ -84,7 +84,7 @@ Básicamente, **PAM** complementa en algunos aspectos el funcionamiento de **NSS
 En la actualidad, **PAM** es el método que utilizan la mayoría de las aplicaciones y herramientas de *GNU/Linux* que necesitan relacionarse, de algún modo, con la autenticación de los usuarios.
 
 <div align="center">
-    <img src="../img/ldap_pam.png" alt="Estructura LDAP mediante PAM y NSS" width="50%" />
+    <img src="../img/ldap/ldap_pam.png" alt="Estructura LDAP mediante PAM y NSS" width="50%" />
 </div>
 
 ## 1.3. ¿Qué es **LDAP**?
@@ -148,7 +148,7 @@ Como hemos dicho antes, las diferentes entradas se organizan a modo de árbol je
 
 
 <div align="center">
-    <img src="../img/ldap_02.png" alt="Estructura LDAP tipica" width="40%" />
+    <img src="../img/ldap/ldap_02.png" alt="Estructura LDAP tipica" width="40%" />
 </div>
 
 En la actualidad, las implementaciones de **LDAP** suelen utilizar **DNS** (*Domain Name Service*) para la estructura de los niveles superiores del árbol. En los niveles inferiores, sin embargo, las entradas representarán otro tipo de unidades organizativas, usuarios o recursos.
@@ -164,7 +164,7 @@ La mayor parte del tiempo, **LDAP** se utiliza para diversas consultas sobre la 
 Aunque ya hemos visto al principio un esquema de funcionamiento mucho más detallado, podríamos representar el funcionamiento de LDAP de una forma más abstracta con el siguiente esquema:
 
 <div align="center">
-    <img src="../img/ldap_03.png" alt="Estructura LDAP típica" width="50%" />
+    <img src="../img/ldap/ldap_03.png" alt="Estructura LDAP típica" width="50%" />
 </div>
 
 Por último, LDAP incluye servicios de integridad y confidencialidad de los datos que contiene. 
@@ -184,12 +184,12 @@ cat /etc/netplan/00-installer-config.yaml
 2. Comprobaremos que los archivos `/etc/hostname` y `/etc/hosts` contienen los nombres adecuados para el servidor.
    1. En el caso de `/etc/hostname`, para asignar un nuevo **nombre** al **servidor**. Por ejemplo, podemos asignar el nombre de ```srv-ldap```, por lo que este debe ser el contenido del fichero. 
    <div align="center">
-        <img src="../img/ldap_lcoalhost.png" alt="/etc/localhost" width="50%" />
+        <img src="../img/ldap/ldap_lcoalhost.png" alt="/etc/localhost" width="50%" />
    </div>
    
    2. Con `/etc/hosts` el proceso es un poco más largo: debemos editar el archivo e incluir las líneas que relacionen la dirección IP estática del servidor con los nombres lógicos que tenemos previsto utilizar. En concreto modificamos la línea que hace referencia al bucle local y añadimos una nueva línea que haga referencia a la dirección IP estática. En definitiva, algo como esto:
    <div align="center">
-        <img src="../img/ldap_hosts.png" alt="/etc/hosts" width="50%" />
+        <img src="../img/ldap/ldap_hosts.png" alt="/etc/hosts" width="50%" />
    </div>
 ```
 127.0.1.1 srv-ldap.simarrilandia.local srv-ldap
@@ -227,18 +227,18 @@ Así conseguiremos que se inicie de nuevo el asistente de configuración, pero e
 - Lo primero que nos pregunta el asistente es si queremos omitir la configuración de OpenLDAP.
 - Después, deberemos escribir el nombre DNS del dominio que usaremos en nuestro directorio LDAP, por ejemplo ```simarrilandia.local```
 <div align="center">
-    <img src="../img/ladp_slapd1.png" alt="Configuración slapd" width="40%" />
+    <img src="../img/ldap/ladp_slapd1.png" alt="Configuración slapd" width="40%" />
 </div>
 
 - A continuación, deberemos escribir el nombre de la empresa o entidad en la que estemos realizando la instalación
 <div align="center">
-    <img src="../img/ladp_slapd2.png" alt="Configuración slapd" width="40%" />
+    <img src="../img/ldap/ladp_slapd2.png" alt="Configuración slapd" width="40%" />
 </div>
 
 - Lo siguiente será escribir la contraseña de administración. 
 - Seguidamente, el asistente nos pregunta si queremos eliminar la base de datos de configuración antigua, responderemos que ```yes```
 <div align="center">
-    <img src="../img/ladp_slapd3.png" alt="Configuración slapd" width="40%" />
+    <img src="../img/ldap/ladp_slapd3.png" alt="Configuración slapd" width="40%" />
 </div>
 
 - Por último, el asistente nos avisa de que aún quedan archivos en la carpeta de LDAP, que pueden estropear el proceso de configuración y nos pide autorización para retirarlos antes de creare la nueva base de datos. Confirmaremos con ```yes```
@@ -255,7 +255,7 @@ sudo slapcat
 El objetivo de este comando consiste en obtener la información de la base de datos LDAP.
 
 <div align="center">
-    <img src="../img/ladp_slapd4.png" alt="Configuración slapd" width="30%" />
+    <img src="../img/ldap/ladp_slapd4.png" alt="Configuración slapd" width="30%" />
 </div>
 
 La salida se produce en formado ***LDIF***, lo que nos facilitará exportar la estructura del directorio LDAP o, sencillamente, obtener una copia de respaldo de su contenido. Para lograrlo, bastará con con redirigir su salida a un archivo. 
@@ -280,7 +280,7 @@ ou: asix
 Como ves, el objeto se llamará `asix`, se encuentra en la parte superior de la jerarquía, y es una ***Unidad organizativa***.
 
 <div align="center">
-    <img src="../img/ladp_slapd5.png" alt="Configuración slapd" width="30%" />
+    <img src="../img/ldap/ladp_slapd5.png" alt="Configuración slapd" width="30%" />
 </div>
 
 A continuación, deberemos añadir la información a la base de datos **OpenLDAP**. Como sabemos, esto se hace con el comando `ldapadd`:
@@ -302,7 +302,7 @@ sudo slapcat
 La salida nos muestra la estructura del directorio hasta el momento, en formado ***LDIF***.
 
 <div align="center">
-    <img src="../img/ladp_slapd.png" alt="Configuración slapd" width="50%" />
+    <img src="../img/ldap/ladp_slapd.png" alt="Configuración slapd" width="50%" />
 </div>
 
 
@@ -340,7 +340,7 @@ sudo ldapadd -x -D cn=admin,dc=simarrilandia,dc=local -W -f grp-aso.ldif
 Comprobamos que el grupo se ha creado correctamente y  como siempre mediante `slapcat` obtendremos todas las entradas para comprobar que todo se ha ejecutado correctamente. 
 
 <div align="center">
-    <img src="../img/ladp_slapd6.png" alt="Configuración slapd" width="50%" />
+    <img src="../img/ldap/ladp_slapd6.png" alt="Configuración slapd" width="50%" />
 </div>
 
 ## 4.3. Añadir un usuario de forma manual. `ldapadd` y `slappasswd`
@@ -356,7 +356,7 @@ sudo slappasswd
 ```
 
 <div align="center">
-    <img src="../img/ladp_slapd7.png" alt="Configuración slapd" width="30%" />
+    <img src="../img/ldap/ladp_slapd7.png" alt="Configuración slapd" width="30%" />
 </div>
 
 A continuación, el comando nos pide la contraseña que queremos utilizar. Es decir, la que usará inicialmente el usuario que estamos a punto de crear, cuando necesite autenticarse.
@@ -404,7 +404,7 @@ sudo ldapadd -x -D cn=admin,dc=simarrilandia,dc=local -W -f usr.ldif
 ```
 
 <div align="center">
-    <img src="../img/ladp_slapd8.png" alt="Configuración slapd" width="50%" />
+    <img src="../img/ldap/ladp_slapd8.png" alt="Configuración slapd" width="50%" />
 </div>
 
 Como antes usaremos el comando `slapcat`, para obtener todas las entradas del directorio y asegurarnos de que todo es correcto:
@@ -429,7 +429,7 @@ ldapsearch -xLLL -b "dc=simarrilandia,dc=local" uid=srey sn givenName cn
 En este ejemplo buscamos un usuario con `uid=srey` y pedimos que nos muestre el contenido de los atributos `sn`, `givenName` y `cn`.
 
 <div align="center">
-    <img src="../img/ladp_slapd9.png" alt="Configuración slapd" width="50%" />
+    <img src="../img/ldap/ladp_slapd9.png" alt="Configuración slapd" width="50%" />
 </div>
 
 En el ejemplo anterior: 
@@ -470,7 +470,7 @@ ldapmodify -x -D cn=admin,dc=simarrilandia,dc=local -W -f cambios.ldif
 Ejecutamos los cambios y utilizamos el comando anterior `ldapsearch` para comprobar que los cambios se han producido de forma satisfactoria:
 
 <div align="center">
-    <img src="../img/ladp_slapd10.png" alt="Configuración slapd" width="50%" />
+    <img src="../img/ldap/ladp_slapd10.png" alt="Configuración slapd" width="50%" />
 </div>
 
 ## 4.6. Borrar entradas del directorio. `ldapdelete`
@@ -483,7 +483,7 @@ ldapdelete -x -W -D 'cn=admin,dc=simarrilandia,dc=local' "uid=srey,ou=asix,dc=si
 Después de escribir la contraseña, parecerá que no ha ocurrido nada. Sin embargo, el objeto se habrá eliminado. Para comprobarlo, podemos volver a utilizar la utilidad `ldapsearch` con la misma sintaxis de arriba.
 
 <div align="center">
-    <img src="../img/ladp_slapd11.png" alt="Configuración slapd" width="50%" />
+    <img src="../img/ldap/ladp_slapd11.png" alt="Configuración slapd" width="50%" />
 </div>
 
 ## 4.7. El paquete `ldapscripts`
@@ -533,7 +533,7 @@ UHOMES="/home/ldap-asix/%u"
 Todas estas variables estan dipersas por todo el fichero de configuración, algunas de ellas comentadas. Debemos descomentar y cambiar las necesarias, según lo indicado anteriormente
 
 <div align="center">
-    <img src="../img/ldap_ldapscripts1.png" alt="Configuración slapscript" width="50%" />
+    <img src="../img/ldap/ldap_ldapscripts1.png" alt="Configuración slapscript" width="50%" />
 </div>
 
 En nuestro caso, todos los usuarios vamos a incluirlos dentro de la única Unidad Organizativa que hemos creado hasta ahora: `asix`. Sin embargo, si buscamos documentación sobre este conjunto de scripts veremos que normalmente establecen diferentes Unidades Organizativas para usuarios, grupos y máquinas.
@@ -556,7 +556,7 @@ sudo chmod 400 /etc/ldapscripts/ldapscripts.passwd
 > **Nota**: El password **solo funciona si lo hacemos mediante un `echo -n`**, y no funciona si lo editamos con un editor como *nano*, *vi* o *vim*, por lo que debemos ejecutar los pasos anteriores. En mi caso, como no tengo el usuario *root* activo y me resisto a activarlo, debo dar un pequeño rodeo para ejecutar el primero de los dos comando. 
 
 <div align="center">
-    <img src="../img/ladp_slapd13.png" alt="Configuración slapd" width="60%" />
+    <img src="../img/ldap/ladp_slapd13.png" alt="Configuración slapd" width="60%" />
 </div>
 
 En este punto ya podríamos empezar los comandos que nos ofrece el paquete `ldapscript`, pero para que funcionen nos queda una tarea que realizar y es crear las unidades organizativas que le hemos especificado en el fichero de configuración. 
@@ -567,7 +567,7 @@ Por ejemplo, para crear el grupo `ISO`:’
 ldapaddgroup iso
 ```
 <div align="center">
-    <img src="../img/ldap_ldapscripts2.png" alt="Configuración slapd" width="60%" />
+    <img src="../img/ldap/ldap_ldapscripts2.png" alt="Configuración slapd" width="60%" />
 </div>
 
 Después el usuario
@@ -581,7 +581,7 @@ ldapdeletegroup iso
 ```
 
 <div align="center">
-    <img src="../img/ldap_ldapscripts3.png" alt="Configuración slapd" width="60%" />
+    <img src="../img/ldap/ldap_ldapscripts3.png" alt="Configuración slapd" width="60%" />
 </div>
 
 Con esta orden creará el usuario con las opciones por defecto configuradas en ldapscript.conf. Es importante prestar atención a la creación del directorio home para que el usuario pueda utilizar el sistema sin problemas. Por defecto no lo crea, tendríamos que especificarle dicha opción. 
@@ -598,13 +598,13 @@ Más ejemplos:
 Otros ejemplos creando un grupo y añadiendo usuarios al grupo creado o al grupos anteriores:
 
 <div align="center">
-    <img src="../img/ldap_ldapscripts4.png" alt="Configuración slapd" width="60%" />
+    <img src="../img/ldap/ldap_ldapscripts4.png" alt="Configuración slapd" width="60%" />
 </div>
 
 Y como antes, podemos ejecutar `sudo slapcat` para comprobar los resultados:
 
 <div align="center">
-    <img src="../img/ldap_ldapscripts5.png" alt="Configuración slapd" width="50%" />
+    <img src="../img/ldap/ldap_ldapscripts5.png" alt="Configuración slapd" width="50%" />
 </div>
 
 Como se puede comprobar, `ldapscript` nos ahorra trabajo respecto a las herramientas nativas que nos ofrece el paquete ldap-utils. Pero todavía hay otra característica que nos puede resultar interesante, su sistema de plantillas. El directorio `/usr/share/doc/ldapscripts/examples/` contiene unos ficheros con extensión `.template.sample` que se pueden utilizar para organizar la manera en la que se gestiona la información de cada uno de los atributos del elemento que estemos modificando.
@@ -707,7 +707,7 @@ sudo systemctl restart apache2
 Para la ejecución de LDAP Account Manager, utilizamos un navegador y accedemos a la dirección `http://192.168.56.254/lam` (o la que sea)
 
 <div align="center">
-    <img src="../img/ldap_lam01.png" alt="Configuración LAM" width="40%" />
+    <img src="../img/ldap/ldap_lam01.png" alt="Configuración LAM" width="40%" />
 </div>
 
 
@@ -716,31 +716,31 @@ Para la ejecución de LDAP Account Manager, utilizamos un navegador y accedemos 
 Para entrar en la configuración, entramos en *LAM Configuration* 
 
 <div align="center">
-    <img src="../img/ldap_lam02.png" alt="Configuración LAM" width="40%" />
+    <img src="../img/ldap/ldap_lam02.png" alt="Configuración LAM" width="40%" />
 </div>
 
 Una vez, dentro seleccionamos *Edit General Settings*. Nos pide una contraseña que por defecto es `lam`
 
 <div align="center">
-    <img src="../img/ldap_lam03.png" alt="Configuración LAM" width="40%" />
+    <img src="../img/ldap/ldap_lam03.png" alt="Configuración LAM" width="40%" />
 </div>
 
 A partir de ahí cambiamos los valores para ajustar a nuestro sistema, asignamos la IP del servidor:
 
 <div align="center">
-    <img src="../img/ldap_lam06.png" alt="Configuración LAM" width="60%" />
+    <img src="../img/ldap/ldap_lam06.png" alt="Configuración LAM" width="60%" />
 </div>
 
 también el idioma
 
 <div align="center">
-    <img src="../img/ldap_lam04.png" alt="Configuración LAM" width="60%" />
+    <img src="../img/ldap/ldap_lam04.png" alt="Configuración LAM" width="60%" />
 </div>
 
 y sobretodo configuración referente a nuestro servidor LDAP:
 
 <div align="center">
-    <img src="../img/ldap_lam05.png" alt="Configuración LAM" width="60%" />
+    <img src="../img/ldap/ldap_lam05.png" alt="Configuración LAM" width="60%" />
 </div>
 
 y guardamos cambios.
@@ -748,20 +748,20 @@ y guardamos cambios.
 Pasamos a la pestaña de Tipos de Cuentas y cambiamos las direcciones LDAP, según lo usado hasta ahora
 
 <div align="center">
-    <img src="../img/ldap_lam06.png" alt="Configuración LAM" width="40%" />
+    <img src="../img/ldap/ldap_lam06.png" alt="Configuración LAM" width="40%" />
 </div>
 
 y ahora ya podemos entrar y encontrar la configuración realizada hasta ahora:
 
 - Grupos
 <div align="center">
-    <img src="../img/ldap_lam08.png" alt="Configuración LAM" width="70%" />
+    <img src="../img/ldap/ldap_lam08.png" alt="Configuración LAM" width="70%" />
 </div>
 
 - y usuarios
 
 <div align="center">
-    <img src="../img/ldap_lam09.png" alt="Configuración LAM" width="70%" />
+    <img src="../img/ldap/ldap_lam09.png" alt="Configuración LAM" width="70%" />
 </div>
 
 
@@ -779,7 +779,7 @@ Hay muchas formas de añadir una máquina cliente al servidor OpenLDAP, pero la 
 Por supuesto el primer paso es asegurarnos de que tenemos conexión con el servidor y a partir de ahí realizar las configuraciones que se detalla a continuación.
 
 <div align="center">
-    <img src="../img/ldap_client00.png" alt="Configuración ldap en cliente" width="50%" />
+    <img src="../img/ldap/ldap_client00.png" alt="Configuración ldap en cliente" width="50%" />
 </div>
 
 Es interesante dar un nombre al equipo representativo, tenemos varias opciones: mediante el fichero `/etc/hostname` o mediante el comando `hostnamectl set-hostname`
@@ -787,7 +787,7 @@ Es interesante dar un nombre al equipo representativo, tenemos varias opciones: 
 A continuación nos asegurarnos que el cliente resuelve el nombre del servidor, de esta manera, nos evitamos trabajar con direcciones IP. En un entorno de producción tendríamos un servidor DNS dando servicio, pero como estamos realizando un laboratorio de prueba, nos conformaremos con introducir la dirección en el archivo de hosts del cliente, aunque puedes hacerlo con un servidor DNS.
 
 <div align="center">
-    <img src="../img/ldap_client06.png" alt="Configuración ldap en cliente" width="60%" />
+    <img src="../img/ldap/ldap_client06.png" alt="Configuración ldap en cliente" width="60%" />
 </div>
 
 Antes de continuar, podemos verificar que accedemos al servidor y obtenemos la lista de usuarios disponibles en el servidor OpenLDAP. Para ello utilizamos el comando `ldapsearch` tal y como hemos visto en la configuracón del servidor. Si no lo tenemos instalado, lo instalamos mediante el paquete `ldap-utils`;
@@ -798,7 +798,7 @@ sudo ldapsearch -x -b "ou=asix,dc=simarrilandia,dc=local"
 ```
 
 <div align="center">
-    <img src="../img/ldap_client07.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client07.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 Aqui vemos lo mismo que cuando lo ejecutamos desde el servidor.
@@ -825,13 +825,13 @@ Durante el proceso, se activa un asistente que nos permite configurar el comport
 En el primar paso, nos solicita la dirección URi del servidor LDAP. En nuestro caso, escribiremos la dirección IP del servidor y sustituiremos el protocolo `ldapi:///` por `ldap://`. **Cuidado con las dos barras**.
 
 <div align="center">
-    <img src="../img/ldap_client01.png" alt="Configuración ldap en cliente" width="50%" />
+    <img src="../img/ldap/ldap_client01.png" alt="Configuración ldap en cliente" width="50%" />
 </div>
 
 Después indicamos el nombre global único *(Distinguished Name – DN)*. Según el ejemplo `dc=simarrilandia,dc=local`
 
 <div align="center">
-    <img src="../img/ldap_client02.png" alt="Configuración ldap en cliente" width="50%" />
+    <img src="../img/ldap/ldap_client02.png" alt="Configuración ldap en cliente" width="50%" />
 </div>
 
 Despúes nos pide versión del protocolo LDAP, dejamos el 3 y después indicaremos si las utilidades que utilicen PAM deberán comportarse del mismo modo que cuando cambiamos contraseñas locales (respondemos `yes`). Esto hará que las contraseñas se guarden en un archivo independiente que sólo podrá ser leído por el superusuario.
@@ -841,13 +841,13 @@ Después, el sistema nos pregunta si queremos que sea necesario identificarse pa
 Ya sólo nos queda indicar el nombre de la cuenta ***LDAP*** que tendrá privilegios para realizar cambios en las contraseñas. Como antes, deberemos escribir un nombre global único *(Distinguished Name – DN)*, según el ejemplo `cn=admin,dc=simarrilandia,dc=local`.
 
 <div align="center">
-    <img src="../img/ldap_client03.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client03.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 En el último paso, el asistente nos solicita la contraseña que usará la cuenta anterior. Deberá coincidir con la que escribimos en el apartado Instalar ***OpenLDAP*** en el servidor.
 
 <div align="center">
-    <img src="../img/ldap_client05.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client05.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 En caso de ocurrir algún error o necesitamos efectuar alguna modificación, podemos repetir el proceso mediante el siguiente comando:
@@ -868,7 +868,7 @@ Deberemos cambiar algunos parámetros en los archivos de configuración del clie
 Cambiamos la configuración de usuarios y grupos a `ldap` en vez de `systemd`
 
 <div align="center">
-    <img src="../img/ldap_client04.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client04.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 Para saber si la configuración anterior funciona adecuadamente, usaremos el comando 'getent', que consultará el contenido del archivo `/etc/nsswitch.conf` para mostrarnos la lista de usuarios, grupos, equipos, etc., que se encuentran registrados en el sistema. Si la configuración que hemos hecho es correcta, aparecerán también las cuentas de usuario definidas en el servidor LDAP.
@@ -884,7 +884,7 @@ El comando nos responderá con la lista de todos los usuarios, grupos, etc., que
 Aqui tenemos el listado filtrado: 
 
 <div align="center">
-    <img src="../img/ldap_client11.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client11.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 
@@ -893,7 +893,7 @@ Aqui tenemos el listado filtrado:
 El siguiente archivo a editar será `/etc/pam.d/common-password` y eliminaremos el parámetro `use_authtok` de la línea 26. La función de este parámetro es evitar que si un determinado usuario falla la autenticación con un método, no pueda validarse con un segundo.
 
 <div align="center">
-    <img src="../img/ldap_client08.png" alt="Configuración ldap en cliente" width="50%" />
+    <img src="../img/ldap/ldap_client08.png" alt="Configuración ldap en cliente" width="50%" />
 </div>
 
 ### 6.3.3. Fichero `/etc/pam.d/common-session`
@@ -909,7 +909,7 @@ session optional       pam_mkhomedir.so skel=/etc/skel umask=077
 Esta línea debemos insertarla al final del fichero.
 
 <div align="center">
-    <img src="../img/ldap_client09.png" alt="Configuración ldap en cliente" width="50%" />
+    <img src="../img/ldap/ldap_client09.png" alt="Configuración ldap en cliente" width="50%" />
 </div>
 
 
@@ -930,7 +930,7 @@ sudo su - srey
 Verás que aparece un mensaje, avisando de que se está creando, dentro de /home, el directorio local para la cuenta. Esto es porque se trata de la primera vez que iniciamos sesión con esta cuenta en el equipo cliente. Como es lógico, esto no ocurrirá el resto de las veces que nos autentiquemos con esta cuenta.
 
 <div align="center">
-    <img src="../img/ldap_client12.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client12.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 
@@ -953,7 +953,7 @@ Durante el proceso, se activa un asistente que nos permite configurar el comport
 ldap://192.168.56.254/
 ```
 <div align="center">
-    <img src="../img/ldap_client13.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client13.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 ```
@@ -961,7 +961,7 @@ dc=simarrilandia,dc=local
 ```
 
 <div align="center">
-    <img src="../img/ldap_client14.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client14.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 Y reiniciamos el sistema.
@@ -971,13 +971,13 @@ Y reiniciamos el sistema.
 Una vez completado el reinicio ya podemos introducir nuestro usuario dado de alta en el servidor ldap. 
 
 <div align="center">
-    <img src="../img/ldap_client15.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client15.png" alt="Configuración ldap en cliente" width="40%" />
 </div>
 
 Recuerda que la pantalla de autenticación de Ubuntu solo muestra los usuarios que ya han iniciado sesión en el sistema, de forma gráfica, al menos una vez.
 
 <div align="center">
-    <img src="../img/ldap_client16.png" alt="Configuración ldap en cliente" width="30%" />
+    <img src="../img/ldap/ldap_client16.png" alt="Configuración ldap en cliente" width="30%" />
 </div>
 
 
