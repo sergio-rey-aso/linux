@@ -1,3 +1,9 @@
+---
+title: Linux
+description: Scripting en Linux con expect
+permalink: /expect/
+---
+
 
 El scripting en Linux con expect es una técnica que permite automatizar tareas repetitivas en sistemas, tanto de forma local como remota, que requieren introducir información manualmente. Expect es un programa que habla a otros programas a través de un script. Siguiendo este script, Expect sabe qué salida esperar del programa que ejecuta y responder en consecuencia y, si procede, es posible devolver el control al usuario o revocarlo. Resulta muy útil para automatizar tareas repetitivas en sistemas, tanto de forma local como remota, que requieren introducir información manualmente, más aún cuando trabajamos con instrucciones y protocolos como SSH, SCP, SFTP, TELNET o RLOGIN.
 

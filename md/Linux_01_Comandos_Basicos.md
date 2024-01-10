@@ -1,23 +1,28 @@
 ---
 title: Linux
 description: Comandos Linux Básicos
-permalink: /Linux_01_Comandos_Basicos/
+permalink: /basico/
 ---
 
 <h1>Comandos Linux Básicos</h1>
 
 <h3>Tabla de contenidos</h3>
 
-# 1. Comandos GNU/Linus Bash
-    - Recordatorio comandos carpetas y permisos
-    - Comandos gestión de gestión de información de ficheros
-    - Comandos administracion:
-      - `ssh`
-      - `vnc`
-      - Automatizaciń con `cron`
-      - Automaticación con `at` y `batch`
-      - Demonios
 # 1. Introducción
+
+
+# 1. Comandos GNU/Linus Bash
+
+- Recordatorio comandos carpetas y permisos
+- Comandos gestión de gestión de información de ficheros
+- Comandos administracion:
+  - `ssh`
+  - `vnc`
+  - Automatizaciń con `cron`
+  - Automaticación con `at` y `batch`
+  - Demonios
+
+
 
 
 # 2. Algunos comandos básicos de ***PowerShell***

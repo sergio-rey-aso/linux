@@ -1,3 +1,9 @@
+---
+title: Linux
+description: SSH y VNC
+permalink: /ssh/
+---
+
 Se trata de conectar desde el HOST a dos equipos virtualizados: un Ubuntu Desktop y un Ubuntu Server.
 
 ### 1. En primer lugar, para **conectar por `ssh`**:

@@ -1,3 +1,10 @@
+---
+title: Linux
+description: Gestión de eventos del sistema
+permalink: /syslog/
+---
+
+
 ### Gestión de eventos del sistema.
 
 Una de las cosas que hace de GNU/Linux un gran sistema operativo es que prácticamente cualquier cosa que suceda en y hacia el sistema puede estar registrado de alguna manera. Esta información es imprescindible para controlar cualquier sistema y es ​​uno de los primeros recursos que se utilizan para solucionar problemas del sistema y de las aplicaciones. Los registros pueden recoger casi cualquier cosa que necesite un *administrador*, siempre y cuando tenga una idea de dónde buscar primero.
