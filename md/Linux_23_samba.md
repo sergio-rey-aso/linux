@@ -20,7 +20,7 @@ permalink: /samba/
 - [5. Verificando la configuración: `testparm`](#5-verificando-la-configuración-testparm)
 - [6. Conectando con el Servidor Samba](#6-conectando-con-el-servidor-samba)
   - [6.1. Accediendo desde un cliente GNU/Linux](#61-accediendo-desde-un-cliente-gnulinux)
-    - [6.1.1. Usando la Línea de Comandos](#611-usando-la-línea-de-comandos)
+    - [6.1.1. Usando la línea de comandos](#611-usando-la-línea-de-comandos)
     - [6.1.2. Desde el explorador de archivos](#612-desde-el-explorador-de-archivos)
     - [6.1.3. Montando el recurso compartido con `mount`](#613-montando-el-recurso-compartido-con-mount)
     - [6.1.4. Montando el recurso compartido permanentemente](#614-montando-el-recurso-compartido-permanentemente)
@@ -368,7 +368,7 @@ Existen varias formas de acceder a un servidor Samba, dependiendo de la platafor
 
 Veamos diferentes forma de acceso
 
-### 6.1.1. Usando la Línea de Comandos
+### 6.1.1. Usando la línea de comandos
 
 Utiliza el comando `smbclient` en la terminal de Linux para acceder al servidor **Samba**. 
 
@@ -510,11 +510,10 @@ Utiliza aplicaciones de gestión de archivos en dispositivos móviles que admita
 Es importante tener en cuenta que el acceso a un servidor Samba requiere configurar adecuadamente los recursos compartidos y establecer permisos de acceso. Además, la seguridad del acceso se puede gestionar mediante autenticación de usuarios y configuración de contraseñas en el servidor Samba.
 
 
-https://www.blai.blog/2021/08/acceder-carpeta-samba-linux-active-directory.html
-
-
-
 # 7. **Webmin**: Herramienta de Administración Web
+
+
+Para finalizar esta sección, vamos a ver una herramienta que no es exactamente samba, pero que nos permite configurar tanto samba como otros servicios de nuestro servidor.
 
 **Webmin** es una interfaz web de administración de sistemas diseñada para simplificar y facilitar la gestión de servidores Unix-like, incluyendo sistemas basados en Linux como Ubuntu Server. Proporciona una interfaz gráfica intuitiva que permite a los administradores de sistemas configurar, controlar y supervisar diversos aspectos del servidor a través de un navegador web.
 
