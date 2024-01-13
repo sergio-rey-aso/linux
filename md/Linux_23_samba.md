@@ -24,7 +24,7 @@ permalink: /samba/
     - [6.1.2. Desde el explorador de archivos](#612-desde-el-explorador-de-archivos)
     - [6.1.3. Montando el recurso compartido con `mount`](#613-montando-el-recurso-compartido-con-mount)
     - [6.1.4. Montando el recurso compartido permanentemente](#614-montando-el-recurso-compartido-permanentemente)
-      - [6.1.4.1. usadno `.smbcredentials`](#6141-usadno-smbcredentials)
+      - [6.1.4.1. usando `.smbcredentials`](#6141-usando-smbcredentials)
   - [6.2. Accediendo desde un cliente Windows](#62-accediendo-desde-un-cliente-windows)
   - [6.3. Otras formas de acceso](#63-otras-formas-de-acceso)
 - [7. **Webmin**: Herramienta de Administración Web](#7-webmin-herramienta-de-administración-web)
@@ -454,7 +454,7 @@ En este caso, incluimos las credenciales en el propio, fichero, accesibles a tod
 
 Si queremos proteger los datos del usuario, usaremos el archivo `.smbcredentials`
 
-#### 6.1.4.1. usadno `.smbcredentials`
+#### 6.1.4.1. usando `.smbcredentials`
 
 Se puede crear un archivo para almacenar las credenciales de acceso al recurso compartido Samba de forma segura. 
 
