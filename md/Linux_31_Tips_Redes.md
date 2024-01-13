@@ -35,7 +35,7 @@ Para aplicar la nueva configuración
 y comprobamos que ha funcionado:
 
 ```
-ip .br a
+ip -br a
 ```
 
 ### Mas operaciones interesantes con tarjetas de red y herramienta `ip`

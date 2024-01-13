@@ -12,14 +12,15 @@ Apuntes de **GNU/Linux**  para el módulo de ASO del CFGS de ASIX.
 
 Apartados:
 
-- [Bash Script](./Linux_02_Bash_Script/)
+- [Bash Script](./bash/)
 - [Open LDAP](./ldap/)
 - [NFS. (*Network File System*)](./nfs/)
+- [Samba](./samba/)
 
 
 
 {% comment %} 
-- [Comandos GNU/Linux Bash. Tips](./Linux_01_Comandos_Basicos/)
+- [Comandos GNU/Linux Bash. Tips](./basico/)
 
 Prueba de [slide](./md/es/slides/00.html)
 

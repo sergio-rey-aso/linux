@@ -1,7 +1,7 @@
 ---
 title: Linux
 description: Bash script
-permalink: /Linux_02_Bash_Script/
+permalink: /bash/
 ---
 
 <h1>Bash Script</h1>

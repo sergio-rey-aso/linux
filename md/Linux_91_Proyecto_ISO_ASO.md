@@ -36,6 +36,16 @@ permalink: /Proyecto/
 - Script para conectar con equipo. Si el equipo tiene VNC pregunta si quieres conectarte por VNC y o por SSH y si solo tiene SSH se conecta directamente por SSH.
 - Crear un servicio de algo (base de datos o lo que sea). Si es posible que se ejecute al iniciar y al apagar el servicio. Por ejemplo podría ser para registrar el arranque y el apagado de los equipos, mínimo.
 
+
+
+ - **Nueva clase de formación**
+   - Tiene un servidor en Linux con LDAP, NFS y SAMBA
+   - Se comparte una carpeta SAMBA llamada entradas. Se dejan ficheros en esta carpeta de entradas con listados de alumnos nuevos o grupos que finalizan
+   - Hay un script que se inicia por un servicio de tipo path, que cogerá los ficheros del la carpeta y dará de alta usuarios o eliminará. según corresponda. Estos alumnos se crean en grupos y dentro de LDAP
+   - Se utilizará una carpeta compartida en NFS para crear los perfiles móviles de los alumnos
+   - Desde un par de equipos cliente se accedera indistitanmente a las difernetes cuentas creadas en LDAP
+   - 
+
 ## Windows
 
 - Crear un tenant  -->  Se necesita tarjeta

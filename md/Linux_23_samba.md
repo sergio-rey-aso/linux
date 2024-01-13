@@ -12,11 +12,22 @@ permalink: /samba/
 - [2. Instalación y configuración básica](#2-instalación-y-configuración-básica)
 - [3. El fichero `/etc/samba/smb.conf`](#3-el-fichero-etcsambasmbconf)
   - [3.1. Sección `[global]`](#31-sección-global)
+    - [3.1.1. Configuración del tipo de servidor : `server role`](#311-configuración-del-tipo-de-servidor--server-role)
+    - [3.1.2. Opciones de configuración principales](#312-opciones-de-configuración-principales)
   - [3.2. Resto de secciones](#32-resto-de-secciones)
-  - [3.3. variables SAMBA](#33-variables-samba)
+  - [3.3. Variables SAMBA](#33-variables-samba)
 - [4. Crear, editar o eliminar usuarios en Samba](#4-crear-editar-o-eliminar-usuarios-en-samba)
 - [5. Verificando la configuración: `testparm`](#5-verificando-la-configuración-testparm)
-- [6. puntos](#6-puntos)
+- [6. Conectando con el Servidor Samba](#6-conectando-con-el-servidor-samba)
+  - [6.1. Accediendo desde un cliente GNU/Linux](#61-accediendo-desde-un-cliente-gnulinux)
+    - [6.1.1. Usando la Línea de Comandos](#611-usando-la-línea-de-comandos)
+    - [6.1.2. Desde el explorador de archivos](#612-desde-el-explorador-de-archivos)
+    - [6.1.3. Montando el recurso compartido con `mount`](#613-montando-el-recurso-compartido-con-mount)
+    - [6.1.4. Montando el recurso compartido permanentemente](#614-montando-el-recurso-compartido-permanentemente)
+      - [6.1.4.1. usadno `.smbcredentials`](#6141-usadno-smbcredentials)
+  - [6.2. Accediendo desde un cliente Windows](#62-accediendo-desde-un-cliente-windows)
+  - [6.3. Otras formas de acceso](#63-otras-formas-de-acceso)
+- [7. **Webmin**: Herramienta de Administración Web](#7-webmin-herramienta-de-administración-web)
 
 
 
@@ -69,6 +80,36 @@ La sección `[global]` define los parámetros de SAMBA del nivel global, así co
     <img src="../img/samba/samba-03.png" alt="Samba" width="50%" />
 </div>
 
+### 3.1.1. Configuración del tipo de servidor : `server role`
+
+Es importante antes de nada tener en cuenta el tipo de servidor que vamos a configurar con samba: el parámetro `server role` se utiliza para especificar el papel que el servidor **Samba** desempeñará en la red. Este parámetro determina si el servidor actuará como un ***controlador de dominio***, un ***servidor autónomo*** o en algún ***otro*** rol específico.
+
+En la siguiente tabla se muestran los diferentes opciones para este parámetro fundamental: 
+
+| Valor                                 | Descripción                                              |
+|---------------------------------------|----------------------------------------------------------|
+| **`standalone server`** (predeterminado)  | Servidor independiente sin funciones de controlador de dominio.|
+| **`member server`**                      | Servidor que forma parte de un dominio existente.        |
+| **`classic primary domain controller`**  | Controlador de dominio principal en un entorno Samba.    |
+| **`classic backup domain controller`**    | Controlador de dominio de respaldo en un entorno Samba.  |
+| `active directory domain controller`  | Controlador de dominio de Active Directory.              |
+| `active directory domain member`      | Miembro de dominio de Active Directory.                   |
+| `active directory domain controller for the domain` | Controlador de dominio específico de un dominio en Active Directory. |
+| `active directory domain controller for a new domain` | Controlador de dominio para la creación de un nuevo dominio en Active Directory. |
+
+Estos son algunos de los valores comunes para el parámetro "`server role`". Ten en cuenta que las opciones exactas pueden variar según la versión específica de Samba que estés utilizando, y siempre es recomendable consultar la documentación oficial correspondiente a tu versión específica para obtener la información más precisa. En todo caso los más utilizados son los 4 primeros, el resto son variaciones de estos.
+
+```
+server role = standalone server
+server role = member server
+server role = classic primary domain controller
+server role = classic backup domain controller
+```
+
+Es importante elegir el valor correcto para "`server role`" según el papel que desees que el servidor **Samba** desempeñe en tu red. 
+
+### 3.1.2. Opciones de configuración principales
+
 Las principales opciones de configuración de la sección global de SAMBA son:
 
 | Opción | Descripción | Valor por defecto | 
@@ -92,15 +133,16 @@ Un sencillo ejemplo de sección [global] es el siguiente:
 
 ```
 [global]
-workgroup = ROBLIS
+workgroup = WORKGROUP
 server string = SAMBA %v en %L
+server role = standalone server
 netbios name = glup
 security = user
 passdb backend = tdbsam
 smb passwd file = /var/lib/samba/private/passdb.tdb
 encrypt passwords = yes
 map to guest = Never
-hosts allow = 147.156.222. 147.156.223.
+hosts allow = 192.168.13. 192.168.56.
 ```
 
 Donde `%v` se sustituye por la versión de SAMBA y `%L` por el nombre del ordenador SAMBA. Mas adelante tenemos una tabla de equivalencia de estas variables.
@@ -124,29 +166,31 @@ Las principales opciones de configuración de estas secciones son:
 
 | Opción | Descripción | Valor por defecto |
 | --- | --- | --- |  
-| read only | Exportación del recurso en solo lectura. | yes |  
-| writeable | Exportación del recurso en modo escritura | no |
-| browseable | Define si se permitirá mostrar este recurso en las listas de recursos compartidos de Windows | yes |
-| path | Ruta absoluta al recurso | Ninguno. |
-| comment | Descripción del servicio. | Ninguno. |
-| guest ok | Define si se permitirá el acceso como usuario invitado. El valor puede ser Yes o No. | no |
+| **read only** | Exportación del recurso en solo lectura. | yes |  
+| **writeable** | Exportación del recurso en modo escritura | no |
+| **browseable** | Define si se permitirá mostrar este recurso en las listas de recursos compartidos de Windows | yes |
+| **path** | Ruta absoluta al recurso | Ninguno. |
+| **comment** | Descripción del servicio. | Ninguno. |
+| **guest ok** | Define si se permitirá el acceso como usuario invitado. El valor puede ser Yes o No. | no |
 | guest account | Usuario que identifica el acceso como invitado. | nobody |
 | guest only | Todos los accesos se realizan como invitado | no |
 | public | Es un equivalente de guest ok, es decir define si se permitirá el acceso como usuario invitado. El valor puede ser Yes o No. | no |
 | force user | Fuerza a que el acceso al recurso se realice como el usuario especificado. | Ninguno |
 | force group | Fuerza a que el acceso al recurso se realice como el grupo especificado. | Ninguno. |
-| hosts allow | Lista de ordenadores desde el que se permite el acceso | Lista vacía (todos los ordenadores). |
+| **hosts allow** | Lista de ordenadores desde el que se permite el acceso | Lista vacía (todos los ordenadores). |
 | hosts deny | Lista de ordenadores a los que se les deniega el acceso. | Lista vacía (ningún ordenador). |
 | printable | Indica si un dispositivo compartido es una impresora. | no |
-| valid users | Define los usuarios o grupos, que podrán acceder al recurso compartido. Los valores pueden ser nombres de usuarios separados por comas o bien nombres de grupo antecedidos por una @. Ejemplo: fulano, mengano, @administradores | Lista vacía (todos los usuarios). |
+| **valid users** | Define los usuarios o grupos, que podrán acceder al recurso compartido. Los valores pueden ser nombres de usuarios separados por comas o bien nombres de grupo antecedidos por una @. Ejemplo: fulano, mengano, @administradores | Lista vacía (todos los usuarios). |
 | write list | Define los usuarios o grupos, que podrán acceder con permiso de escritura. Los valores pueden ser nombres de usuarios separados por comas o bien nombres de grupo antecedidos por una @. Ejemplo: fulano, mengano, @administradores | Lista vacía (todos los usuarios). |
-| admin users | Define los usuarios o grupos, que podrán acceder con permisos administrativos para el recurso. Es decir, podrán acceder hacia el recurso realizando todas las operaciones como super-usuarios. | Lista vacía (ningún usuario). |
-| directory mask | Es lo mismo que directory mode. Define qué permiso en el sistema tendrán los subdirectorios creados dentro del recurso. Ejemplos: 1777 | Definido por sistema | 
-| create mask | Define que permiso en el sistema tendrán los nuevos archivos creados dentro del recurso. Ejemplo: 0644 | Definido por sistema | 
+| **admin users** | Define los usuarios o grupos, que podrán acceder con permisos administrativos para el recurso. Es decir, podrán acceder hacia el recurso realizando todas las operaciones como super-usuarios. | Lista vacía (ningún usuario). |
+| **directory mask** | Es lo mismo que directory mode. Define qué permiso en el sistema tendrán los subdirectorios creados dentro del recurso. Ejemplos: 1777 | Definido por sistema | 
+| **create mask** | Define que permiso en el sistema tendrán los nuevos archivos creados dentro del recurso. Ejemplo: 0644 | Definido por sistema | 
 | follow symlinks | Permite el seguimiento de enlaces simbólicos | Yes |
 
 `read only` y `writeable` se refieren al modo de exportación del recurso, solo que de forma inversa, así el
 equivalente de `read only = yes` es `writeable = no`.
+
+> **IMPORTANTE**: A la hora de compartir no solo debemos tener en cuenta los parámetros `read only` y `writeable` para establecer permisos, también **debemos tener en cuenta los permisos de las carpetas compartidas**, de forma similar a lo visto con **NFS**
 
 En el siguiente ejemplo, en el cual se exportan los directorios raíz de los usuarios:
 ```
@@ -192,7 +236,7 @@ create mask = 0777
 directory mask = 0777
 ```
 
-## 3.3. variables SAMBA
+## 3.3. Variables SAMBA
 
 Comentar que SAMBA posee una serie de variables, que comienzan por el símbolo `%`, y que permiten especificar de forma variable distintos valores, como pueden ser un conjunto de directorios, etc. Las principales variables son:
 
@@ -238,9 +282,13 @@ Nos aparecerá algo como:
 Además : 
 
 ```bash
-smbpasswd -a nombre_usuario     # Para editar un usuario ejecutamos
+smbpasswd -d nombre_usuario     # Para deshabilitar un usuario
+smbpasswd -e nombre_usuario     # Para habilitar un usuario deshabilitado
+smbpasswd -s nombre_usuario     # Para pregunta por el password del usuario
+smbpasswd -n nombre_usuario     # Para resetear o variar el password
 smbpasswd -x nombre_usuario     # Para borrar un usuario ejecutamos:
 ```
+
 Si queremos realizar una correspondencia entre usuarios de un sistema Microsoft Windows y usuarios de Linux para el uso de recurso compartidos por *samba*, creamos un nuevo archivo donde estarán todos los usuarios autorizados para conectarse al Servidor de Samba, para esto ejecutamos:
 
 ```bash
@@ -290,7 +338,7 @@ Y le quitamos el `;` para descomentarlos, y en `writable` le cambiamos *no* por 
 
 # 5. Verificando la configuración: `testparm`
 
-Siempre que cambiemos la configuración del archivo smb.conf debemos ejecutar el siguiente comando:
+Siempre que cambiemos la configuración del archivo `smb.conf` debemos ejecutar el siguiente comando:
 
 ```
 testparm
@@ -299,7 +347,7 @@ testparm
 lo que hace este parámetro es verificar que los parámetros del archivo `smb.conf` estén correctos. 
 
 <div align="center">
-    <img src="../img/samba/samba-05.png" alt="Samba" width="50%" />
+    <img src="../img/samba/samba-05.png" alt="Samba" width="60%" />
 </div>
 
 Una vez sepamos que nuestro fichero de configuración esta correcto, podemos aplicar cambios mediante el reinicio del servicio: 
@@ -307,18 +355,233 @@ Una vez sepamos que nuestro fichero de configuración esta correcto, podemos apl
 ```bash
 sudo systemctl restart smbd.service 
 ```
+<div align="center">
+    <img src="../img/samba/samba-06.png" alt="Samba" width="60%" />
+</div>
+
+# 6. Conectando con el Servidor Samba
+
+Existen varias formas de acceder a un servidor Samba, dependiendo de la plataforma y los requisitos específicos de acceso. A continuación, se describen algunas de las formas comunes de acceder a un servidor Samba:
 
 
-# 6. puntos
+## 6.1. Accediendo desde un cliente GNU/Linux
 
-Hacer tarea que contenga los siguientes puntos
+Veamos diferentes forma de acceso
 
-- Compartir anónimo
-- Compartir usuarios
-- Crear usuarios para compartir
-- Compartir por otros usuarios **no** `root`
-- Instalación webadmin y creación de nuevo recurso
+### 6.1.1. Usando la Línea de Comandos
 
+Utiliza el comando `smbclient` en la terminal de Linux para acceder al servidor **Samba**. 
+
+Para ello, en primer lugar debes instalar el paquete ***smblient*** en el cliente
+
+Para su uso: 
+
+```bash 
+smbclient //nombre_del_servidor/nombre_del_recurso -U usuario
+```
+Luego, se te pedirá que ingreses la contraseña del usuario.
+
+Debemos tener en cuenta que si utilizamos en esta forma de acceder, entraremos en la shell smb, que no es ni bash ni sh. Para más información sobre los comandos disponibles, consulta la documentación de [samba](https://www.samba.org/samba/docs/current/man-html/smbclient.1.html)
+
+<div align="center">
+    <img src="../img/samba/samba-07.png" alt="Samba" width="60%" />
+</div>
+
+### 6.1.2. Desde el explorador de archivos
+
+Si tenemos el paquete ***smbclient*** instalado, podemos acceder desde el explorador de archivos: 
+
+En este caso accedemos desde el explorador de archivos, pulsamos en `+ Otras Ubicaciones` e insertamos la ruta del servidor precedido de `smb://`
+
+<div align="center">
+    <img src="../img/samba/samba-08.png" alt="Samba" width="60%" />
+</div>
+
+nos pedirá la autentificación 
+
+<div align="center">
+    <img src="../img/samba/samba-09.png" alt="Samba" width="60%" />
+</div>
+
+y accedemos al recurso: 
+
+<div align="center">
+    <img src="../img/samba/samba-10.png" alt="Samba" width="60%" />
+</div>
+
+
+### 6.1.3. Montando el recurso compartido con `mount`
+
+Podemos utilizar el comando `mount` para montar un recurso compartido **Samba** en un directorio local. Por ejemplo:
+
+```bash
+sudo mount -t cifs //nombre_del_servidor/nombre_del_recurso /ruta_de_montaje -o username=usuario
+```
+Luego, se te pedirá que ingreses la contraseña del usuario.
+
+<div align="center">
+    <img src="../img/samba/samba-11.png" alt="Samba" width="80%" />
+</div>
+
+De esta forma tenemos el recurso accesible *mientras no cerremos nuestra sesión* 
+
+> **Cuidado**: para poder montar unidades **Samba**, debemos tener instalado el paquete `cifs-utils`, en caso contrarío nos dará un error que nos puede llevar a engaño: 
+
+<div align="center">
+    <img src="../img/samba/samba-12.png" alt="Samba" width="80%" />
+</div>
+
+
+### 6.1.4. Montando el recurso compartido permanentemente
+
+Para montar permanentemente, debemos incluir en `/etc/fstab` los puntos de montajes.
+
+En este caso, tenemos una gran variedad de opciones a la hora de montar:
+
+```
+//192.168.56.254/compartido  /mnt/compartido  cifs  guest,uid=1000  0  0
+```
+
+En este caso: 
+- `guest`: se monta como usuarios invitado, no se necesita password
+- `ùid=1000`: se accede como si se tratara del uid 1000
+
+```
+//192.168.56.254/compartido  /mnt/compartido  cifs  user=sergio,password=sergi@,noexec,user,rw,nounix,iocharset=utf8 0 0
+```
+
+En este caso, incluimos las credenciales en el propio, fichero, accesibles a todo el mundo.
+
+Si queremos proteger los datos del usuario, usaremos el archivo `.smbcredentials`
+
+#### 6.1.4.1. usadno `.smbcredentials`
+
+Se puede crear un archivo para almacenar las credenciales de acceso al recurso compartido Samba de forma segura. 
+
+Creamos un archivo, por ejemplo, ~/.smbcredentials, con el siguiente contenido:
+
+```
+username=sergio
+password=sergi@
+```
+y le aplicamos permisos restrictivos a este fichero:
+
+```bash
+chmod 600 ~/.smbcredentials.
+```
+
+En en archivo `/etc/fstab`:
+
+```
+//192.168.56.254/compartido  /mnt/compartido  cifs  credentials=/home/sergio/.smbcredentials,uid=1000,gid=1000  0  0
+```
+
+y ya podemos montar 
+
+```bash
+sudo mount -a
+```
+
+Si has configurado correctamente todo, el recurso compartido debería montarse en el punto especificado.
+
+<div align="center">
+    <img src="../img/samba/samba-13.png" alt="Samba" width="50%" />
+</div>
+
+
+## 6.2. Accediendo desde un cliente Windows
+
+Desde un Explorador de Archivos en Windows:
+- Abre el Explorador de Archivos en Windows.
+- En la barra de direcciones, escribe la dirección del servidor Samba precedida por `\\` (por ejemplo, \\nombre_del_servidor o \\dirección_ip_del_servidor).
+- Se te pedirá que introduzcas las credenciales de usuario y contraseña del servidor Samba.
+
+
+## 6.3. Otras formas de acceso
+
+- *A través de Aplicaciones de Cliente*:
+
+Puedes utilizar aplicaciones específicas para acceder a recursos compartidos de Samba. Por ejemplo, en entornos Windows, puedes usar el "Mapa de Unidades de Red" para asignar una letra de unidad a un recurso compartido.
+
+- *Desde Dispositivos Móviles*:
+
+Utiliza aplicaciones de gestión de archivos en dispositivos móviles que admitan el protocolo SMB para acceder a los recursos compartidos Samba. Algunas aplicaciones permiten explorar y transferir archivos de manera similar a como lo harías en un Explorador de Archivos.
+
+Es importante tener en cuenta que el acceso a un servidor Samba requiere configurar adecuadamente los recursos compartidos y establecer permisos de acceso. Además, la seguridad del acceso se puede gestionar mediante autenticación de usuarios y configuración de contraseñas en el servidor Samba.
+
+
+https://www.blai.blog/2021/08/acceder-carpeta-samba-linux-active-directory.html
+
+
+
+# 7. **Webmin**: Herramienta de Administración Web
+
+**Webmin** es una interfaz web de administración de sistemas diseñada para simplificar y facilitar la gestión de servidores Unix-like, incluyendo sistemas basados en Linux como Ubuntu Server. Proporciona una interfaz gráfica intuitiva que permite a los administradores de sistemas configurar, controlar y supervisar diversos aspectos del servidor a través de un navegador web.
+
+Características Principales:
+
+1. **Configuración del Sistema:**
+   - Ajuste de configuraciones del sistema, como la red, el almacenamiento y la hora del sistema.
+
+2. **Usuarios y Grupos:**
+   - Gestión de usuarios y grupos, creación y eliminación de cuentas, y asignación de permisos.
+
+3. **Administración de Paquetes:**
+   - Instalación, actualización y gestión de paquetes de software en el sistema.
+
+4. **Configuración de Servicios:**
+   - Control y configuración de servicios del sistema, como Apache, MySQL, BIND, etc.
+
+5. **Firewall y Configuración de Red:**
+   - Configuración del firewall y ajustes relacionados con la red.
+
+
+**Instalación en Ubuntu Server:**
+
+Para la instalación de Webmin, se recomienda utilizar los pasos indicados en la propia web de [webmin](https://webmin.com/download/)
+
+Segùn podemos comprobar, los pasos serán los siguientes (en ubuntu):
+
+```bash
+# descarga de script que añade repositorios de webmin
+curl -o setup-repos.sh https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh
+
+# ejecución de script de repositorios
+sudo sh setup-repos.sh
+
+# procedemos con la instalación.
+sudo apt-get install webmin --install-recommends
+
+```
+
+
+Para cceder a la Interfaz Web
+  - Abre tu navegador web y visita `https://tu_direccion_ip_o_nombre_de_domino:10000/`
+  - Inicia sesión con las credenciales de administrador del sistema.
+
+<div align="center">
+    <img src="../img/samba/webmin-01.png" alt="Samba" width="60%" />
+</div>
+
+> Notas Importantes:
+> - Webmin utiliza el puerto 10000 por defecto y requiere una conexión segura (HTTPS).
+> - Asegúrate de que el tráfico hacia el puerto 10000 esté permitido en el firewall.
+> - Protege adecuadamente el acceso a la interfaz web de Webmin.
+
+**Webmin** proporciona una forma conveniente de administrar servidores Linux a través de una interfaz gráfica, lo que puede ser especialmente útil para aquellos que prefieren una experiencia de administración basada en la web.
+
+<div align="center">
+    <img src="../img/samba/webmin-02.png" alt="Samba" width="80%" />
+</div>
+
+Recursos Adicionales:
+- [Sitio web oficial de Webmin](http://www.webmin.com/)
+- [Documentación de Webmin](http://doxfer.webmin.com/Webmin/Main_Page)
+
+
+
+
+---
 
 **Fuentes:**
 
@@ -327,7 +590,9 @@ Hacer tarea que contenga los siguientes puntos
 - [Instalar y configurar Samba Share en Ubuntu 22.04, 20.04 y 18.04](https://es.linux-console.net/?p=21480)
 - [Teycen: Configurar Samba en Ubuntu para compartir archivos e impresoras en redes Windows](http://www.teycen.com/pages/linux/linux_samba.php)
 - [Guía Ubuntu: Samba](https://www.guia-ubuntu.com/index.php/Samba#Para_compartir_una_carpeta)
+- [Jose Castillo: Samba](https://castilloinformatica.es/wiki/index.php?title=Samba)
 - [YouTube: Uso de Samba para compartir carpetas con equipos Windows](https://www.youtube.com/watch?v=2fF1etV7iYY)
+- [carpetas compartidas con samba para usuarios de AD ](https://linux-l.listas.softwarelibre.narkive.com/iXaaYzcN/carpetas-compartidas-con-samba-para-usuarios-de-ad)
 
 - [DigitalOcean: How To Install Webmin on Ubuntu 22.04](https://www.digitalocean.com/community/tutorials/how-to-install-webmin-on-ubuntu-22-04)
 - [HowtoForge; Cómo instalar Webmin con el certificado SSL gratuito Let’s Encrypt en Ubuntu 22.04](https://howtoforge.es/como-instalar-webmin-con-el-certificado-ssl-gratuito-let-s-encrypt-en-ubuntu-22-04/)
