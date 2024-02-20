@@ -798,7 +798,7 @@ sudo ldapsearch -x -b "ou=asix,dc=simarrilandia,dc=local"
 ```
 
 <div align="center">
-    <img src="../img/ldap/ldap_client07.png" alt="Configuración ldap en cliente" width="40%" />
+    <img src="../img/ldap/ldap_client07.png" alt="Configuración ldap en cliente" width="80%" />
 </div>
 
 Aqui vemos lo mismo que cuando lo ejecutamos desde el servidor.
