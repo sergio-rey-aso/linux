@@ -805,12 +805,19 @@ Cuando evaluamos una expresión con los corchetes `[]`, hay que tener muy en cue
 - El operador 'no' se representa con '`!`'.
 - Para utilizar los paréntesis hay que escaparlos, es decir, poner el símbolo '`\`' antes de cada paréntesis, ya que estos son símbolos especiales para el intérprete y queremos evitar que los interprete como tales.
 
-| operador | resultado |
-| --- | --- |  
-| num1 -`eq` num2 `-a` num1 `-gt` num3 | Comprueba si num1 es igual a num2 y además mayor que num3. |
-| `-r` arch1 `-o` `-x` arch1 | Comprueba si arch1 tiene permisos de lectura o de ejecución. |
-| `!` `-s` arch1 | Comprueba que el fichero arch1 si es vacío |
-| $var `-ne` 0 `-a` `\(` `-f` arch1 `-o` `-d` arch1 `\)` | Comprueba si el valor de la variable $var es distinto de 0 y además, comprueba si arch1 es un fichero normal o un directorio. |
+```bash
+# Comprueba si num1 es igual a num2 y además mayor que num3. 
+num1 -`eq` num2 `-a` num1 `-gt` num3 
+
+# Comprueba si arch1 tiene permisos de lectura o de ejecución. 
+`-r` arch1 `-o` `-x` arch1 
+
+# Comprueba que el fichero arch1 si es vacío 
+`!` `-s` arch1 
+
+# Comprueba si el valor de la variable $var es distinto de 0 y además, comprueba si arch1 es un fichero normal o un directorio. 
+$var `-ne` 0 `-a` `\(` `-f` arch1 `-o` `-d` arch1 `\)` 
+```
 
 ## 10.3. Diferencias `test`, `[]` y `[[]]`
 
@@ -1843,7 +1850,7 @@ do
     if (( (i % 2) == 0 )) #Numero par
     then
         echo "Numero par: $i"
-        else #Numero impar
+    else #Numero impar
         echo "Numero impar: $i"
     fi
     (( i++ ))
